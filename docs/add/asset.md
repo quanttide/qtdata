@@ -1,4 +1,4 @@
-# 资产管理架构
+# 资产模块
 
 ## 系统架构
 
@@ -19,20 +19,4 @@
 ┌─────────────────────────────────────────────┐
 │              S3对象存储                    │
 └─────────────────────────────────────────────┘
-```
-
-## 资产模型
-
-```
-Asset {
-  id: string
-  title: string
-  description: string
-  category: enum[dataset, processor, document]
-  name: string
-  content: string
-  status: enum[draft, ready, archived]
-  created_at: datetime
-  updated_at: datetime
-}
 ```
