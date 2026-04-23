@@ -27,9 +27,8 @@
 Asset {
   id: string
   category: enum[dataset, processor, document]
-  name: string
+name: string
   content: string        # S3对象存储路径
-  version: string
   status: enum[draft, ready, archived]
   created_at: datetime
 }
