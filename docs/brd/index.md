@@ -5,3 +5,4 @@
 - [场景三：报价与交付规范](./scenario/quotation.md)
 - [场景四：多业务线管理](./scenario/business_line.md)
 - [场景五：数据工程规范](./scenario/delivery.md)
+- [场景六：客户门户（ixd）](./scenario/portal.md)
