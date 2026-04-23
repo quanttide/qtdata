@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>数据交付 - 客户门户原型</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.css"
+            rel="stylesheet"
+        />
+        <style>
+            .step-active {
+                color: #3b82f6;
+                border-color: #3b82f6;
+            }
+            .step-complete {
+                color: #10b981;
+                border-color: #10b981;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50 text-gray-800">
+        <div class="flex h-screen">
+            <aside class="w-64 bg-slate-900 text-white flex flex-col">
+                <div
+                    class="p-6 text-xl font-bold border-b border-slate-700 flex items-center"
+                >
+                    <span class="mr-2 text-blue-400">●</span> 客户交付门户
+                </div>
+                <nav class="flex-1 p-4 space-y-2">
+                    <a
+                        href="#"
+                        class="flex items-center p-3 bg-blue-600 rounded-lg"
+                        ><span class="mr-3">📊</span> 项目概览</a
+                    >
+                    <a
+                        href="#"
+                        class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition"
+                        ><span class="mr-3">📦</span> 交付资产</a
+                    >
+                    <a
+                        href="#"
+                        class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition"
+                        ><span class="mr-3">✅</span> 验收中心</a
+                    >
+                    <a
+                        href="#"
+                        class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition"
+                        ><span class="mr-3">🔔</span> 消息通知
+                        <span
+                            class="ml-auto bg-red-500 text-xs px-2 py-1 rounded-full"
+                            >3</span
+                        ></a
+                    >
+                </nav>
+                <div class="p-4 border-t border-slate-700 text-sm">
+                    <p class="text-slate-400">当前用户：</p>
+                    <p class="font-medium">某品牌客户负责人</p>
+                </div>
+            </aside>
+
+            <main class="flex-1 overflow-y-auto">
+                <header
+                    class="bg-white shadow-sm p-4 flex justify-between items-center px-8"
+                >
+                    <h2 class="text-xl font-semibold">
+                        项目详情：自动驾驶语义分割数据集 A-2026
+                    </h2>
+                    <div class="flex items-center space-x-4">
+                        <span
+                            class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium"
+                            >执行中</span
+                        >
+                        <button class="text-gray-500 hover:text-blue-600">
+                            帮助中心
+                        </button>
+                    </div>
+                </header>
+
+                <div class="p-8 space-y-8">
+                    <section
+                        class="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+                    >
+                        <h3 class="text-lg font-bold mb-6 flex items-center">
+                            <span class="w-1 h-5 bg-blue-600 mr-2"></span>
+                            进度追踪
+                        </h3>
+                        <div class="relative flex justify-between">
+                            <div
+                                class="absolute top-5 left-0 w-full h-0.5 bg-gray-200 -z-0"
+                            ></div>
+
+                            <div class="z-10 flex flex-col items-center">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center mb-2"
+                                >
+                                    ✓
+                                </div>
+                                <p class="text-sm font-medium">需求确认</p>
+                                <p class="text-xs text-gray-400">2026-03-01</p>
+                            </div>
+                            <div class="z-10 flex flex-col items-center">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center mb-2"
+                                >
+                                    ✓
+                                </div>
+                                <p class="text-sm font-medium">数据采集</p>
+                                <p class="text-xs text-gray-400">2026-03-15</p>
+                            </div>
+                            <div class="z-10 flex flex-col items-center">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center mb-2 ring-4 ring-blue-100"
+                                >
+                                    3
+                                </div>
+                                <p class="text-sm font-bold text-blue-600">
+                                    数据清洗
+                                </p>
+                                <p class="text-xs text-gray-400">
+                                    进行中 (85%)
+                                </p>
+                            </div>
+                            <div class="z-10 flex flex-col items-center">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center mb-2"
+                                >
+                                    4
+                                </div>
+                                <p class="text-sm text-gray-500">质量验收</p>
+                                <p class="text-xs text-gray-400">预计 04-25</p>
+                            </div>
+                            <div class="z-10 flex flex-col items-center">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center mb-2"
+                                >
+                                    5
+                                </div>
+                                <p class="text-sm text-gray-500">交付完成</p>
+                                <p class="text-xs text-gray-400">--</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="grid grid-cols-3 gap-6">
+                        <div
+                            class="col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+                        >
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-lg font-bold">交付资产清单</h3>
+                                <button
+                                    class="text-blue-600 text-sm hover:underline"
+                                >
+                                    全部下载 (.zip)
+                                </button>
+                            </div>
+                            <table class="w-full text-left">
+                                <thead class="bg-gray-50 text-gray-500 text-sm">
+                                    <tr>
+                                        <th class="p-3 font-medium">
+                                            资产名称
+                                        </th>
+                                        <th class="p-3 font-medium">类型</th>
+                                        <th class="p-3 font-medium">状态</th>
+                                        <th class="p-3 font-medium">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <tr>
+                                        <td class="p-3">
+                                            <p
+                                                class="font-medium text-blue-600 cursor-pointer"
+                                            >
+                                                Training_Set_V1.csv
+                                            </p>
+                                            <p class="text-xs text-gray-400">
+                                                1.2 GB
+                                            </p>
+                                        </td>
+                                        <td class="p-3 text-sm">数据集</td>
+                                        <td class="p-3">
+                                            <span
+                                                class="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded"
+                                                >可预览</span
+                                            >
+                                        </td>
+                                        <td class="p-3">
+                                            <button
+                                                class="text-gray-400 hover:text-blue-600"
+                                            >
+                                                下载
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3">
+                                            <p class="font-medium">
+                                                Data_Cleaner_Script.py
+                                            </p>
+                                            <p class="text-xs text-gray-400">
+                                                GitLab Repo
+                                            </p>
+                                        </td>
+                                        <td class="p-3 text-sm">处理器代码</td>
+                                        <td class="p-3">
+                                            <span
+                                                class="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded"
+                                                >外部链接</span
+                                            >
+                                        </td>
+                                        <td class="p-3">
+                                            <button
+                                                class="text-gray-400 hover:text-blue-600"
+                                            >
+                                                访问
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3">
+                                            <p class="font-medium">
+                                                质量分析报告_March.pdf
+                                            </p>
+                                            <p class="text-xs text-gray-400">
+                                                4.5 MB
+                                            </p>
+                                        </td>
+                                        <td class="p-3 text-sm">文档</td>
+                                        <td class="p-3">
+                                            <span
+                                                class="text-xs px-2 py-1 bg-green-100 text-green-600 rounded"
+                                                >已审阅</span
+                                            >
+                                        </td>
+                                        <td class="p-3">
+                                            <button
+                                                class="text-gray-400 hover:text-blue-600"
+                                            >
+                                                阅读
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div
+                            class="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+                        >
+                            <h3 class="text-lg font-bold mb-4">验收流程</h3>
+                            <div
+                                class="p-4 bg-yellow-50 border-l-4 border-yellow-400 mb-6"
+                            >
+                                <p class="text-sm text-yellow-700 font-medium">
+                                    待反馈：
+                                </p>
+                                <p class="text-xs text-yellow-600 mt-1">
+                                    请对本周交付的清洗数据集进行质量确认。
+                                </p>
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <label
+                                        class="block text-sm font-medium mb-1"
+                                        >反馈意见</label
+                                    >
+                                    <textarea
+                                        class="w-full border border-gray-200 rounded-lg p-3 text-sm h-24 focus:ring-2 focus:ring-blue-500 outline-none"
+                                        placeholder="输入反馈内容..."
+                                    ></textarea>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button
+                                        class="flex-1 bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition"
+                                    >
+                                        确认验收
+                                    </button>
+                                    <button
+                                        class="flex-1 border border-gray-200 py-2 rounded-lg font-medium hover:bg-gray-50 transition text-gray-600"
+                                    >
+                                        驳回修改
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </main>
+        </div>
+    </body>
+</html>
