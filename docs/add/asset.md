@@ -10,7 +10,6 @@
                     ▼
 ┌─────────────────────────────────────────────┐
 │              资产服务 (Asset)              │
-│  - 客户管理                                 │
 │  - 资产元数据                              │
 │  - S3文件引用                              │
 │  - 状态流转                                │
@@ -27,7 +26,6 @@
 ```
 Asset {
   id: string
-  customer_id: string   # 关联客户
   type: enum[dataset, processor, document]
   name: string
   s3_key: string        # S3对象存储路径
@@ -37,4 +35,4 @@ Asset {
 }
 ```
 
-不显式关联Project，Asset直接归属客户，通过目录结构组织。
+直接S3存储，无任何关联关系。
