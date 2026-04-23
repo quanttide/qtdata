@@ -1,0 +1,66 @@
+# 资产管理模块
+
+## 模块定位
+
+管理数据交付活动，包括数据集、数据处理器、数据文档等交付资产。
+
+## 核心功能
+
+### 1. 资产登记
+
+记录每个交付项目的资产清单：
+
+- 数据集：原始数据、清洗后数据
+- 数据处理器：Python脚本、notebook
+- 数据文档：数据模型、流程定义、报告
+
+### 2. 版本管理
+
+每个项目交付 multiple 版本，支持：
+
+- 版本历史追溯
+- 客户查看当前版本
+- 问题溯源
+
+### 3. 状态追踪
+
+- 待处理：项目启动前
+- 处理中：数据清洗进行中
+- 待验收：交付完成，等待客户确认
+- 已验收：客户确认完成
+- 已归档：项目结束归档
+
+### 4. 客户门户
+
+客户可查看：
+
+- 当前项目进度
+- 交付资产清单
+- 数据质量报告
+- 验收状态
+
+## 数据模型
+
+```
+Asset {
+  id: string
+  project_id: string
+  type: enum[dataset, processor, document]
+  name: string
+  path: string
+  version: string
+  status: enum[draft, ready, archived]
+  created_at: datetime
+  updated_at: datetime
+}
+
+Project {
+  id: string
+  customer_id: string
+  name: string
+  status: enum[pending, processing, review, done, archived]
+  assets: Asset[]
+  created_at: datetime
+  updated_at: datetime
+}
+```
