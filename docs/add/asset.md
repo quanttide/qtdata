@@ -10,7 +10,7 @@
                     ▼
 ┌─────────────────────────────────────────────┐
 │              资产服务 (Asset)              │
-│  - 项目管理                                 │
+│  - 客户管理                                 │
 │  - 资产元数据                              │
 │  - S3文件引用                              │
 │  - 状态流转                                │
@@ -19,9 +19,6 @@
                     ▼
 ┌─────────────────────────────────────────────┐
 │              S3对象存储                    │
-│  - 数据集文件                              │
-│  - 代码仓库                                │
-│  - 文档                                   │
 └─────────────────────────────────────────────┘
 ```
 
@@ -30,16 +27,14 @@
 ```
 Asset {
   id: string
-  project_id: string
+  customer_id: string   # 关联客户
   type: enum[dataset, processor, document]
   name: string
   s3_key: string        # S3对象存储路径
-  size: integer         # 文件大小
-  hash: string         # MD5/SHA256
   version: string
   status: enum[draft, ready, archived]
   created_at: datetime
 }
 ```
 
-一个Asset服务同时管理元数据和S3文件存储，简化架构。
+不显式关联Project，Asset直接归属客户，通过目录结构组织。
