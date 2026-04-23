@@ -5,77 +5,41 @@
 ```
 ┌─────────────────────────────────────────────┐
 │              客户门户 (ixd)                │
-│  - 项目概览                                  │
-│  - 进度追踪                                  │
-│  - 资产浏览                                 │
-│  - 验收流程                                 │
 └─────────────────────────────────────────────┘
                     │
                     ▼
 ┌─────────────────────────────────────────────┐
-│              资产服务 API                   │
-│  - 资产 CRUD                               │
+│              资产服务 (Asset)              │
 │  - 项目管理                                 │
-│  - 状态流转                                 │
-│  - 版本管理                                 │
+│  - 资产元数据                              │
+│  - S3文件引用                              │
+│  - 状态流转                                │
 └─────────────────────────────────────────────┘
                     │
                     ▼
 ┌─────────────────────────────────────────────┐
-│              数据存储                       │
-│  - PostgreSQL: 项目、资产元数据           │
-│  - MinIO: 数据文件存储                     │
-│  - Git: 代码仓库                           │
+│              S3对象存储                    │
+│  - 数据集文件                              │
+│  - 代码仓库                                │
+│  - 文档                                   │
 └─────────────────────────────────────────────┘
 ```
 
-## 核心模块
-
-### 1. 资产服务
-
-负责资产的CRUD和版本管理：
+## 资产模型
 
 ```
-AssetService {
-  create_asset(asset): Asset
-  get_asset(id): Asset
-  list_assets(filters): Asset[]
-  update_asset(id, asset): Asset
-  delete_asset(id): void
-  create_version(asset_id, version): AssetVersion
+Asset {
+  id: string
+  project_id: string
+  type: enum[dataset, processor, document]
+  name: string
+  s3_key: string        # S3对象存储路径
+  size: integer         # 文件大小
+  hash: string         # MD5/SHA256
+  version: string
+  status: enum[draft, ready, archived]
+  created_at: datetime
 }
 ```
 
-### 2. 项目服务
-
-负责项目管理：
-
-```
-ProjectService {
-  create_project(customer_id, name): Project
-  get_project(id): Project
-  list_projects(filters): Project[]
-  update_status(id, status): Project
-  add_asset(project_id, asset_id): void
-}
-```
-
-### 3. 文件服务
-
-负责数据文件存储：
-
-```
-FileService {
-  upload(file): FileInfo
-  download(file_id): Stream
-  preview(file_id): Preview
-}
-```
-
-## 技术选型
-
-- 后端：Python/FastAPI
-- 前端：React + Ant Design
-- 数据库：PostgreSQL
-- 对象存储：MinIO
-- 代码仓库：Git (GitHub)
+一个Asset服务同时管理元数据和S3文件存储，简化架构。
