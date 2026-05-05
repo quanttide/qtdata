@@ -1,0 +1,14 @@
+{
+  "name": "qtgame-tycoon-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "description": "客户需求投资判断与接单交付流程的游戏化经营模拟器原型",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "check": "node --check app.js && node --check server.js"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

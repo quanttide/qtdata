@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>量潮项目经营模拟器</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero">
+        <div class="hero__content">
+          <p class="eyebrow">客户视角 · 快速评估 · 游戏化反馈</p>
+          <h1>量潮项目经营模拟器</h1>
+          <p class="hero__lead">
+            把“客户提需求、平台判断值不值得做、报价接单、交付验收”的业务过程包装成 5 分钟可理解的模拟经营游戏。
+          </p>
+          <div class="hero__actions">
+            <a href="#simulator" class="button button--primary">开始模拟接单</a>
+            <a href="#story" class="button button--ghost">查看故事线</a>
+          </div>
+        </div>
+        <div class="hero-card" aria-label="经营状态总览">
+          <div class="hero-card__top">
+            <span>项目机会</span>
+            <strong id="heroOpportunity">Q2 数据中台</strong>
+          </div>
+          <div class="metric-grid">
+            <div><span>预算</span><strong id="heroBudget">¥80,000</strong></div>
+            <div><span>周期</span><strong id="heroDays">28 天</strong></div>
+            <div><span>风险</span><strong id="heroRisk">中</strong></div>
+            <div><span>建议</span><strong id="heroAdvice">谨慎接单</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="story" class="section story-section">
+        <div class="section-heading">
+          <p class="eyebrow">把技术讲成客户能听懂的故事</p>
+          <h2>原型核心故事</h2>
+        </div>
+        <div class="story-flow">
+          <article class="story-card is-active">
+            <span>01</span>
+            <h3>客户提出需求</h3>
+            <p>客户输入行业、目标、预算、期望周期和质量要求，就像进入一个经营游戏的第一关。</p>
+          </article>
+          <article class="story-card">
+            <span>02</span>
+            <h3>平台给出副官建议</h3>
+            <p>系统把预算、工期、复杂度、价值和风险量化，告诉客户这个需求值不值得投资。</p>
+          </article>
+          <article class="story-card">
+            <span>03</span>
+            <h3>选择是否接单</h3>
+            <p>用户能看到报价区间、可行性等级、可能踩坑点，再决定继续、缩小范围或暂缓。</p>
+          </article>
+          <article class="story-card">
+            <span>04</span>
+            <h3>交付与验收复盘</h3>
+            <p>模拟接单后展示服务过程、质量评分、验收建议，帮助团队理解客户真实顾虑。</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="simulator" class="section simulator-layout">
+        <div class="panel input-panel">
+          <div class="panel__heading">
+            <p class="eyebrow">需求卡片</p>
+            <h2>客户想做什么？</h2>
+          </div>
+
+          <label>
+            项目名称
+            <input id="projectName" type="text" value="企业经营数据驾驶舱" />
+          </label>
+
+          <label>
+            客户类型
+            <select id="clientType">
+              <option value="startup">创业公司：想快速验证市场</option>
+              <option value="sme" selected>中小企业：想降本增效</option>
+              <option value="enterprise">大型企业：流程复杂、验收严格</option>
+            </select>
+          </label>
+
+          <label>
+            需求复杂度 <output id="complexityValue">6</output>/10
+            <input id="complexity" type="range" min="1" max="10" value="6" />
+          </label>
+
+          <label>
+            业务价值 <output id="valueValue">7</output>/10
+            <input id="businessValue" type="range" min="1" max="10" value="7" />
+          </label>
+
+          <div class="two-columns">
+            <label>
+              客户预算（元）
+              <input id="budget" type="number" min="5000" step="5000" value="80000" />
+            </label>
+            <label>
+              期望周期（天）
+              <input id="deadline" type="number" min="3" step="1" value="28" />
+            </label>
+          </div>
+
+          <label>
+            当前报价速度
+            <select id="quoteSpeed">
+              <option value="slow">慢：先聊清楚，再报价</option>
+              <option value="balanced" selected>平衡：快速评估 + 关键问题确认</option>
+              <option value="fast">快：当天给出方向和区间</option>
+            </select>
+          </label>
+
+          <button id="simulateBtn" class="button button--primary button--full">生成经营建议</button>
+        </div>
+
+        <div class="panel result-panel" aria-live="polite">
+          <div class="score-ring" id="scoreRing">
+            <span id="scoreValue">72</span>
+            <small>投资价值</small>
+          </div>
+          <div class="result-copy">
+            <p class="eyebrow">副官建议</p>
+            <h2 id="recommendation">建议拆分范围后接单</h2>
+            <p id="summary">这个需求业务价值较高，但周期和复杂度存在压力，建议先做核心数据看板，降低客户决策负担。</p>
+          </div>
+
+          <div class="status-board">
+            <div><span>建议报价</span><strong id="quoteRange">¥72,000 - ¥96,000</strong></div>
+            <div><span>交付压力</span><strong id="deliveryPressure">中高</strong></div>
+            <div><span>客户认知负担</span><strong id="cognitiveLoad">中</strong></div>
+            <div><span>验收难度</span><strong id="acceptanceRisk">中</strong></div>
+          </div>
+
+          <div class="timeline">
+            <h3>模拟经营流程</h3>
+            <ol id="timelineList"></ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="section insights-section">
+        <div class="section-heading">
+          <p class="eyebrow">平台沉淀</p>
+          <h2>这套玩法能帮团队知道什么？</h2>
+        </div>
+        <div class="insight-grid">
+          <article>
+            <h3>1. 业务怎么调整</h3>
+            <p>通过需求得分、报价压力和验收风险，快速识别哪些客户适合接、哪些需求应该拆小、哪些机会需要教育客户。</p>
+          </article>
+          <article>
+            <h3>2. 客户信息是什么</h3>
+            <p>记录客户预算、周期、价值判断和犹豫点，把原本模糊的沟通变成可复盘的数据。</p>
+          </article>
+          <article>
+            <h3>3. 传播为什么更容易</h3>
+            <p>客户不需要理解复杂技术，只要玩一遍“需求投资模拟”，就能理解平台如何帮他降低试错成本。</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>
