@@ -1,9 +1,17 @@
 name: qtdata_project
-description: 量潮数据项目模型
+description: 量潮数据看板组件
 version: 0.1.0
 
 environment:
   sdk: ^3.11.5
 
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.1.5
+  quanttide_project: ^0.2.0
+  flutter_quanttide_project: ^0.1.0
+
 dev_dependencies:
-  test: ^1.25.0
+  flutter_test:
+    sdk: flutter
