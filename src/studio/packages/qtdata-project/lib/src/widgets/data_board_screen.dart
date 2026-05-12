@@ -25,7 +25,7 @@ class DataBoardScreen extends StatelessWidget {
             title: '需求探索',
             tasks: board.requirement,
             cardBuilder: _buildCard,
-          ), flex: 1.0),
+          ), flex: 1.2),
           (child: StageColumn(
             icon: Icons.description_outlined,
             title: '约定启动',
@@ -37,13 +37,7 @@ class DataBoardScreen extends StatelessWidget {
             title: '执行监控',
             tasks: board.execution,
             cardBuilder: _buildCard,
-          ), flex: 1.0),
-          (child: StageColumn(
-            icon: Icons.swap_horiz_outlined,
-            title: '变更管理',
-            tasks: board.change,
-            cardBuilder: _buildCard,
-          ), flex: 0.8),
+          ), flex: 1.2),
           (child: StageColumn(
             icon: Icons.check_circle_outlined,
             title: '验收交付',
