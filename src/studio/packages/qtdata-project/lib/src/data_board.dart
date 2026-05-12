@@ -8,6 +8,5 @@ class DataBoard {
   List<Task> get requirement => tasks.where((t) => t.type == 'requirement').toList();
   List<Task> get agreement => tasks.where((t) => t.type == 'agreement').toList();
   List<Task> get execution => tasks.where((t) => t.type == 'execution').toList();
-  List<Task> get change => tasks.where((t) => t.type == 'change').toList();
   List<Task> get acceptance => tasks.where((t) => t.type == 'acceptance').toList();
 }
