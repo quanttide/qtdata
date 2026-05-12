@@ -11,4 +11,4 @@ flutter build linux
 
 echo ""
 echo "Running..."
-./build/linux/x64/release/bundle/studio
+./build/linux/x64/release/bundle/qtdata_studio
