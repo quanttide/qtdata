@@ -8,6 +8,14 @@
 - **回答简洁**。不解释背景、理由、替代方案，除非被问到。
 - **提交粒度小**。一个改动一个提交，提交信息说明意图。
 
+## 沟通原则（经对话验证）
+
+- **从问题出发，不从方案出发**。用户说不清楚时，帮他理清"当前哪里不对"，而不是直接给功能列表。
+- **不说空话**。不接受表面合理的结论，追问底层逻辑。如果用户指出"只是简单加了一句话"，说明没有真正理解他的意思，需要重来。
+- **迭代识别**。用户通过否定来逼近目标——不对的版本会直接指出"不是这个"。不要争辩，根据反馈调整。
+- **文档写业务问题，不写设计哲学**。PMD 记录业务上发生了什么、要解决什么问题，不是方案特征说明。
+- **先读 PMD**。开始新任务前先看 `docs/pmd/index.md`，了解当前业务定位和问题域。
+
 ## 测试体系
 
 按 `tests/README.md` 的约定，不越级。
@@ -22,9 +30,11 @@
 |------|------|
 | `ROADMAP.md` | 项目路线图：数据页面、资产页面 |
 | `tests/ROADMAP.md` | E2E 测试路线图 |
-| `tests/screens/ROADMAP.md` | 页面层路线图（Project、Data、Asset 三页面） |
-| `src/studio/ROADMAP.md` | Studio 客户端路线图（qtdata-process、qtdata-asset） |
-| `src/provider/ROADMAP.md` | Provider 服务端路线图（流程 API、资产 API） |
-| `tests/README.md` | 测试体系约定（三层：conftest / utils / usecases） |
+| `tests/screens/ROADMAP.md` | 页面层路线图 |
+| `src/studio/ROADMAP.md` | Studio 客户端路线图 |
+| `src/provider/ROADMAP.md` | Provider 服务端路线图 |
+| `tests/README.md` | 测试体系约定 |
+| `docs/pmd/index.md` | 项目管理文档：当前问题与方案定位 |
+| `docs/ixd/data_screen.md` | 数据页面交互设计 |
 
 
