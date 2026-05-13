@@ -2,8 +2,7 @@ from screens.base_page import BasePage
 
 
 class HomeScreen(BasePage):
-    def __init__(self, driver, client):
-        super().__init__(driver)
+    def __init__(self, client):
         self.client = client
 
     def get_projects(self):
@@ -17,7 +16,3 @@ class HomeScreen(BasePage):
 
     def create_task(self, title: str, task_type: str = "requirement"):
         return self.client.post("/tasks", json={"id": title, "title": title, "type": task_type}).json()
-
-    def verify_stage_titles(self):
-        for title in ["需求探索", "约定启动", "执行监控", "验收交付"]:
-            assert self.find_by_text(title) is not None
