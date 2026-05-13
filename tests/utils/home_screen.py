@@ -1,4 +1,4 @@
-from screens.base_page import BasePage
+from utils.base_page import BasePage
 
 
 class HomeScreen(BasePage):
