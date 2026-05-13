@@ -1,9 +1,24 @@
 # ROADMAP
 
-如果我们不管底层有没有，让平台先研发出来看看模样，再和平台对接。
-那么路线图是：
-1. 独立开发
-2. 逐步重构
-3. 完成依赖
+先独立研发再看模样，逐步对接。
 
-数据问题可以在开发过程中解决，而且用数据方法解决数据问题，让系统自我指涉，从而可以自适应。
+## 1. Provider 完成
+
+- [x] FastAPI 服务骨架
+- [x] Project/Task CRUD 路由
+- [x] camelCase JSON API（`fastapi-quanttide-project` v0.2.0）
+- [ ] 存储层（内存 dict + demo 数据）
+- [ ] 存储层测试
+
+## 2. Studio 接入 API
+
+- [ ] `qtdata-project` 数据层（api_client + state）
+- [ ] 替换硬编码 demo 数据
+- [ ] 数据层测试
+
+## 3. 联调
+
+- [ ] Provider 启动 → Studio 加载显示数据
+- [ ] CRUD 操作端到端验证
+
+数据问题在开发过程中解决，用数据方法解决数据问题。
