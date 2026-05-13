@@ -39,12 +39,14 @@ cd src/provider && uv run pytest test/ -v
 
 ### Studio
 
-`src/studio/integration_test/app_test.dart` — 用 `shelf` 起 mock server，渲染看板，验证数据从网络到 UI 全链路。
+`src/studio/test/test_service.dart` — mock HTTP，验证数据加载、看板渲染和错误状态。
 
 ```bash
-cd src/studio && flutter test integration_test/
+cd src/studio && flutter test
 ```
+
+---
 
 ## 端到端测试
 
-验证真实provider 和 studio是否可以联动。根目录tests文件夹。
+验证真实 provider 和 studio 是否可以联动。根目录 `tests/` 文件夹。
