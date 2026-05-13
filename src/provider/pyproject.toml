@@ -20,3 +20,4 @@ dev-dependencies = [
 ]
 
 [tool.uv.sources]
+fastapi-quanttide-project = { path = "../../../../packages/quanttide-project-toolkit/packages/fastapi" }
