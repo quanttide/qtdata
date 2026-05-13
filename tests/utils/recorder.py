@@ -6,8 +6,9 @@ ASSETS_VIDEOS = Path(__file__).resolve().parent.parent.parent / "assets" / "vide
 
 
 class Recorder:
-    def __init__(self, filename: str):
-        self.path = ASSETS_VIDEOS / f"{filename}.mp4"
+    def __init__(self, filename: str, output_dir: Path | None = None):
+        output_dir = output_dir or ASSETS_VIDEOS
+        self.path = output_dir / f"{filename}.mp4"
         self.proc = None
 
     def start(self):

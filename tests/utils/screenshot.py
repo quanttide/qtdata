@@ -7,17 +7,19 @@ from mss import tools as mss_tools
 ASSETS_IMAGES = Path(__file__).resolve().parent.parent.parent / "assets" / "images"
 
 
-def capture(filename: str):
-    ASSETS_IMAGES.mkdir(parents=True, exist_ok=True)
-    path = str(ASSETS_IMAGES / f"{filename}.png")
+def capture(filename: str, output_dir: Path | None = None):
+    output_dir = output_dir or ASSETS_IMAGES
+    output_dir.mkdir(parents=True, exist_ok=True)
+    path = str(output_dir / f"{filename}.png")
     with mss.MSS() as sct:
         sct.shot(output=path)
     return path
 
 
-def capture_window(filename: str, window_title: str):
-    ASSETS_IMAGES.mkdir(parents=True, exist_ok=True)
-    path = str(ASSETS_IMAGES / f"{filename}.png")
+def capture_window(filename: str, window_title: str, output_dir: Path | None = None):
+    output_dir = output_dir or ASSETS_IMAGES
+    output_dir.mkdir(parents=True, exist_ok=True)
+    path = str(output_dir / f"{filename}.png")
 
     result = subprocess.run(
         ["xdotool", "search", "--name", window_title],
