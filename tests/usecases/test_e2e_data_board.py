@@ -1,4 +1,4 @@
-from utils.home_screen import HomeScreen
+from screens.home_screen import HomeScreen
 
 
 def test_provider_only(client, provider_process):
