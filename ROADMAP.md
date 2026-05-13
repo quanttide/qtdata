@@ -8,7 +8,7 @@
 - [x] Project/Task CRUD 路由
 - [x] camelCase JSON API（`fastapi-quanttide-project` v0.2.0）
 - [x] 存储层（内存 dict + demo 数据）
-- [x] 存储层测试
+- [x] 存储层单元测试
 
 ## 2. Studio 接入 API
 
@@ -16,14 +16,14 @@
 - [x] 替换硬编码 demo 数据
 - [x] 数据层单元测试
 
-## 3. 集成测试
+## 3. 服务测试
 
-- [ ] Provider 集成测试（TestClient 验证完整 CRUD + camelCase）
-- [ ] Studio 集成测试（`integration_test` + `shelf` mock server）
+- [ ] Provider 端（TestClient 验证完整 CRUD + camelCase）
+- [ ] Studio 端（`integration_test` + `shelf` mock server）
 
-## 4. 联调
+## 4. 端到端测试
 
-- [ ] Provider 启动 → Studio 加载显示数据
-- [ ] CRUD 操作端到端验证
+- [ ] Provider 接入真实数据库（替代内存 dict）
+- [ ] 启动真实服务 + 真实 APP，验证数据持久化和前后端互通
 
 数据问题在开发过程中解决，用数据方法解决数据问题。
