@@ -1,19 +1,4 @@
-# E2E 测试工具
-
-工具层（`tests/utils/`）和页面层（`tests/screens/`）共同提供 E2E 测试所需的操作能力。
-
-按测试调用顺序组织：先通过页面对象准备数据，再操作 UI 并断言，最后用录制/截图工具记录结果。
-
-## 页面层
-
-`tests/screens/` 封装业务页面操作。
-
-`HomeScreen` 继承 `BasePage`，封装数据看板特有的 API 操作：
-
-- `get_projects()` / `get_tasks()` — 获取项目/任务列表
-- `create_project(name)` / `create_task(title)` — 创建项目/任务
-
-## 工具层
+# 工具层
 
 `tests/utils/` 提供窗口操作基类和录制/截图工具。
 
