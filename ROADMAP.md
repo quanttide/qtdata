@@ -18,8 +18,8 @@
 
 ## 3. 服务测试
 
-- [ ] Provider 端（TestClient 验证完整 CRUD + camelCase）
-- [ ] Studio 端（`integration_test` + `shelf` mock server）
+- [x] Provider 端（TestClient 验证完整 CRUD + camelCase）
+- [x] Studio 端（mock HTTP 验证数据加载和错误状态）
 
 ## 4. 端到端测试
 
