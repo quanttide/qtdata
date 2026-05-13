@@ -8,6 +8,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  http: ^1.2.0
   provider: ^6.1.5
   quanttide_project: ^0.2.0
   flutter_quanttide_project: ^0.1.0

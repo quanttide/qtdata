@@ -4,66 +4,35 @@
 
 | 端 | 位置 | 技术栈 | 数据来源 |
 |---|---|---|---|
-| 服务端 | `src/provider/` | FastAPI + `fastapi-quanttide-project` v0.2.0 | 无存储，仅 API |
-| 客户端 | `src/studio/` | Flutter + `qtdata-project` 包 | 硬编码 demo 数据 |
+| 服务端 | `src/provider/` | FastAPI + `fastapi-quanttide-project` v0.2.0 | 内存 dict + demo 数据 |
+| 客户端 | `src/studio/` | Flutter + `qtdata-project` 包 | API 加载 |
 
-Provider 只有 API 层（`build_default()` 用内存 dict），无数据则接口返回空列表。
+Provider 已有 demo 数据（3 个 Project + 15 个 Task），Studio 通过 `DataBoardState` 调用 API 加载。
 
 JSON 已统一 camelCase，Dart `Task.fromJson()` 可直接消费。
 
 ---
 
-## 开发
-
-### 1. Provider 存储层
-
-替换 `build_default()` 为自定义 `build()` + 有数据的内存存储（后续可换持久化）：
-
-- `app/storage.py` — 内存 dict + 预置 demo Project 和 Task
-- `app/main.py` — 注册自定义路由
-
-Demo 数据与 Studio 当前硬编码数据对齐，确保前端开箱即有数据显示。
-
-### 2. Studio 数据层
-
-在 `packages/qtdata-project` 中新增：
-
-- `lib/src/services/api_client.dart` — HTTP 调用 provider，返回 `List<Task>`
-- `lib/src/state/data_board_state.dart` — `ChangeNotifier`，管理 `DataBoard` 的加载/刷新/错误状态
-
-新增依赖：`http` 或 `dio`（`qtdata-project/pubspec.yaml`）。
-
-### 3. 替换入口
-
-`lib/main.dart` 中 `_demoBoard()` 替换为 `DataBoardState`：
-
-```dart
-ChangeNotifierProvider(
-  create: (_) => DataBoardState()..load(),
-  child: Consumer<DataBoardState>(
-    builder: (ctx, state, _) => DataBoardScreen(board: state.board),
-  ),
-)
-```
-
----
-
 ## 测试
 
-### Provider 存储层
+### Provider 集成测试
+
+`test_main.py` — 使用 `TestClient` 验证完整 HTTP 链路，补充断言确认 demo 数据存在且 camelCase 字段名正确。
 
 ```bash
 cd src/provider && uv run pytest test/ -v
 ```
 
-新增 `test_storage.py` — 验证 demo 数据加载、CRUD 操作。
+### Studio 集成测试
 
-### Studio 数据层
+使用 Flutter `integration_test` 规范，跑在桌面/模拟器上测试完整 App Widget 树 + 网络链路。
 
-`packages/qtdata-project/test/` 新增：
+- `integration_test/app_test.dart` — `IntegrationTestWidgetsFlutterBinding`，启动真实 HTTP server（`shelf`），渲染 `QtDataStudio`，验证数据加载和看板渲染
+- `pubspec.yaml` — 新增 `integration_test`（SDK）、`shelf`（mock server）
 
-- `test_api_client.dart` — mock HTTP，验证 JSON 解析和错误处理
-- `test_data_board_state.dart` — 验证加载/刷新/空数据状态
+```bash
+cd src/studio && flutter test integration_test/
+```
 
 ---
 
