@@ -1,29 +1,17 @@
 # ROADMAP
 
-先独立研发再看模样，逐步对接。
+### P2 Flutter 测试端
 
-## 1. Provider 完成
+- [ ] Studio 添加 `integration_test` 依赖和目录
+- [ ] 基础驱动脚本（Flutter Driver 或 integration_test 入口）
 
-- [x] FastAPI 服务骨架
-- [x] Project/Task CRUD 路由
-- [x] camelCase JSON API（`fastapi-quanttide-project` v0.2.0）
-- [x] 存储层（内存 dict + demo 数据）
-- [x] 存储层单元测试
+### P3 操作层
 
-## 2. Studio 接入 API
+- [ ] `screens/`：按业务屏幕实现 Page Object（登录、数据浏览、看板等）
 
-- [x] `qtdata-project` 数据层（api_client + state）
-- [x] 替换硬编码 demo 数据
-- [x] 数据层单元测试
+### P4 场景层
 
-## 3. 服务测试
-
-- [x] Provider 端（TestClient 验证完整 CRUD + camelCase）
-- [x] Studio 端（mock HTTP 验证数据加载和错误状态）
-
-## 4. 端到端测试
-
+- [ ] `scenarios/`：首个 E2E 用例并跑通
 - [ ] Provider 接入真实数据库（替代内存 dict）
-- [ ] 启动真实服务 + 真实 APP，验证数据持久化和前后端互通
 
 数据问题在开发过程中解决，用数据方法解决数据问题。
