@@ -1,0 +1,12 @@
+[project]
+name = "qtdata-e2e"
+version = "0.1.0"
+description = "QTData end-to-end tests"
+requires-python = ">=3.12"
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.0.0",
+    "httpx>=0.27.0",
+    "pillow>=10.0.0",
+]
