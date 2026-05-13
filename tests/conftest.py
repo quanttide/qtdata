@@ -43,15 +43,15 @@ def client(provider_url, provider_process):
 
 
 @pytest.fixture(scope="session")
-def appium_driver():
-    from appium import webdriver
-
-    STUDIO_BUNDLE = PROJECT_ROOT / "src/studio/build/linux/x64/release/bundle/qtdata_studio"
-    caps = {
-        "appium:automationName": "Flutter",
-        "appium:platformName": "Linux",
-        "appium:app": str(STUDIO_BUNDLE),
-    }
-    driver = webdriver.Remote("http://localhost:4723", caps)
-    yield driver
-    driver.quit()
+def flutter_process():
+    STUDIO_DIR = PROJECT_ROOT / "src/studio"
+    proc = subprocess.Popen(
+        ["flutter", "run", "-d", "linux"],
+        cwd=STUDIO_DIR,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    time.sleep(10)
+    yield proc
+    proc.terminate()
+    proc.wait()

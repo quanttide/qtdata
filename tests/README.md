@@ -2,14 +2,14 @@
 
 测试服务端、客户端、命令行工具的真实对接状况。
 
-启动服务端、客户端及 Appium Server，使用 Appium 驱动 Flutter 客户端，验证数据链路正常。
+启动服务端、客户端，使用 xdotool 驱动 Flutter 窗口，验证数据链路正常。
 
 ## 分层设计
 
 E2E 测试按职责分四层：
 
-- **基础设施层** — pytest fixture（`conftest.py`）：provider 启停、Appium Server 启停、Flutter driver 连接
-- **操作层** — Page Object（`screens/`）：按屏幕封装 Appium 控件定位和操作
+- **基础设施层** — pytest fixture（`conftest.py`）：provider 启停、Flutter app 启停、窗口管理
+- **操作层** — Page Object（`screens/`）：按屏幕封装 xdotool 窗口操作和坐标定位
 - **场景层** — pytest test cases（`scenarios/`）：业务交互序列
 - **表达层** — 录制/截图工具（`utils/`）：记录和呈现测试过程与结果
 
@@ -19,10 +19,12 @@ E2E 测试按职责分四层：
 
 | 工具 | 用途 |
 |------|------|
-| Appium | Flutter UI 自动化（控件定位、点击、输入） |
+| xdotool | 窗口查找、激活、坐标点击 |
+| mss | 截图 |
+| Pillow | 图像比对（可选） |
 | httpx | Provider API 调用（数据准备、状态校验） |
 | pytest | 用例编排与断言 |
-| mss / ffmpeg | 截图 / 录屏 |
+| ffmpeg | 录屏 |
 
 ## 产物交付
 
