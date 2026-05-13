@@ -14,10 +14,17 @@
 
 ## 仓库结构
 
-```
-src/provider/       – Python FastAPI 服务端
-src/studio/         – Flutter 客户端
-packages/qtdata-project/ – 本地 Dart 功能包
-tests/              – 端到端测试
-docs/               – 开发文档
-```
+见 `README.md` 仓库结构部分。
+
+## 文档索引
+
+| 文档 | 用途 |
+|------|------|
+| `ROADMAP.md` | 项目路线图：数据页面、资产页面 |
+| `tests/ROADMAP.md` | E2E 测试路线图 |
+| `tests/screens/ROADMAP.md` | 页面层路线图（Project、Data、Asset 三页面） |
+| `src/studio/ROADMAP.md` | Studio 客户端路线图（qtdata-process、qtdata-asset） |
+| `src/provider/ROADMAP.md` | Provider 服务端路线图（流程 API、资产 API） |
+| `tests/README.md` | 测试体系约定（三层：conftest / utils / usecases） |
+
+
