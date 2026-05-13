@@ -7,16 +7,21 @@
 - [x] FastAPI 服务骨架
 - [x] Project/Task CRUD 路由
 - [x] camelCase JSON API（`fastapi-quanttide-project` v0.2.0）
-- [ ] 存储层（内存 dict + demo 数据）
-- [ ] 存储层测试
+- [x] 存储层（内存 dict + demo 数据）
+- [x] 存储层测试
 
 ## 2. Studio 接入 API
 
-- [ ] `qtdata-project` 数据层（api_client + state）
-- [ ] 替换硬编码 demo 数据
-- [ ] 数据层测试
+- [x] `qtdata-project` 数据层（api_client + state）
+- [x] 替换硬编码 demo 数据
+- [x] 数据层单元测试
 
-## 3. 联调
+## 3. 集成测试
+
+- [ ] Provider 集成测试（TestClient 验证完整 CRUD + camelCase）
+- [ ] Studio 集成测试（`integration_test` + `shelf` mock server）
+
+## 4. 联调
 
 - [ ] Provider 启动 → Studio 加载显示数据
 - [ ] CRUD 操作端到端验证
