@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 
-from utils.home_screen import HomeScreen
+from screens.home_screen import HomeScreen
 
 
 def test_get_projects():
