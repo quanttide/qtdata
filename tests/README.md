@@ -8,10 +8,10 @@
 
 E2E 测试按职责分四层：
 
-- **基础设施层** — 测试框架驱动（Flutter Driver / integration_test 启动）
-- **操作层** — Page Object 或组件定位器（如 `find.byKey('nav_data')`、`tap()`）
-- **场景层** — 具体的 test case（登录 → 导航到数据 → 验证表格）
-- **表达层** — 通过录制、截图等方式记录和呈现测试过程和结果
+- **基础设施层** — pytest fixture（`conftest.py`）：服务启停、driver 初始化
+- **操作层** — Page Object（`screens/`）：按屏幕组织组件定位和操作封装
+- **场景层** — pytest test cases（`scenarios/`）：业务交互序列
+- **表达层** — 录制/截图工具（`utils/`）：记录和呈现测试过程与结果
 
 原则：场景层不知"怎么点击"，操作层不知"录不录制"。每层只关心自己职责，独立可替换。
 
