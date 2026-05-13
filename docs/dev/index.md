@@ -25,7 +25,7 @@ cd src/studio && flutter run
 
 ---
 
-## 联调测试
+## 服务测试
 
 验证 qtdata 自己的 provider 和 studio 能否互通。
 
@@ -44,3 +44,7 @@ cd src/provider && uv run pytest test/ -v
 ```bash
 cd src/studio && flutter test integration_test/
 ```
+
+## 端到端测试
+
+验证真实provider 和 studio是否可以联动。根目录tests文件夹。
