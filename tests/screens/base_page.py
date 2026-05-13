@@ -1,5 +1,11 @@
 import subprocess
 import time
+from pathlib import Path
+
+import pytesseract
+from PIL import Image
+
+from utils.screenshot import capture_window
 
 
 class BasePage:
@@ -32,3 +38,14 @@ class BasePage:
 
     def press_key(self, key: str):
         subprocess.run(["xdotool", "key", key], timeout=5)
+
+    def screenshot(self, name: str) -> str:
+        self.focus()
+        time.sleep(0.5)
+        return capture_window(name, self.WINDOW_TITLE)
+
+    def assert_text_visible(self, text: str, screenshot_path: str | None = None, lang: str = "chi_sim+eng"):
+        if screenshot_path is None:
+            screenshot_path = self.screenshot("ocr_check")
+        ocr_text = pytesseract.image_to_string(Image.open(screenshot_path), lang=lang)
+        assert text in ocr_text, f"Expected '{text}' not found in screenshot.\nOCR result:\n{ocr_text}"

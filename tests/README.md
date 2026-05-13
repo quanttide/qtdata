@@ -21,7 +21,8 @@ E2E 测试按职责分四层：
 |------|------|
 | xdotool | 窗口查找、激活、坐标点击 |
 | mss | 截图 |
-| Pillow | 图像比对（可选） |
+| pytesseract | OCR 文字识别（验证页面内容） |
+| Pillow | 图像处理 |
 | httpx | Provider API 调用（数据准备、状态校验） |
 | pytest | 用例编排与断言 |
 | ffmpeg | 录屏 |
