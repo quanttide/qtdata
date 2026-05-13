@@ -1,24 +1,10 @@
-from utils.driver import FlutterDriver
-from utils.screenshot import capture
+from screens.base_page import BasePage
 
 
-class HomeScreen:
-    STAGE_TITLES = ["需求探索", "约定启动", "执行监控", "验收交付"]
-
-    def __init__(self, client, driver: FlutterDriver | None = None):
+class HomeScreen(BasePage):
+    def __init__(self, driver, client):
+        super().__init__(driver)
         self.client = client
-        self.driver = driver
-
-    def launch(self):
-        if self.driver:
-            self.driver.start()
-
-    def close(self):
-        if self.driver:
-            self.driver.stop()
-
-    def screenshot(self, name: str):
-        return capture(name, window_title="量潮数据")
 
     def get_projects(self):
         return self.client.get("/projects").json()
@@ -30,7 +16,8 @@ class HomeScreen:
         return self.client.post("/projects", json={"id": name, "name": name, "title": name}).json()
 
     def create_task(self, title: str, task_type: str = "requirement"):
-        return self.client.post(
-            "/tasks",
-            json={"id": title, "title": title, "type": task_type},
-        ).json()
+        return self.client.post("/tasks", json={"id": title, "title": title, "type": task_type}).json()
+
+    def verify_stage_titles(self):
+        for title in ["需求探索", "约定启动", "执行监控", "验收交付"]:
+            assert self.find_by_text(title) is not None

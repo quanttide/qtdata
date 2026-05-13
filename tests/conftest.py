@@ -40,3 +40,18 @@ def provider_process(provider_url):
 def client(provider_url, provider_process):
     with httpx.Client(base_url=provider_url) as c:
         yield c
+
+
+@pytest.fixture(scope="session")
+def appium_driver():
+    from appium import webdriver
+
+    STUDIO_BUNDLE = PROJECT_ROOT / "src/studio/build/linux/x64/release/bundle/qtdata_studio"
+    caps = {
+        "appium:automationName": "Flutter",
+        "appium:platformName": "Linux",
+        "appium:app": str(STUDIO_BUNDLE),
+    }
+    driver = webdriver.Remote("http://localhost:4723", caps)
+    yield driver
+    driver.quit()
