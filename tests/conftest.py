@@ -31,6 +31,9 @@ def provider_process(provider_url):
     else:
         proc.terminate()
         raise RuntimeError("Provider failed to start within 15s")
+    resp = httpx.get(f"{provider_url}/health")
+    body = resp.json()
+    assert body == {"status": "ok"}, f"Unexpected health response: {body}"
     yield proc
     proc.terminate()
     proc.wait()
@@ -39,6 +42,9 @@ def provider_process(provider_url):
 @pytest.fixture(scope="session")
 def client(provider_url, provider_process):
     with httpx.Client(base_url=provider_url) as c:
+        resp = c.get("/health")
+        assert resp.status_code == 200
+        assert resp.json() == {"status": "ok"}
         yield c
 
 
@@ -52,6 +58,14 @@ def flutter_process():
         stderr=subprocess.DEVNULL,
     )
     time.sleep(10)
+    result = subprocess.run(
+        ["xdotool", "search", "--name", "量潮数据"],
+        capture_output=True, text=True, timeout=5,
+    )
+    if not result.stdout.strip():
+        proc.terminate()
+        proc.wait()
+        raise RuntimeError("Flutter window not found after 10s")
     yield proc
     proc.terminate()
     proc.wait()
