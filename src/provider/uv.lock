@@ -71,6 +71,19 @@ wheels = [
 ]
 
 [[package]]
+name = "fastapi-quanttide-project"
+version = "0.1.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "fastapi" },
+    { name = "quanttide-project" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/51/f9/99852cb09df30bfa0efe06dc72bf5afa12c5db54149f4f6c31451b4a1eeb/fastapi_quanttide_project-0.1.1.tar.gz", hash = "sha256:cbfe7690c3d26490b1718792cd0cdd39ebee6aa50382ab581625c5519e937ba8", size = 114066, upload-time = "2026-05-13T10:25:23.205Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/16/24/b0db20fb853dcb4eb41539392976eba95e89f3b8051569f8493b13176a33/fastapi_quanttide_project-0.1.1-py3-none-any.whl", hash = "sha256:ec16a6e0605057ad4d8f7a5c09df22de66d1c95037a462977de9da197669d9e5", size = 3513, upload-time = "2026-05-13T10:25:21.888Z" },
+]
+
+[[package]]
 name = "h11"
 version = "0.16.0"
 source = { registry = "https://pypi.org/simple" }
@@ -268,17 +281,31 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "fastapi" },
+    { name = "fastapi-quanttide-project" },
     { name = "uvicorn", extra = ["standard"] },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "fastapi", specifier = ">=0.136.1" },
+    { name = "fastapi-quanttide-project", specifier = ">=0.1.1" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.46.0" },
 ]
 
 [package.metadata.requires-dev]
 dev = []
+
+[[package]]
+name = "quanttide-project"
+version = "0.1.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pydantic" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/00/1c/33e9f69222373f132f761dc0574422da0a75447b401c72dacee605e50db9/quanttide_project-0.1.1.tar.gz", hash = "sha256:11c2bd9826027f787c143e5c3dad5e26088d3eb23a2dd4cc4e2291cd4b8151ba", size = 39740, upload-time = "2026-05-13T10:25:09.466Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/29/e2/cc2104c65367f6c76afae81894db6507c455608f7bd408e5584b84ec380a/quanttide_project-0.1.1-py3-none-any.whl", hash = "sha256:16431a0d9eda3901b938ce0fb2128e8eabe8562dc6d7be685ce75e18fe6f67c8", size = 7333, upload-time = "2026-05-13T10:25:08.264Z" },
+]
 
 [[package]]
 name = "starlette"
