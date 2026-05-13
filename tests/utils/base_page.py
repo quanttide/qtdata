@@ -5,7 +5,7 @@ from pathlib import Path
 import pytesseract
 from PIL import Image
 
-from utils.screenshot import capture_window
+from .screenshot import capture_window
 
 
 class BasePage:

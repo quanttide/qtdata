@@ -6,14 +6,15 @@
 
 ## 分层设计
 
-E2E 测试按职责分四层：
+E2E 测试按职责分三层：
 
-- **基础设施层** — pytest fixture（`conftest.py`）：provider 启停、Flutter app 启停、窗口管理
-- **操作层** — Page Object（`screens/`）：按屏幕封装 xdotool 窗口操作和坐标定位
-- **场景层** — pytest test cases（`scenarios/`）：业务交互序列
-- **表达层** — 录制/截图工具（`utils/`）：记录和呈现测试过程与结果
+| 层 | 目录/文件 | 职责 |
+|---|-----------|------|
+| 基础层 | `conftest.py` | provider 启停、Flutter app 启停、窗口管理 |
+| 工具层 | `utils/` | Page Object 与录制/截图工具 |
+| 用例层 | `usecases/` | pytest 业务交互序列 |
 
-原则：场景层不知"怎么点击"，操作层不知"录不录制"。每层只关心自己职责，独立可替换。
+原则：下层不依赖上层，每层只关心自己职责，独立可替换。
 
 ## 技术栈
 
