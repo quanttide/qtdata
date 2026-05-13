@@ -1,11 +1,10 @@
 import time
-from pathlib import Path
 
 from utils.recorder import Recorder
 
 
 def test_recorder_start_stop(tmp_path):
-    r = Recorder("test_recording")
+    r = Recorder("test_recording", output_dir=tmp_path)
     r.start()
     time.sleep(1)
     r.stop()
