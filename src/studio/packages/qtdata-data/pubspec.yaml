@@ -1,0 +1,15 @@
+name: qtdata_data
+description: 量潮数据处理流程组件包（流程定义、阶段展示、状态追踪）
+version: 0.1.0
+
+environment:
+  sdk: ^3.11.5
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.1.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
