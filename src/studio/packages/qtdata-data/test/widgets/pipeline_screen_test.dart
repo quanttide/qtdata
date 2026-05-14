@@ -7,11 +7,12 @@ void main() {
     testWidgets('renders all tasks in a row', (tester) async {
       final pipeline = Pipeline(
         id: '1',
-        name: '数据处理流程',
+        name: 'test-pipeline',
+        title: 'Test Pipeline',
         tasks: [
-          Task(id: 's1', name: '第一步', order: 1, status: TaskStatus.completed),
-          Task(id: 's2', name: '第二步', order: 2, status: TaskStatus.running),
-          Task(id: 's3', name: '第三步', order: 3, status: TaskStatus.pending),
+          Task(id: 's1', name: 'step/1', title: '第一步', status: TaskStatus.completed),
+          Task(id: 's2', name: 'step/2', title: '第二步', status: TaskStatus.inProgress),
+          Task(id: 's3', name: 'step/3', title: '第三步', status: TaskStatus.pending),
         ],
       );
 
@@ -28,9 +29,30 @@ void main() {
       expect(find.text('第二步'), findsOneWidget);
       expect(find.text('第三步'), findsOneWidget);
       expect(find.text('达标'), findsOneWidget);
-      expect(find.text('执行中'), findsOneWidget);
+      expect(find.text('进行中'), findsOneWidget);
       expect(find.text('就绪'), findsOneWidget);
       expect(find.byIcon(Icons.chevron_right), findsNWidgets(2));
+    });
+
+    testWidgets('renders nothing for empty pipeline', (tester) async {
+      final pipeline = Pipeline(
+        id: '1',
+        name: 'empty-pipeline',
+        title: 'Empty',
+        tasks: [],
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PipelineScreen(pipeline: pipeline),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byIcon(Icons.chevron_right), findsNothing);
+      expect(find.byType(TaskCard), findsNothing);
     });
   });
 }

@@ -34,6 +34,9 @@ class _PipelineView extends StatelessWidget {
   }
 
   Widget _buildFlow(Pipeline pipeline) {
+    if (pipeline.tasks.isEmpty) {
+      return const SizedBox.shrink();
+    }
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.all(32),

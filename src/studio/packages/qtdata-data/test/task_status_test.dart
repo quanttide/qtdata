@@ -7,12 +7,14 @@ void main() {
       expect(TaskStatus.pending.index, 0);
     });
 
-    test('values contain all four statuses', () {
+    test('values contain all six statuses', () {
       expect(TaskStatus.values, [
         TaskStatus.pending,
-        TaskStatus.running,
+        TaskStatus.inProgress,
         TaskStatus.completed,
         TaskStatus.failed,
+        TaskStatus.rejected,
+        TaskStatus.cancelled,
       ]);
     });
   });

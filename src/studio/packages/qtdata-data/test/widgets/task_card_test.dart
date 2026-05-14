@@ -4,11 +4,11 @@ import 'package:qtdata_data/qtdata_data.dart';
 
 void main() {
   group('TaskCard', () {
-    testWidgets('renders task name and status label', (tester) async {
+    testWidgets('renders task title and status label', (tester) async {
       final task = Task(
         id: '1',
-        name: '导入销售订单',
-        order: 1,
+        name: 'import/sales-orders',
+        title: '导入销售订单',
         status: TaskStatus.completed,
       );
 
@@ -26,10 +26,10 @@ void main() {
 
     testWidgets('renders running status label', (tester) async {
       final task = Task(
-        id: '1',
-        name: '计算客户RFM',
-        order: 1,
-        status: TaskStatus.running,
+        id: '2',
+        name: 'compute/customer-rfm',
+        title: '计算客户RFM',
+        status: TaskStatus.inProgress,
       );
 
       await tester.pumpWidget(
@@ -40,14 +40,14 @@ void main() {
         ),
       );
 
-      expect(find.text('执行中'), findsOneWidget);
+      expect(find.text('进行中'), findsOneWidget);
     });
 
     testWidgets('renders failed status label', (tester) async {
       final task = Task(
-        id: '1',
-        name: '清洗订单数据',
-        order: 1,
+        id: '3',
+        name: 'cleanse/order-data',
+        title: '清洗订单数据',
         status: TaskStatus.failed,
       );
 
@@ -60,6 +60,44 @@ void main() {
       );
 
       expect(find.text('异常'), findsOneWidget);
+    });
+
+    testWidgets('renders rejected status label', (tester) async {
+      final task = Task(
+        id: '4',
+        name: 'review/result',
+        title: '审核结果',
+        status: TaskStatus.rejected,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: TaskCard(task: task),
+          ),
+        ),
+      );
+
+      expect(find.text('驳回'), findsOneWidget);
+    });
+
+    testWidgets('renders cancelled status label', (tester) async {
+      final task = Task(
+        id: '5',
+        name: 'cleanse/order-data',
+        title: '清洗订单数据',
+        status: TaskStatus.cancelled,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: TaskCard(task: task),
+          ),
+        ),
+      );
+
+      expect(find.text('取消'), findsOneWidget);
     });
   });
 }
