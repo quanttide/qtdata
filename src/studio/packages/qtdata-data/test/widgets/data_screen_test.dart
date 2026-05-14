@@ -9,7 +9,7 @@ class _TestErrorBloc extends PipelineBloc {
 }
 
 void main() {
-  group('PipelineScreen', () {
+  group('DataScreen', () {
     testWidgets('renders all tasks in a row', (tester) async {
       final pipeline = Pipeline(
         id: '1',
@@ -25,7 +25,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: PipelineScreen(pipeline: pipeline),
+            body: DataScreen(pipeline: pipeline),
           ),
         ),
       );
@@ -46,7 +46,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: PipelineScreen(
+            body: DataScreen(
               pipeline: Pipeline(id: '1', name: 'empty', title: 'Empty', tasks: []),
               bloc: bloc,
             ),
@@ -72,7 +72,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: PipelineScreen(pipeline: pipeline),
+            body: DataScreen(pipeline: pipeline),
           ),
         ),
       );
