@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import '../process_stage.dart';
+import '../task.dart';
+import 'task_status_display.dart';
 
-class StageCard extends StatelessWidget {
-  final ProcessStage stage;
+class TaskCard extends StatelessWidget {
+  final Task task;
 
-  const StageCard({super.key, required this.stage});
+  const TaskCard({super.key, required this.task});
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = stage.status.borderColor;
-    final textColor = stage.status.textColor;
+    final borderColor = task.status.borderColor;
+    final textColor = task.status.textColor;
 
     return Container(
       constraints: const BoxConstraints(minWidth: 130),
@@ -30,12 +31,12 @@ class StageCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            stage.name,
+            task.name,
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 4),
           Text(
-            stage.status.label,
+            task.status.label,
             style: TextStyle(fontSize: 12, color: textColor),
           ),
         ],

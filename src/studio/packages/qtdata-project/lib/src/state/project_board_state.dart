@@ -1,16 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:quanttide_project/quanttide_project.dart';
-import '../data_board.dart';
+import '../project_board.dart';
 import '../services/api_client.dart';
 
-class DataBoardState extends ChangeNotifier {
+class ProjectBoardState extends ChangeNotifier {
   final ApiClient _api;
 
-  DataBoard board = DataBoard(tasks: []);
+  ProjectBoard board = ProjectBoard(tasks: []);
   bool loading = false;
   String? error;
 
-  DataBoardState({ApiClient? api}) : _api = api ?? ApiClient();
+  ProjectBoardState({ApiClient? api}) : _api = api ?? ApiClient();
 
   Future<void> load() async {
     loading = true;
@@ -19,7 +19,7 @@ class DataBoardState extends ChangeNotifier {
 
     try {
       final tasks = await _api.fetchTasks();
-      board = DataBoard(tasks: tasks);
+      board = ProjectBoard(tasks: tasks);
     } catch (e) {
       error = e.toString();
     }
