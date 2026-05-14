@@ -22,18 +22,38 @@ class PipelinePanel extends StatelessWidget {
     if (pipeline.tasks.isEmpty) {
       return const SizedBox.shrink();
     }
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.fromLTRB(32, 32, 32, 8),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (int i = 0; i < pipeline.tasks.length; i++) ...[
-            TaskCard(task: pipeline.tasks[i]),
-            if (i < pipeline.tasks.length - 1) const _Arrow(),
-          ],
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(32, 24, 32, 4),
+          child: Text(
+            pipeline.title,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          ),
+        ),
+        if (pipeline.description.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(32, 0, 32, 12),
+            child: Text(
+              pipeline.description,
+              style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+            ),
+          ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.fromLTRB(32, 8, 32, 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (int i = 0; i < pipeline.tasks.length; i++) ...[
+                TaskCard(task: pipeline.tasks[i]),
+                if (i < pipeline.tasks.length - 1) const _Arrow(),
+              ],
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
