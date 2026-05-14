@@ -4,7 +4,7 @@ import 'package:qtdata_data/qtdata_data.dart';
 
 class _TestErrorBloc extends PipelineBloc {
   void showError(String message) {
-    emit(PipelineError(message));
+    emit(PipelineLoadFailed(message));
   }
 }
 

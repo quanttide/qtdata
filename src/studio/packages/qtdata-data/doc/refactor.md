@@ -26,13 +26,13 @@
 `state/pipeline_bloc.dart` 当前写法：
 
 ```dart
-final current = (state as PipelineLoaded).pipeline;
+final current = (state as PipelineDisplayed).pipeline;
 ```
 
 改为类型守卫：
 
 ```dart
-if (state is PipelineLoaded) {
+if (state is PipelineDisplayed) {
   final current = state.pipeline;
   // ...
 }
