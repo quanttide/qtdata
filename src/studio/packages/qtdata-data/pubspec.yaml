@@ -8,6 +8,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  bloc: ^9.1.0
   flutter_bloc: ^9.1.0
   quanttide_data: ^0.1.0
 
