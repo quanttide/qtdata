@@ -73,14 +73,15 @@ class _DataFlowPage extends StatelessWidget {
   const _DataFlowPage();
 
   static final _mockPipeline = Pipeline(
-    id: '1',
-    name: '数据处理流程',
+    id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+    name: 'order-data-pipeline',
+    title: '数据处理流程',
     tasks: [
-      Task(id: 's1', name: '导入销售订单', order: 1, status: TaskStatus.completed),
-      Task(id: 's2', name: '清洗订单数据', order: 2, status: TaskStatus.completed),
-      Task(id: 's3', name: '合并客户信息', order: 3, status: TaskStatus.completed),
-      Task(id: 's4', name: '计算客户RFM', order: 4, status: TaskStatus.running),
-      Task(id: 's5', name: '生成分析报告', order: 5, status: TaskStatus.pending),
+      Task(id: 'b1c2d3e4-f5a6-7890-bcde-f12345678901', name: 'import/sales-orders', title: '导入销售订单', status: TaskStatus.completed),
+      Task(id: 'c2d3e4f5-a6b7-8901-cdef-123456789012', name: 'cleanse/order-data', title: '清洗订单数据', status: TaskStatus.completed),
+      Task(id: 'd3e4f5a6-b7c8-9012-def1-234567890123', name: 'merge/customer-info', title: '合并客户信息', status: TaskStatus.completed),
+      Task(id: 'e4f5a6b7-c8d9-0123-ef12-345678901234', name: 'compute/customer-rfm', title: '计算客户RFM', status: TaskStatus.inProgress),
+      Task(id: 'f5a6b7c8-d9e0-1234-f123-456789012345', name: 'generate/analysis-report', title: '生成分析报告', status: TaskStatus.pending),
     ],
   );
 

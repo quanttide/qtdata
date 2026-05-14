@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../task.dart';
-import 'task_status_display.dart';
 
 class TaskCard extends StatelessWidget {
   final Task task;
@@ -9,8 +8,7 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = task.status.borderColor;
-    final textColor = task.status.textColor;
+    final color = Color(task.status.color);
 
     return Container(
       constraints: const BoxConstraints(minWidth: 130),
@@ -18,7 +16,7 @@ class TaskCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: borderColor),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -31,13 +29,13 @@ class TaskCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            task.name,
+            task.title,
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 4),
           Text(
             task.status.label,
-            style: TextStyle(fontSize: 12, color: textColor),
+            style: TextStyle(fontSize: 12, color: color),
           ),
         ],
       ),
