@@ -6,13 +6,14 @@ import 'task_card.dart';
 
 class PipelineScreen extends StatelessWidget {
   final Pipeline pipeline;
+  final PipelineBloc? bloc;
 
-  const PipelineScreen({super.key, required this.pipeline});
+  const PipelineScreen({super.key, required this.pipeline, this.bloc});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => PipelineBloc()..add(LoadPipeline(pipeline)),
+      create: (_) => bloc ?? PipelineBloc()..add(LoadPipeline(pipeline)),
       child: const _PipelineView(),
     );
   }
@@ -24,11 +25,11 @@ class _PipelineView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PipelineBloc, PipelineState>(
-      builder: (context, state) {
-        if (state is PipelineLoaded) {
-          return _buildFlow(state.pipeline);
-        }
-        return const SizedBox.shrink();
+      builder: (context, state) => switch (state) {
+        PipelineInitial() => const SizedBox.shrink(),
+        PipelineLoading() => const Center(child: CircularProgressIndicator()),
+        PipelineLoaded(:final pipeline) => _buildFlow(pipeline),
+        PipelineError(:final message) => Center(child: Text(message)),
       },
     );
   }

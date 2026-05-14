@@ -9,14 +9,22 @@ class LoadPipeline extends PipelineEvent {
   LoadPipeline(this.pipeline);
 }
 
-abstract class PipelineState {}
+sealed class PipelineState {}
 
 class PipelineInitial extends PipelineState {}
+
+class PipelineLoading extends PipelineState {}
 
 class PipelineLoaded extends PipelineState {
   final Pipeline pipeline;
 
   PipelineLoaded(this.pipeline);
+}
+
+class PipelineError extends PipelineState {
+  final String message;
+
+  PipelineError(this.message);
 }
 
 class PipelineBloc extends Bloc<PipelineEvent, PipelineState> {
@@ -25,6 +33,7 @@ class PipelineBloc extends Bloc<PipelineEvent, PipelineState> {
   }
 
   void _onLoadPipeline(LoadPipeline event, Emitter<PipelineState> emit) {
+    emit(PipelineLoading());
     emit(PipelineLoaded(event.pipeline));
   }
 }
