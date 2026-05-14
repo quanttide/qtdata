@@ -9,7 +9,7 @@ void main() {
       bloc.close();
     });
 
-    test('LoadPipeline emits PipelineLoaded with the pipeline', () async {
+    test('LoadPipeline emits Loading then Loaded', () async {
       final bloc = PipelineBloc();
       final pipeline = Pipeline(
         id: '1',
@@ -21,10 +21,18 @@ void main() {
       bloc.add(LoadPipeline(pipeline));
       await expectLater(
         bloc.stream,
-        emits(isA<PipelineLoaded>()),
+        emitsInOrder([
+          isA<PipelineLoading>(),
+          isA<PipelineLoaded>(),
+        ]),
       );
 
       bloc.close();
+    });
+
+    test('PipelineError stores message', () {
+      final error = PipelineError('test error');
+      expect(error.message, 'test error');
     });
 
     test('LoadPipeline replaces existing state', () async {
@@ -45,13 +53,19 @@ void main() {
       bloc.add(LoadPipeline(pipeline1));
       await expectLater(
         bloc.stream,
-        emits(isA<PipelineLoaded>()),
+        emitsInOrder([
+          isA<PipelineLoading>(),
+          isA<PipelineLoaded>(),
+        ]),
       );
 
       bloc.add(LoadPipeline(pipeline2));
       await expectLater(
         bloc.stream,
-        emits(isA<PipelineLoaded>()),
+        emitsInOrder([
+          isA<PipelineLoading>(),
+          isA<PipelineLoaded>(),
+        ]),
       );
 
       final loaded = bloc.state as PipelineLoaded;

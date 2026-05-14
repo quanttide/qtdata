@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qtdata_data/qtdata_data.dart';
 
+class _TestErrorBloc extends PipelineBloc {
+  void showError(String message) {
+    emit(PipelineError(message));
+  }
+}
+
 void main() {
   group('PipelineScreen', () {
     testWidgets('renders all tasks in a row', (tester) async {
@@ -32,6 +38,27 @@ void main() {
       expect(find.text('进行中'), findsOneWidget);
       expect(find.text('就绪'), findsOneWidget);
       expect(find.byIcon(Icons.chevron_right), findsNWidgets(2));
+    });
+
+    testWidgets('shows error message on error', (tester) async {
+      final bloc = _TestErrorBloc();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PipelineScreen(
+              pipeline: Pipeline(id: '1', name: 'empty', title: 'Empty', tasks: []),
+              bloc: bloc,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      bloc.showError('加载失败');
+      await tester.pumpAndSettle();
+
+      expect(find.text('加载失败'), findsOneWidget);
     });
 
     testWidgets('renders nothing for empty pipeline', (tester) async {
