@@ -26,20 +26,12 @@ class PipelinePanel extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(32, 24, 32, 4),
+          padding: const EdgeInsets.fromLTRB(32, 24, 32, 12),
           child: Text(
-            pipeline.title,
+            '流程',
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
         ),
-        if (pipeline.description.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(32, 0, 32, 12),
-            child: Text(
-              pipeline.description,
-              style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
-            ),
-          ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.fromLTRB(32, 8, 32, 8),
