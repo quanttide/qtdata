@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qtdata_data/qtdata_data.dart';
-import 'package:qtdata_project/qtdata_project.dart';
+import 'package:qtdata_project/qtdata_project.dart' hide Task;
 
 void main() {
   runApp(const _App());
@@ -72,15 +72,15 @@ class _HomePageState extends State<HomePage> {
 class _DataFlowPage extends StatelessWidget {
   const _DataFlowPage();
 
-  static final _mockFlow = ProcessFlow(
+  static final _mockPipeline = Pipeline(
     id: '1',
     name: '数据处理流程',
-    stages: [
-      ProcessStage(id: 's1', name: '导入销售订单', order: 1, status: ProcessStatus.completed),
-      ProcessStage(id: 's2', name: '清洗订单数据', order: 2, status: ProcessStatus.completed),
-      ProcessStage(id: 's3', name: '合并客户信息', order: 3, status: ProcessStatus.completed),
-      ProcessStage(id: 's4', name: '计算客户RFM', order: 4, status: ProcessStatus.running),
-      ProcessStage(id: 's5', name: '生成分析报告', order: 5, status: ProcessStatus.pending),
+    tasks: [
+      Task(id: 's1', name: '导入销售订单', order: 1, status: TaskStatus.completed),
+      Task(id: 's2', name: '清洗订单数据', order: 2, status: TaskStatus.completed),
+      Task(id: 's3', name: '合并客户信息', order: 3, status: TaskStatus.completed),
+      Task(id: 's4', name: '计算客户RFM', order: 4, status: TaskStatus.running),
+      Task(id: 's5', name: '生成分析报告', order: 5, status: TaskStatus.pending),
     ],
   );
 
@@ -94,7 +94,7 @@ class _DataFlowPage extends StatelessWidget {
         surfaceTintColor: Colors.white,
       ),
       body: Center(
-        child: ProcessFlowScreen(flow: _mockFlow),
+        child: PipelineScreen(pipeline: _mockPipeline),
       ),
     );
   }

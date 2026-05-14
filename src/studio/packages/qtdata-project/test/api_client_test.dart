@@ -60,6 +60,24 @@ void main() {
       expect(projects.length, 1);
       expect(projects[0].id, 'p1');
     });
+
+    test('fetchProjects throws on non-200', () async {
+      final api = ApiClient(
+        client: MockClient((request) async {
+          return http.Response('{}', 500);
+        }),
+      );
+      expect(api.fetchProjects(), throwsException);
+    });
+
+    test('dispose does not throw', () {
+      final api = ApiClient(
+        client: MockClient((request) async {
+          return http.Response('[]', 200);
+        }),
+      );
+      expect(api.dispose, returnsNormally);
+    });
   });
 
   group('BoardBloc', () {
@@ -77,13 +95,13 @@ void main() {
       );
       final bloc = BoardBloc(api: api);
 
-      expectLater(
+      final future = expectLater(
         bloc.stream,
         emitsInOrder([isA<BoardLoading>(), isA<BoardLoaded>()]),
       );
 
       bloc.add(LoadBoard());
-      await bloc.stream.first;
+      await future;
       await bloc.close();
     });
 
@@ -95,13 +113,13 @@ void main() {
       );
       final bloc = BoardBloc(api: api);
 
-      expectLater(
+      final future = expectLater(
         bloc.stream,
         emitsInOrder([isA<BoardLoading>(), isA<BoardError>()]),
       );
 
       bloc.add(LoadBoard());
-      await bloc.stream.first;
+      await future;
       await bloc.close();
     });
   });

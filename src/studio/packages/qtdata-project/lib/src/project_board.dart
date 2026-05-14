@@ -1,9 +1,9 @@
 import 'package:quanttide_project/quanttide_project.dart';
 
-class DataBoard {
+class ProjectBoard {
   final List<Task> tasks;
 
-  const DataBoard({required this.tasks});
+  const ProjectBoard({required this.tasks});
 
   List<Task> get requirement => tasks.where((t) => t.type == 'requirement').toList();
   List<Task> get agreement => tasks.where((t) => t.type == 'agreement').toList();

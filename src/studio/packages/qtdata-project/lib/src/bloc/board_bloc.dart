@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../data_board.dart';
+import '../project_board.dart';
 import '../services/api_client.dart';
 
 sealed class BoardEvent {}
@@ -8,7 +8,7 @@ final class LoadBoard extends BoardEvent {}
 
 sealed class BoardState {
   final String? error;
-  final DataBoard? board;
+  final ProjectBoard? board;
 
   const BoardState({this.error, this.board});
 }
@@ -22,7 +22,7 @@ final class BoardLoading extends BoardState {
 }
 
 final class BoardLoaded extends BoardState {
-  const BoardLoaded(DataBoard b) : super(board: b);
+  const BoardLoaded(ProjectBoard b) : super(board: b);
 }
 
 final class BoardError extends BoardState {
@@ -43,9 +43,9 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     try {
       final tasks = await _api.fetchTasks();
       if (tasks.isEmpty) {
-        emit(BoardLoaded(const DataBoard(tasks: [])));
+        emit(BoardLoaded(const ProjectBoard(tasks: [])));
       } else {
-        emit(BoardLoaded(DataBoard(tasks: tasks)));
+        emit(BoardLoaded(ProjectBoard(tasks: tasks)));
       }
     } catch (e) {
       emit(BoardError(e.toString()));
