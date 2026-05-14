@@ -245,10 +245,10 @@ packages:
     dependency: "direct main"
     description:
       name: quanttide_data
-      sha256: "2907a2da2c5965dcfa381d1e013e4e3f47f1541f0c92582af27ad2578a22ce11"
+      sha256: "86ae4894631c947332c5775b78c5315f8c6a705b00cfafa0177cbdd494351335"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.2.0"
+    version: "0.3.0"
   quanttide_project:
     dependency: transitive
     description:

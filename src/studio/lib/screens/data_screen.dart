@@ -27,7 +27,7 @@ class DataScreen extends StatelessWidget {
             ..add(LoadPipeline(pipelineId)),
       child: Column(
         children: [
-          const Expanded(child: PipelinePanel()),
+          const PipelinePanel(),
           DatasetPanel(datasets: datasets),
         ],
       ),
