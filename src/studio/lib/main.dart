@@ -95,7 +95,7 @@ class _DataFlowPage extends StatelessWidget {
         surfaceTintColor: Colors.white,
       ),
       body: Center(
-        child: PipelineScreen(pipeline: _mockPipeline),
+        child: DataScreen(pipeline: _mockPipeline),
       ),
     );
   }

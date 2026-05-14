@@ -3,23 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quanttide_data/quanttide_data.dart';
 import 'task_card.dart';
 
-class PipelineScreen extends StatelessWidget {
-  final Pipeline pipeline;
-  final PipelineBloc? bloc;
-
-  const PipelineScreen({super.key, required this.pipeline, this.bloc});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => bloc ?? PipelineBloc()..add(LoadPipeline(pipeline)),
-      child: const _PipelineView(),
-    );
-  }
-}
-
-class _PipelineView extends StatelessWidget {
-  const _PipelineView();
+class PipelineView extends StatelessWidget {
+  const PipelineView({super.key});
 
   @override
   Widget build(BuildContext context) {
