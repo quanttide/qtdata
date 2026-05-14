@@ -3,7 +3,7 @@ description: "量潮数据"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none"
-version: 0.0.1
+version: 0.0.3
 
 environment:
   sdk: ^3.11.5

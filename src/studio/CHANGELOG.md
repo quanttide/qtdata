@@ -1,5 +1,18 @@
 # Changelog
 
+## [studio/v0.0.3] - 2026-05-14
+
+### 新增
+- DatasetPanel 数据集面板
+- 基于 quanttide_data 0.3.0 的 DataScreen
+- BoardBloc（替代 Provider 状态管理）
+- 虚线占位组件（空列提示）
+
+### 变更
+- 升级依赖 quanttide_data 0.3.0，PipelineBloc 改用 Repository 模式
+- DataBoard / DataBoardState → ProjectBoard / ProjectBoardState
+- 主页切换为 NavigationRail 布局（看板 + 数据 双页）
+
 ## [studio/v0.0.2] - 2026-05-14
 
 ### 新增
