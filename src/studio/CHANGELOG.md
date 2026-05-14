@@ -1,5 +1,13 @@
 # Changelog
 
+## [studio/v0.0.4] - 2026-05-14
+
+### 变更
+- mock 数据分离为独立模块，按 DRD 更新为工厂产量场景
+- PipelinePanel 和 DatasetPanel 标题风格统一（流程 / 数据集）
+- PipelinePanel 移除动态 title/description，使用硬编码标题
+- 修复 HomePage 缺少 key 参数的 lint 警告
+
 ## [studio/v0.0.3] - 2026-05-14
 
 ### 新增
