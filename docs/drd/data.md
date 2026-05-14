@@ -58,11 +58,11 @@
 
 | 步骤 | Task | Dataset（输入→输出） | 说明 |
 |------|------|----------------------|------|
-| 导入 | `import/raw-output` | 外部文件 → `raw-output-data` | 导入工厂原始产量数据（Excel/CSV）：工厂名称、生产日期、衣服款式、产量数量、生产线 |
-| 清洗 | `cleanse/output-data` | `raw-output-data` → `cleaned-output-data` | 修正负数产量、处理缺失值、过滤超产能异常值 |
-| 合并 | `merge/output-records` | `cleaned-output-data` → `merged-output-records` | 整合 ERP 系统数据与现场记录，去重/消歧 |
-| 计算 | `compute/output-kpi` | `merged-output-records` → `output-analysis-results` | 计算日产量、月产量、合格率、单位时间效率 |
-| 报表 | `generate/analysis-report` | `output-analysis-results` → 报告 | 生成产量趋势、设备利用率、工人效率分析报告 |
+| 导入 | `import-raw-output` | 外部文件 → `raw-output-data` | 导入工厂原始产量数据（Excel/CSV）：工厂名称、生产日期、衣服款式、产量数量、生产线 |
+| 清洗 | `cleanse-output-data` | `raw-output-data` → `cleaned-output-data` | 修正负数产量、处理缺失值、过滤超产能异常值 |
+| 合并 | `merge-output-records` | `cleaned-output-data` → `merged-output-records` | 整合 ERP 系统数据与现场记录，去重/消歧 |
+| 计算 | `compute-output-kpi` | `merged-output-records` → `output-analysis-results` | 计算日产量、月产量、合格率、单位时间效率 |
+| 报表 | `generate-analysis-report` | `output-analysis-results` → 报告 | 生成产量趋势、设备利用率、工人效率分析报告 |
 
 ### 数据集描述
 
