@@ -10,7 +10,7 @@ dependencies:
     sdk: flutter
   bloc: ^9.1.0
   flutter_bloc: ^9.1.0
-  quanttide_data: ^0.1.1
+  quanttide_data: ^0.2.0
 
 dev_dependencies:
   flutter_test:

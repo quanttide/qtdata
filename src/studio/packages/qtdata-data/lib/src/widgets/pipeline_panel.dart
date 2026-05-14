@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quanttide_data/quanttide_data.dart';
 import 'task_card.dart';
 
-class PipelineView extends StatelessWidget {
-  const PipelineView({super.key});
+class PipelinePanel extends StatelessWidget {
+  const PipelinePanel({super.key});
 
   @override
   Widget build(BuildContext context) {

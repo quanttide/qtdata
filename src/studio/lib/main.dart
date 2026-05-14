@@ -69,21 +69,35 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+class MockPipelineRepository implements PipelineRepository {
+  @override
+  Future<Pipeline> fetch(String id) async => _mockPipeline;
+}
+
+const _mockPipeline = Pipeline(
+  id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'order-data-pipeline',
+  title: '数据处理流程',
+  tasks: [
+    Task(id: 'b1c2d3e4-f5a6-7890-bcde-f12345678901', name: 'import/sales-orders', title: '导入销售订单', status: TaskStatus.completed),
+    Task(id: 'c2d3e4f5-a6b7-8901-cdef-123456789012', name: 'cleanse/order-data', title: '清洗订单数据', status: TaskStatus.completed),
+    Task(id: 'd3e4f5a6-b7c8-9012-def1-234567890123', name: 'merge/customer-info', title: '合并客户信息', status: TaskStatus.completed),
+    Task(id: 'e4f5a6b7-c8d9-0123-ef12-345678901234', name: 'compute/customer-rfm', title: '计算客户RFM', status: TaskStatus.inProgress),
+    Task(id: 'f5a6b7c8-d9e0-1234-f123-456789012345', name: 'generate/analysis-report', title: '生成分析报告', status: TaskStatus.pending),
+  ],
+);
+
 class _DataFlowPage extends StatelessWidget {
   const _DataFlowPage();
 
-  static final _mockPipeline = Pipeline(
-    id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-    name: 'order-data-pipeline',
-    title: '数据处理流程',
-    tasks: [
-      Task(id: 'b1c2d3e4-f5a6-7890-bcde-f12345678901', name: 'import/sales-orders', title: '导入销售订单', status: TaskStatus.completed),
-      Task(id: 'c2d3e4f5-a6b7-8901-cdef-123456789012', name: 'cleanse/order-data', title: '清洗订单数据', status: TaskStatus.completed),
-      Task(id: 'd3e4f5a6-b7c8-9012-def1-234567890123', name: 'merge/customer-info', title: '合并客户信息', status: TaskStatus.completed),
-      Task(id: 'e4f5a6b7-c8d9-0123-ef12-345678901234', name: 'compute/customer-rfm', title: '计算客户RFM', status: TaskStatus.inProgress),
-      Task(id: 'f5a6b7c8-d9e0-1234-f123-456789012345', name: 'generate/analysis-report', title: '生成分析报告', status: TaskStatus.pending),
-    ],
-  );
+  static final _repo = MockPipelineRepository();
+
+  static final _mockDatasets = [
+    Dataset(id: 'd1', name: 'sales/orders', title: '销售订单', schemaId: 's1', status: DatasetStatus.ready),
+    Dataset(id: 'd2', name: 'clean/orders', title: '已清洗订单', schemaId: 's2', status: DatasetStatus.ready),
+    Dataset(id: 'd3', name: 'customer/unified', title: '统一客户', schemaId: 's3', status: DatasetStatus.ready),
+    Dataset(id: 'd4', name: 'customer/rfm', title: '客户 RFM', schemaId: 's4', status: DatasetStatus.ready),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +109,11 @@ class _DataFlowPage extends StatelessWidget {
         surfaceTintColor: Colors.white,
       ),
       body: Center(
-        child: DataScreen(pipeline: _mockPipeline),
+        child: DataScreen(
+          pipelineId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+          repository: _repo,
+          datasets: _mockDatasets,
+        ),
       ),
     );
   }
