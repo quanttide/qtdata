@@ -24,7 +24,7 @@ class PipelinePanel extends StatelessWidget {
     }
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.fromLTRB(32, 32, 32, 8),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -46,8 +46,9 @@ class _Arrow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Icon(
-        Icons.chevron_right,
-        color: Colors.grey.shade300,
+        Icons.arrow_forward_ios,
+        size: 16,
+        color: Colors.grey.shade500,
       ),
     );
   }

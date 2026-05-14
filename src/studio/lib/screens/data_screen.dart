@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quanttide_data/quanttide_data.dart';
-import 'dataset_panel.dart';
-import 'pipeline_panel.dart';
+import '../components/dataset_panel.dart';
+import '../components/pipeline_panel.dart';
 
 class DataScreen extends StatelessWidget {
   final String pipelineId;

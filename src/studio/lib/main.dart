@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:qtdata_data/qtdata_data.dart';
+import 'package:quanttide_data/quanttide_data.dart';
 import 'package:qtdata_project/qtdata_project.dart' hide Task;
+import 'screens/data_screen.dart';
 
 void main() {
   runApp(const _App());
@@ -92,11 +93,11 @@ class _DataFlowPage extends StatelessWidget {
 
   static final _repo = MockPipelineRepository();
 
-  static final _mockDatasets = [
+  static final _mockDatasets = <Dataset>[
     Dataset(id: 'd1', name: 'sales/orders', title: '销售订单', schemaId: 's1', status: DatasetStatus.ready),
     Dataset(id: 'd2', name: 'clean/orders', title: '已清洗订单', schemaId: 's2', status: DatasetStatus.ready),
     Dataset(id: 'd3', name: 'customer/unified', title: '统一客户', schemaId: 's3', status: DatasetStatus.ready),
-    Dataset(id: 'd4', name: 'customer/rfm', title: '客户 RFM', schemaId: 's4', status: DatasetStatus.ready),
+    Dataset(id: 'd4', name: 'customer/rfm', title: '客户 RFM', schemaId: 's4', status: DatasetStatus.pending),
   ];
 
   @override
@@ -108,12 +109,10 @@ class _DataFlowPage extends StatelessWidget {
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
       ),
-      body: Center(
-        child: DataScreen(
-          pipelineId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-          repository: _repo,
-          datasets: _mockDatasets,
-        ),
+      body: DataScreen(
+        pipelineId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+        repository: _repo,
+        datasets: _mockDatasets,
       ),
     );
   }
