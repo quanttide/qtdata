@@ -1,26 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:qtdata_data/qtdata_data.dart';
 import 'package:qtdata_project/qtdata_project.dart';
 
 void main() {
-  runApp(const QtDataStudio());
-}
-
-class QtDataStudio extends StatelessWidget {
-  final ApiClient? apiClient;
-
-  const QtDataStudio({super.key, this.apiClient});
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => DataBoardState(api: apiClient ?? ApiClient())..load(),
-      child: _App(),
-    );
-  }
+  runApp(const _App());
 }
 
 class _App extends StatelessWidget {
+  const _App();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -35,32 +23,78 @@ class _App extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFFF5F5F5),
         useMaterial3: true,
       ),
-      home: Consumer<DataBoardState>(
-        builder: (context, state, _) {
-          if (state.loading) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }
-          if (state.error != null) {
-            return Scaffold(
-              body: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text('加载失败: ${state.error}'),
-                    const SizedBox(height: 16),
-                    FilledButton(
-                      onPressed: () => context.read<DataBoardState>().load(),
-                      child: const Text('重试'),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-          return DataBoardScreen(board: state.board);
-        },
+      home: const HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatefulWidget {
+  const HomePage();
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final pages = <Widget>[
+      const ProjectBoardScreen(),
+      const _DataFlowPage(),
+    ];
+
+    return Row(
+      children: [
+        NavigationRail(
+          selectedIndex: _currentIndex,
+          onDestinationSelected: (i) => setState(() => _currentIndex = i),
+          labelType: NavigationRailLabelType.all,
+          destinations: const [
+            NavigationRailDestination(
+              icon: Icon(Icons.dashboard),
+              label: Text('看板'),
+            ),
+            NavigationRailDestination(
+              icon: Icon(Icons.query_stats),
+              label: Text('数据'),
+            ),
+          ],
+        ),
+        const VerticalDivider(width: 1),
+        Expanded(child: pages[_currentIndex]),
+      ],
+    );
+  }
+}
+
+class _DataFlowPage extends StatelessWidget {
+  const _DataFlowPage();
+
+  static final _mockFlow = ProcessFlow(
+    id: '1',
+    name: '数据处理流程',
+    stages: [
+      ProcessStage(id: 's1', name: '导入销售订单', order: 1, status: ProcessStatus.completed),
+      ProcessStage(id: 's2', name: '清洗订单数据', order: 2, status: ProcessStatus.completed),
+      ProcessStage(id: 's3', name: '合并客户信息', order: 3, status: ProcessStatus.completed),
+      ProcessStage(id: 's4', name: '计算客户RFM', order: 4, status: ProcessStatus.running),
+      ProcessStage(id: 's5', name: '生成分析报告', order: 5, status: ProcessStatus.pending),
+    ],
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF9FAFB),
+      appBar: AppBar(
+        title: const Text('数据流程'),
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+      ),
+      body: Center(
+        child: ProcessFlowScreen(flow: _mockFlow),
       ),
     );
   }

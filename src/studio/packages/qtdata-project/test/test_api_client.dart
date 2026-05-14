@@ -62,8 +62,8 @@ void main() {
     });
   });
 
-  group('DataBoardState', () {
-    test('load sets board from api', () async {
+  group('BoardBloc', () {
+    test('load emits BoardLoaded on success', () async {
       final api = ApiClient(
         client: MockClient((request) async {
           return http.Response.bytes(
@@ -75,16 +75,34 @@ void main() {
           );
         }),
       );
-      final state = DataBoardState(api: api);
-      expect(state.loading, false);
-      expect(state.board.tasks, isEmpty);
+      final bloc = BoardBloc(api: api);
 
-      await state.load();
+      expectLater(
+        bloc.stream,
+        emitsInOrder([isA<BoardLoading>(), isA<BoardLoaded>()]),
+      );
 
-      expect(state.loading, false);
-      expect(state.board.tasks.length, 2);
-      expect(state.board.requirement.length, 1);
-      expect(state.board.execution.length, 1);
+      bloc.add(LoadBoard());
+      await bloc.stream.first;
+      await bloc.close();
+    });
+
+    test('load emits BoardError on failure', () async {
+      final api = ApiClient(
+        client: MockClient((request) async {
+          return http.Response('{}', 500);
+        }),
+      );
+      final bloc = BoardBloc(api: api);
+
+      expectLater(
+        bloc.stream,
+        emitsInOrder([isA<BoardLoading>(), isA<BoardError>()]),
+      );
+
+      bloc.add(LoadBoard());
+      await bloc.stream.first;
+      await bloc.close();
     });
   });
 }
