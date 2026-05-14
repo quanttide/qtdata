@@ -147,6 +147,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "6.1.5+1"
+  quanttide_data:
+    dependency: "direct main"
+    description:
+      name: quanttide_data
+      sha256: "699d0f49baf69c788148d8e169d8ab158596ff05beb93c1d7ba2a4559f69d88c"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.1.0"
   sky_engine:
     dependency: transitive
     description: flutter

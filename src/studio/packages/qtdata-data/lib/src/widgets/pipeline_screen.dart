@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../pipeline.dart';
+import 'package:quanttide_data/quanttide_data.dart';
 import '../state/pipeline_bloc.dart';
 import 'task_card.dart';
 

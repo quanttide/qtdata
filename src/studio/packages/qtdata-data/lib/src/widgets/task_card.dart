@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../task.dart';
+import 'package:quanttide_data/quanttide_data.dart';
 
 class TaskCard extends StatelessWidget {
   final Task task;
