@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quanttide_data/quanttide_data.dart';
-import '../state/pipeline_bloc.dart';
 import 'task_card.dart';
 
 class PipelineScreen extends StatelessWidget {
@@ -29,7 +28,7 @@ class _PipelineView extends StatelessWidget {
         PipelineInitial() => const SizedBox.shrink(),
         PipelineLoading() => const Center(child: CircularProgressIndicator()),
         PipelineLoaded(:final pipeline) => _buildFlow(pipeline),
-        PipelineError(:final message) => Center(child: Text(message)),
+        PipelineLoadFailed(:final message) => Center(child: Text(message)),
       },
     );
   }
