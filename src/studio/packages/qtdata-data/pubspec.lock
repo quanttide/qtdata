@@ -151,10 +151,10 @@ packages:
     dependency: "direct main"
     description:
       name: quanttide_data
-      sha256: d2795ff176fd891ab244d1586a64a65f0fe1e38db6f651515d42282041539fe1
+      sha256: "2907a2da2c5965dcfa381d1e013e4e3f47f1541f0c92582af27ad2578a22ce11"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.1"
+    version: "0.2.0"
   sky_engine:
     dependency: transitive
     description: flutter

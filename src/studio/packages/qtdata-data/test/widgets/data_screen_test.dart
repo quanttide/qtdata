@@ -2,7 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qtdata_data/qtdata_data.dart';
 
+class _MockRepo implements PipelineRepository {
+  @override
+  Future<Pipeline> fetch(String id) async => _testPipeline;
+}
+
+class _EmptyRepo implements PipelineRepository {
+  @override
+  Future<Pipeline> fetch(String id) async => Pipeline(
+    id: '1',
+    name: 'empty',
+    title: 'Empty',
+    tasks: [],
+  );
+}
+
+final _testPipeline = Pipeline(
+  id: '1',
+  name: 'test-pipeline',
+  title: 'Test Pipeline',
+  tasks: [
+    Task(id: 's1', name: 'step/1', title: '第一步', status: TaskStatus.completed),
+    Task(id: 's2', name: 'step/2', title: '第二步', status: TaskStatus.inProgress),
+    Task(id: 's3', name: 'step/3', title: '第三步', status: TaskStatus.pending),
+  ],
+);
+
 class _TestErrorBloc extends PipelineBloc {
+  _TestErrorBloc() : super(repository: _MockRepo());
+
   void showError(String message) {
     emit(PipelineLoadFailed(message));
   }
@@ -11,24 +39,17 @@ class _TestErrorBloc extends PipelineBloc {
 void main() {
   group('DataScreen', () {
     testWidgets('renders all tasks in a row', (tester) async {
-      final pipeline = Pipeline(
-        id: '1',
-        name: 'test-pipeline',
-        title: 'Test Pipeline',
-        tasks: [
-          Task(id: 's1', name: 'step/1', title: '第一步', status: TaskStatus.completed),
-          Task(id: 's2', name: 'step/2', title: '第二步', status: TaskStatus.inProgress),
-          Task(id: 's3', name: 'step/3', title: '第三步', status: TaskStatus.pending),
-        ],
-      );
+      final repo = _MockRepo();
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: DataScreen(pipeline: pipeline),
+            body: DataScreen(pipelineId: '1', repository: repo),
           ),
         ),
       );
+
+      // wait for async load
       await tester.pumpAndSettle();
 
       expect(find.text('第一步'), findsOneWidget);
@@ -47,7 +68,8 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: DataScreen(
-              pipeline: Pipeline(id: '1', name: 'empty', title: 'Empty', tasks: []),
+              pipelineId: '1',
+              repository: _MockRepo(),
               bloc: bloc,
             ),
           ),
@@ -61,18 +83,32 @@ void main() {
       expect(find.text('加载失败'), findsOneWidget);
     });
 
-    testWidgets('renders nothing for empty pipeline', (tester) async {
-      final pipeline = Pipeline(
-        id: '1',
-        name: 'empty-pipeline',
-        title: 'Empty',
-        tasks: [],
-      );
-
+    testWidgets('renders datasets section', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: DataScreen(pipeline: pipeline),
+            body: DataScreen(
+              pipelineId: '1',
+              repository: _MockRepo(),
+              datasets: [
+                Dataset(id: 'd1', name: 'test/ds', title: '测试数据集', schemaId: 's1', status: DatasetStatus.ready),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('数据集'), findsOneWidget);
+      expect(find.text('test/ds'), findsOneWidget);
+      expect(find.text('已就绪'), findsOneWidget);
+    });
+
+    testWidgets('renders nothing for empty pipeline', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DataScreen(pipelineId: '1', repository: _EmptyRepo()),
           ),
         ),
       );
