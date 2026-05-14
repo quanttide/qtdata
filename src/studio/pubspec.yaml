@@ -22,8 +22,8 @@ dependencies:
   provider: ^6.1.5
   qtdata_project:
     path: packages/qtdata-project
-  qtdata_data:
-    path: packages/qtdata-data
+  quanttide_data: ^0.2.0
+  flutter_bloc: ^9.1.0
 
 dev_dependencies:
   flutter_test:

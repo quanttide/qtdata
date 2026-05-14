@@ -79,7 +79,7 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_bloc:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_bloc
       sha256: cf51747952201a455a1c840f8171d273be009b932c75093020f9af64f2123e38
@@ -234,13 +234,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "6.1.5+1"
-  qtdata_data:
-    dependency: "direct main"
-    description:
-      path: "packages/qtdata-data"
-      relative: true
-    source: path
-    version: "0.1.0"
   qtdata_project:
     dependency: "direct main"
     description:
@@ -249,7 +242,7 @@ packages:
     source: path
     version: "0.1.0"
   quanttide_data:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: quanttide_data
       sha256: "2907a2da2c5965dcfa381d1e013e4e3f47f1541f0c92582af27ad2578a22ce11"

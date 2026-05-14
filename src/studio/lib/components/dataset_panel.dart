@@ -17,7 +17,7 @@ class DatasetPanel extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(32, 24, 32, 12),
+          padding: const EdgeInsets.fromLTRB(32, 12, 32, 12),
           child: Text(
             '数据集',
             style: const TextStyle(
@@ -27,17 +27,14 @@ class DatasetPanel extends StatelessWidget {
             ),
           ),
         ),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
+        Padding(
           padding: const EdgeInsets.fromLTRB(32, 0, 32, 32),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
+          child: Wrap(
+            spacing: 12,
+            runSpacing: 12,
             children: [
               for (final dataset in datasets)
-                Padding(
-                  padding: const EdgeInsets.only(right: 12),
-                  child: DatasetCard(dataset: dataset),
-                ),
+                DatasetCard(dataset: dataset),
             ],
           ),
         ),
