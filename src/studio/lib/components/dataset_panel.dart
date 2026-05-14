@@ -17,13 +17,12 @@ class DatasetPanel extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(32, 12, 32, 12),
+          padding: const EdgeInsets.fromLTRB(32, 24, 32, 12),
           child: Text(
             '数据集',
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF374151),
             ),
           ),
         ),
