@@ -94,10 +94,10 @@ class _DataFlowPage extends StatelessWidget {
   static final _repo = MockPipelineRepository();
 
   static final _mockDatasets = <Dataset>[
-    Dataset(id: 'd1', name: 'sales/orders', title: '销售订单', schemaId: 's1', status: DatasetStatus.ready),
-    Dataset(id: 'd2', name: 'clean/orders', title: '已清洗订单', schemaId: 's2', status: DatasetStatus.ready),
-    Dataset(id: 'd3', name: 'customer/unified', title: '统一客户', schemaId: 's3', status: DatasetStatus.ready),
-    Dataset(id: 'd4', name: 'customer/rfm', title: '客户 RFM', schemaId: 's4', status: DatasetStatus.pending),
+    Dataset(id: 'd1', name: 'sales/orders', title: '销售订单', status: DatasetStatus.ready),
+    Dataset(id: 'd2', name: 'clean/orders', title: '已清洗订单', status: DatasetStatus.ready),
+    Dataset(id: 'd3', name: 'customer/unified', title: '统一客户', status: DatasetStatus.ready),
+    Dataset(id: 'd4', name: 'customer/rfm', title: '客户 RFM', status: DatasetStatus.pending),
   ];
 
   @override

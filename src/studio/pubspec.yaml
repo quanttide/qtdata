@@ -2,7 +2,7 @@ name: qtdata_studio
 description: "量潮数据"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none'
+publish_to: "none"
 version: 0.0.1
 
 environment:
@@ -20,10 +20,10 @@ dependencies:
 
   cupertino_icons: ^1.0.8
   provider: ^6.1.5
+  quanttide_data: ^0.3.0
+  flutter_bloc: ^9.1.0
   qtdata_project:
     path: packages/qtdata-project
-  quanttide_data: ^0.2.0
-  flutter_bloc: ^9.1.0
 
 dev_dependencies:
   flutter_test:
@@ -38,7 +38,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
