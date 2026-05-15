@@ -1,0 +1,19 @@
+# 2026-05-15
+
+## 做了什么
+
+1. **全项目阅读 + 进度梳理**：通读 ROADMAP.md 及子模块 ROADMAP（provider/studio/tests/screens），建立全景视图。
+2. **ROADMAP 与代码对比**：逐一检查 provider CRUD 实现、studio data_screen、test 基础设施，标记已完成/未完成项。
+3. **更新 ROADMAP.md**：标记:
+   - Provider CRUD API ✅
+   - 数据页面 UI 框架 ✅
+   - 测试基础设施 ✅
+   - 资产页面全任务仍为 ❌
+4. **建立会话记录位置**：确定 `.quanttide/journal/` 作为域外通用记录路径，按日期归档。
+
+## 关键发现
+
+- Provider 已基于 `fastapi-quanttide-project` 实现 Project/Task CRUD，使用内存 dict 存储
+- Studio data_screen.dart 已搭建，依赖外部 `quanttide_data` 包
+- tests/utils/ 基础框架已就绪（BasePage、screenshot、recorder）
+- 资产页面（模型、UI、API、测试）全未开始
