@@ -166,7 +166,7 @@ wheels = [
 [[package]]
 name = "fastapi-quanttide-project"
 version = "0.2.0"
-source = { directory = "../../packages/quanttide-project-toolkit/packages/fastapi" }
+source = { directory = "../packages/quanttide-project-toolkit/packages/fastapi" }
 dependencies = [
     { name = "fastapi" },
     { name = "quanttide-project" },
@@ -175,7 +175,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi", specifier = ">=0.115.0" },
-    { name = "quanttide-project", directory = "../../packages/quanttide-project-toolkit/packages/python" },
+    { name = "quanttide-project", directory = "../packages/quanttide-project-toolkit/packages/python" },
 ]
 
 [package.metadata.requires-dev]
@@ -608,7 +608,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi", specifier = ">=0.136.1" },
-    { name = "fastapi-quanttide-project", directory = "../../packages/quanttide-project-toolkit/packages/fastapi" },
+    { name = "fastapi-quanttide-project", directory = "../packages/quanttide-project-toolkit/packages/fastapi" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.46.0" },
 ]
 
@@ -621,7 +621,7 @@ dev = [
 [[package]]
 name = "quanttide-project"
 version = "0.1.1"
-source = { directory = "../../packages/quanttide-project-toolkit/packages/python" }
+source = { directory = "../packages/quanttide-project-toolkit/packages/python" }
 dependencies = [
     { name = "pydantic" },
 ]

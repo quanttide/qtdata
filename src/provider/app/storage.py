@@ -1,52 +1,229 @@
 from datetime import datetime, timezone
+from types import SimpleNamespace
+from typing import TypeVar, Generic, Type, Any
+from sqlalchemy.orm import Session
+from app.database import SessionLocal, init_db, Base, ProjectDB, TaskDB
 
-from quanttide_project import Project, Task
+ModelType = TypeVar("ModelType", bound=Base)
+
+class BaseRepo(Generic[ModelType]):
+    def __init__(self, db: Session, model: Type[ModelType]):
+        self.db = db
+        self.model = model
+
+    def get(self, _id: str) -> ModelType | None:
+        return self.db.query(self.model).filter(self.model.id == _id).first()
+
+    def list_all(self) -> list[ModelType]:
+        return list(self.db.query(self.model).all())
+
+    def setdefault(self, _id: str, p: Any) -> Any:
+        existing = self.get(_id)
+        if existing is not None:
+            return self._to_obj(existing)
+        
+        kwargs = {}
+        for col in self._get_columns():
+            if col == "id":
+                continue
+            val = getattr(p, col, None)
+            if val is None and col in ("created_at", "updated_at"):
+                val = datetime.now(timezone.utc)
+            kwargs[col] = val
+        
+        instance = self.model(id=_id, **kwargs)
+        self.db.add(instance)
+        self.db.commit()
+        self.db.refresh(instance)
+        return p
+
+    def update(self, update_dict: dict) -> Any:
+        if not update_dict:
+            return None
+        _id, p = next(iter(update_dict.items()))
+        instance = self.get(_id)
+        if instance is None:
+            return p
+        for col in self._get_columns():
+            if col == "id":
+                continue
+            val = getattr(p, col, None)
+            if val is not None:
+                setattr(instance, col, val)
+        if "updated_at" in self._get_columns():
+            instance.updated_at = datetime.now(timezone.utc)
+        self.db.commit()
+        self.db.refresh(instance)
+        return p
+
+    def pop(self, _id: str, default: Any = None) -> bool:
+        instance = self.get(_id)
+        if instance is None:
+            return False
+        self.db.delete(instance)
+        self.db.commit()
+        return True
+
+    def _get_columns(self) -> list[str]:
+        return [c.name for c in self.model.__table__.columns]
+
+    def _to_obj(self, row: ModelType) -> Any:
+        from types import SimpleNamespace
+        return SimpleNamespace(**{c: getattr(row, c) for c in self._get_columns()})
 
 
-def _now() -> datetime:
-    return datetime.now(timezone.utc)
+class ProjectRepo(BaseRepo[ProjectDB]):
+    def __init__(self, db: Session):
+        super().__init__(db, ProjectDB)
 
-
-def _demo_projects() -> dict[str, Project]:
-    projects: dict[str, Project] = {}
-    for i in range(1, 4):
-        p = Project(
-            id=f"p{i}",
-            name=f"project-{i}",
-            title=f"数据项目 {i}",
-            created_by="alice",
-            created_at=_now(),
-            updated_at=_now(),
+    def _to_obj(self, row: ProjectDB):
+        """返回 Pydantic 模型，让 Router 的 _apply 能正常工作"""
+        from quanttide_project import Project
+        return Project(
+            id=row.id,
+            name=row.name or "",
+            title=row.title or "",
+            created_by=row.created_by,
+            created_at=row.created_at,
+            updated_at=row.updated_at,
         )
-        projects[p.id] = p
-    return projects
 
 
-def _demo_tasks() -> dict[str, Task]:
-    tasks: dict[str, Task] = {}
-    for t in [
-        Task(id="r1", title="客户数据清洗需求", description="客户需要清洗近3年销售数据，包含订单、客户、产品三张表，预计数据量约500万行", type="requirement", status="pending"),
-        Task(id="r2", title="电商平台用户行为分析", description="分析用户浏览→加购→下单转化路径，识别流失节点，输出优化建议报告", type="requirement", status="confirmed"),
-        Task(id="r3", title="库存预测模型需求", description="基于历史销售数据构建库存预测模型，降低缺货率，减少库存积压", type="requirement", status="pending"),
-        Task(id="r4", title="变更：新增数据源字段", description="客户在清洗过程中发现需要额外合并CRM系统中的客户等级字段", type="requirement", status="pending"),
-        Task(id="r5", title="变更：调整交付格式", description="客户要求最终交付格式从CSV改为Parquet，需评估对处理流程的影响", type="requirement", status="confirmed"),
-        Task(id="a1", title="签订数据处理协议", description="明确数据范围、交付标准、验收条件、付款节点、保密条款", type="agreement"),
-        Task(id="a2", title="数据安全与保密协议", description="客户数据涉及商业机密，需签署NDA并约定数据销毁流程", type="agreement"),
-        Task(id="a3", title="内部资源分配", description="组建项目团队：数据工程师2人、分析师1人、项目经理1人", type="agreement"),
-        Task(id="e1", title="数据探查与质量评估", description="对客户提供的样本数据进行完整性、一致性、准确性评估，输出数据质量报告", type="execution", status="doing"),
-        Task(id="e2", title="数据清理ETL开发", description="开发数据清理pipeline：去重、缺失值处理、异常值检测、字段标准化", type="execution", status="doing"),
-        Task(id="e3", title="分析模型开发", description="基于清理后的数据构建用户行为分析模型，完成特征工程和模型训练", type="execution", status="todo"),
-        Task(id="e4", title="每周进度同步", description="向客户汇报本周完成量、下周计划、风险预警", type="execution", status="doing"),
-        Task(id="c1", title="交付物验证", description="客户对清理后的数据进行抽样验证，确认数据质量符合约定标准", type="acceptance", status="pending"),
-        Task(id="c2", title="最终报告提交", description="提交完整的数据清理报告、分析报告、模型说明文档及数据文件", type="acceptance", status="pending"),
-        Task(id="c3", title="尾款结算与项目关闭", description="客户确认验收后支付尾款，项目资料归档，数据按约定销毁或移交", type="acceptance", status="pending"),
-    ]:
-        tasks[t.id] = t
-    return tasks
+class TaskRepo(BaseRepo[TaskDB]):
+    def __init__(self, db: Session):
+        super().__init__(db, TaskDB)
+
+    def _to_obj(self, row: TaskDB):
+        from quanttide_project import Task
+        return Task(
+            id=row.id,
+            title=row.title or "",
+            description=row.description,
+            type=row.type or "",
+            status=row.status,
+        )
 
 
-def build_store() -> dict:
-    return {
-        "projects": _demo_projects(),
-        "tasks": _demo_tasks(),
-    }
+# ========== 兼容层：让 main.py 的 lambda 不用改 ==========
+class _CompatProxy:
+    def __init__(self, key: str):
+        self.key = key
+
+    def setdefault(self, _id: str, p: Any) -> Any:
+        db = SessionLocal()
+        try:
+            repo = ProjectRepo(db) if self.key == "projects" else TaskRepo(db)
+            return repo.setdefault(_id, p)
+        finally:
+            db.close()
+
+    def get(self, _id: str) -> Any | None:
+        db = SessionLocal()
+        try:
+            repo = ProjectRepo(db) if self.key == "projects" else TaskRepo(db)
+            result = repo.get(_id)
+            return repo._to_obj(result) if result else None
+        finally:
+            db.close()
+
+    def values(self) -> list[Any]:
+        db = SessionLocal()
+        try:
+            repo = ProjectRepo(db) if self.key == "projects" else TaskRepo(db)
+            rows = repo.list_all()
+            return [repo._to_obj(r) for r in rows]
+        finally:
+            db.close()
+
+    def update(self, update_dict: dict) -> Any:
+        db = SessionLocal()
+        try:
+            repo = ProjectRepo(db) if self.key == "projects" else TaskRepo(db)
+            return repo.update(update_dict)
+        finally:
+            db.close()
+
+    def pop(self, _id: str, default: Any = None) -> bool:
+        db = SessionLocal()
+        try:
+            repo = ProjectRepo(db) if self.key == "projects" else TaskRepo(db)
+            return repo.pop(_id)
+        finally:
+            db.close()
+    def __len__(self):
+            db = SessionLocal()
+            try:
+                repo = ProjectRepo(db) if self.key == "projects" else TaskRepo(db)
+                return len(repo.list_all())
+            finally:
+                db.close()
+
+    def __contains__(self, _id):
+        db = SessionLocal()
+        try:
+            repo = ProjectRepo(db) if self.key == "projects" else TaskRepo(db)
+            return repo.get(_id) is not None
+        finally:
+            db.close()
+
+    def __getitem__(self, _id):
+        db = SessionLocal()
+        try:
+            repo = ProjectRepo(db) if self.key == "projects" else TaskRepo(db)
+            result = repo.get(_id)
+            if result is None:
+                raise KeyError(_id)
+            return repo._to_obj(result)
+        finally:
+            db.close()
+
+class DBStore:
+     def __init__(self):
+        init_db()
+        self._projects = _CompatProxy("projects")
+        self._tasks = _CompatProxy("tasks")  
+
+     def _init_demo_if_empty(self):
+        if not self._projects.values():
+            for i in range(1, 4):
+                self._projects.setdefault(
+                    f"p{i}",
+                    SimpleNamespace(
+                        id=f"p{i}",
+                        name=f"项目{i}",
+                        title=f"数据项目 {i}",
+                        created_by="system",
+                        created_at=datetime.now(timezone.utc),
+                        updated_at=datetime.now(timezone.utc),
+                    ),
+                )
+        
+        if not self._tasks.values():
+            task_types = [
+                "requirement", "agreement", "execution", "acceptance",
+                "requirement", "agreement", "execution", "acceptance",
+                "requirement", "agreement", "execution", "acceptance",
+                "requirement", "agreement", "execution",  # 第15个
+            ]
+            for i in range(1, 16):
+                tid = "r1" if i == 1 else f"t{i}"
+                self._tasks.setdefault(
+                    tid,
+                    SimpleNamespace(
+                        id=tid,
+                        title=f"任务{i}",
+                        description=f"任务{i}描述",
+                        type=task_types[i - 1],
+                        status="pending",
+                    ),
+                )
+
+     def __getitem__(self, key: str):
+        if key == "projects":
+            return self._projects
+        if key == "tasks":
+            return self._tasks
+        raise KeyError(key)
+
+def build_store():
+    return DBStore()
