@@ -13,26 +13,11 @@ CLI 以**工作空间**为顶层组织单元。每个工作空间对应一个独
 ```
 qtdata
 │
-├── scope                       # 项目范围定义
 ├── blueprint                   # 技术蓝图拆解
+├── scope                       # 项目范围定义
 ├── quotation                   # 报价单
 └── delivery                    # 交付与验收
 
-```
-
-## 数据存储
-
-所有数据以 JSON 契约文件存储在 `data/qtdata/` 下，按工作空间组织：
-
-```
-data/qtdata/
-  <workspace>/
-    scope.json          # 范围书
-    blueprint.json       # 蓝图
-    quotation.json       # 报价单
-    delivery/            # 交付物清单
-      index.json         # 验收清单
-      assets/<id>.json  # 单个交付物记录
 ```
 
 ## 验收标准
