@@ -12,25 +12,12 @@ CLI 以**工作空间**为顶层组织单元。每个工作空间对应一个独
 
 ```
 qtdata
-├── workspace                   # 工作空间管理
-│   ├── init <name>             # 初始化工作空间（从模板创建目录结构）
-│   └── list                    # 列出工作空间及状态
 │
 ├── scope                       # 项目范围定义
-│   └── create                  # 创建范围书（业务目标、样本数据、验收标准）
-│
 ├── blueprint                   # 技术蓝图拆解
-│   └── create                  # 创建蓝图（数据模型 + 工作流步骤）
-│
 ├── quotation                   # 报价单
-│   └── create                  # 创建报价单（工时分项、付款计划、变更成本）
-│
 └── delivery                    # 交付与验收
-    ├── create                  # 创建交付物（类型：dataset/processor/doc）
-    ├── list                    # 列出交付物清单及验收状态
-    ├── submit <id>             # 提交交付物待验收
-    ├── verify <id>             # 验收交付物，记录结论和问题
-    └── accept <id> | reject <id>   # 签署/驳回
+
 ```
 
 ## 数据存储
@@ -48,11 +35,9 @@ data/qtdata/
       assets/<id>.json  # 单个交付物记录
 ```
 
-
-
 ## 验收标准
 
-- [ ] `scope create` 写入 `scope.json`，字段完整可读
-- [ ] `blueprint create` 写入 `blueprint.json`，含数据模型和七步工作流
-- [ ] `quotation create` 写入 `quotation.json`，含工时分项和付款计划
-- [ ] `delivery create` 创建交付物，`verify` 记录验收结论，`accept/reject` 变更状态
+- [ ] `scope` 写入 `scope.json`，字段完整可读
+- [ ] `blueprint` 写入 `blueprint.cue`，含数据模型和七步工作流
+- [ ] `quotation` 写入 `quotation.json`，含工时分项和付款计划
+- [ ] `delivery` 验收交付物
