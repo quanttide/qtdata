@@ -8,3 +8,5 @@ name = "qtdata"
 path = "src/main.rs"
 
 [dependencies]
+clap = { version = "4", features = ["derive"] }
+quanttide-agent = "0.1.0"
