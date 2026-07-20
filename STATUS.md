@@ -1,3 +1,27 @@
+# qtdata 状态报告
+
+> 更新日期：2026-07-20
+> 仓库：quanttide/qtdata
+> 最新 commit：70f0d38 (2026-07-11)
+> 最新版本：v0.0.2 (2026-06-23)
+
+## 版本历史
+
+| 版本 | 日期 | 内容 |
+|------|------|------|
+| v0.0.2 | 2026-06-23 | CLI: blueprint/scope/quotation/delivery 四命令 |
+| v0.0.1 | 2026-05-14 | Provider + Studio + E2E 测试框架 |
+
+## 组件进度
+
+| 组件 | 版本 | 状态 | 技术 |
+|------|------|------|------|
+| CLI (`src/cli`) | v0.0.2 | 四命令已实现 | Rust + DeepSeek API |
+| Provider (`src/provider`) | v0.0.1 | CRUD 骨架 | Python FastAPI |
+| Studio (`src/studio`) | v0.0.1 | 四列看板 | Flutter |
+
+## 战略差距分析
+
 ### 差距一览
 
 | 维度 | journal 反映的真实业务 | intention 的战略目标 | CLI 实现 | 差距 |
@@ -17,3 +41,23 @@
 
 - CLI 把"输入 Markdown 输出 JSON"作为产品逻辑 → 实际上产品逻辑应该是**技术管理的执行系统**
 - 当前阶段（阶段一：CLI 框架）是对的方向，但要意识到阶段二以后的路还很长
+
+## ROADMAP 进度
+
+| 组件 | ROADMAP 文件 | 阶段 |
+|------|-------------|------|
+| CLI | `src/cli/ROADMAP.md` | 四阶段（CLI框架→Scope→Quotation→Delivery），阶段一进行中 |
+| Provider | `src/provider/ROADMAP.md` | 数据处理API + 资产管理API，均未开始 |
+| Studio | `src/studio/ROADMAP.md` | qtdata-data + qtdata-asset 两个新 package，均未开始 |
+
+## 文档覆盖
+
+| 目录 | 状态 |
+|------|------|
+| docs/brd/ | 有（场景拆解：业务线/获客/采集/报价/交付） |
+| docs/prd/ | 有 |
+| docs/add/ | 有（资产模块） |
+| docs/dev/ | 有（测试策略、集成方案） |
+| docs/ixd/ | 有（页面流程、数据屏、Pipeline视图） |
+| docs/drd/ | 有（数据模型） |
+| docs/pmd/ | 有 |
