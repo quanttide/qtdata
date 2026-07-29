@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>量潮数据 · 我的项目</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        body {
+            background: #f1f5f9;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .project-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.25rem 1.5rem;
+            border: 1px solid #f1f5f9;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+        .project-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+            transform: translateY(-1px);
+        }
+        .status-badge {
+            font-size: 0.6rem;
+            padding: 0.1rem 0.6rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        .status-badge.active {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .status-badge.done {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status-badge.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .phase-tag {
+            font-size: 0.6rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        .phase-tag.research {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .phase-tag.negotiate {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .phase-tag.implement {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .phase-tag.accept {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+        .phase-tag.review {
+            background: #fce7f3;
+            color: #9d174d;
+        }
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            padding: 0.15rem 0;
+        }
+        .info-row .label {
+            color: #94a3b8;
+            min-width: 72px;
+            font-weight: 400;
+            flex-shrink: 0;
+            padding-top: 0.05rem;
+        }
+        .info-row .value .ready {
+            color: #10b981;
+        }
+        .info-row .value .pending {
+            color: #f59e0b;
+        }
+        .info-row .value .na {
+            color: #94a3b8;
+        }
+        .info-row .value .logic-text {
+            color: #475569;
+            line-height: 1.4;
+        }
+        .filter-group {
+            display: flex;
+            gap: 0.2rem;
+            background: #f1f5f9;
+            padding: 0.2rem;
+            border-radius: 8px;
+        }
+        .filter-group button {
+            padding: 0.2rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-weight: 500;
+        }
+        .filter-group button.active {
+            background: white;
+            color: #1e293b;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            border: 1px solid #f1f5f9;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-align: center;
+        }
+        .stat-card:hover {
+            border-color: #cbd5e1;
+        }
+        .stat-card .number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .stat-card .label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+        .stat-card.active-filter {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+        }
+        .stat-card .num-green {
+            color: #10b981;
+        }
+        .stat-card .num-amber {
+            color: #f59e0b;
+        }
+        .stat-card .num-blue {
+            color: #4f46e5;
+        }
+        .stat-card .num-gray {
+            color: #94a3b8;
+        }
+        .sidebar-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            cursor: pointer;
+            color: #94a3b8;
+        }
+        .sidebar-icon:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        .sidebar-icon.active {
+            background: #e0e7ff;
+            color: #4f46e5;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #1e293b;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1000;
+            pointer-events: none;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e2e8f0;
+        }
+        .timeline-item {
+            position: relative;
+            padding: 0.5rem 0 0.5rem 1.2rem;
+            border-left: 3px solid transparent;
+            margin-bottom: 0.5rem;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.5rem;
+            top: 0.6rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #e2e8f0;
+            background: white;
+        }
+        .timeline-item.done::before {
+            background: #10b981;
+            border-color: #10b981;
+        }
+        .timeline-item.done {
+            border-left-color: #10b981;
+        }
+        .timeline-item.active::before {
+            background: #4f46e5;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+        .timeline-item.active {
+            border-left-color: #4f46e5;
+        }
+        .timeline-item.waiting::before {
+            background: #e2e8f0;
+            border-color: #d1d5db;
+        }
+        .timeline-item.waiting {
+            border-left-color: #d1d5db;
+        }
+        .timeline-item .tl-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .timeline-item .tl-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1e293b;
+        }
+        .timeline-item .tl-status {
+            font-size: 0.6rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 10px;
+        }
+        .timeline-item .tl-status.done {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .timeline-item .tl-status.active {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .timeline-item .tl-status.waiting {
+            background: #f1f5f9;
+            color: #94a3b8;
+        }
+        .tl-deliverable {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.2rem 0.5rem;
+            background: #f8fafc;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: #1e293b;
+            margin-top: 0.2rem;
+        }
+        .tl-deliverable .dl-icon {
+            color: #94a3b8;
+        }
+        .tl-deliverable .dl-action {
+            margin-left: auto;
+            font-size: 0.7rem;
+            color: #4f46e5;
+            cursor: pointer;
+        }
+        .tl-deliverable .dl-action:hover {
+            text-decoration: underline;
+        }
+        .tl-empty {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            padding: 0.2rem 0.5rem;
+        }
+
+        /* 蓝图模块 */
+        .blueprint-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            border: 1px solid #e2e8f0;
+        }
+        .blueprint-section .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.85rem;
+            color: #334155;
+        }
+        .blueprint-section .step-item:last-child {
+            border-bottom: none;
+        }
+        .blueprint-section .step-num {
+            background: #4f46e5;
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: 600;
+            flex-shrink: 0;
+            margin-top: 0.05rem;
+        }
+        .blueprint-section .step-text {
+            flex: 1;
+            line-height: 1.5;
+        }
+        .blueprint-section .exception-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.3rem 0;
+            font-size: 0.8rem;
+            color: #334155;
+            border-bottom: 1px solid #f8fafc;
+        }
+        .blueprint-section .exception-item:last-child {
+            border-bottom: none;
+        }
+        .blueprint-section .exception-item .ex-label {
+            font-weight: 500;
+            min-width: 80px;
+            color: #1e293b;
+        }
+        .blueprint-section .exception-item .ex-strategy {
+            color: #64748b;
+        }
+
+        /* ===== 交付目标卡片（纵向格式） ===== */
+        .delivery-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 0.5rem;
+        }
+        .delivery-card:last-child {
+            margin-bottom: 0;
+        }
+        .delivery-card .dc-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #1e293b;
+            margin-bottom: 0.3rem;
+        }
+        .delivery-card .dc-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem 0.8rem;
+        }
+        .delivery-card .dc-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.75rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 6px;
+            background: white;
+            border: 1px solid #e2e8f0;
+        }
+        .delivery-card .dc-item .dstatus {
+            font-size: 0.55rem;
+            padding: 0.05rem 0.3rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .dstatus.done {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .dstatus.active {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .dstatus.waiting {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .dstatus.todo {
+            background: #f1f5f9;
+            color: #94a3b8;
+        }
+        .dc-dim-label {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            min-width: 40px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: white;
+            border-radius: 24px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeSlide 0.3s ease;
+        }
+        .modal-box::-webkit-scrollbar {
+            width: 4px;
+        }
+        .modal-box::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .modal-box .file-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.5rem;
+            background: #f8fafc;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .modal-box .file-item:last-child {
+            border-bottom: none;
+        }
+        .modal-box .file-item i {
+            color: #4f46e5;
+        }
+        .modal-box .file-item .file-action {
+            margin-left: auto;
+            color: #4f46e5;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+        .modal-box .file-item .file-action:hover {
+            text-decoration: underline;
+        }
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all 0.15s;
+        }
+        .btn-primary:hover {
+            background: #4338ca;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- 资料弹窗 -->
+    <div id="docModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="flex items-center justify-between mb-3">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-800" id="docModalTitle">资料详情</h2>
+                    <p class="text-xs text-gray-400" id="docModalSub">交付物</p>
+                </div>
+                <button class="text-gray-400 hover:text-gray-600 text-xl" onclick="closeDocModal()">&times;</button>
+            </div>
+            <div id="docModalContent"></div>
+        </div>
+    </div>
+
+    <div id="app" class="flex min-h-screen">
+
+        <aside class="w-20 bg-white border-r border-gray-100 flex flex-col items-center py-4 gap-0.5 flex-shrink-0 h-screen sticky top-0 z-10">
+            <div class="text-xl font-bold text-indigo-600 mb-3">量</div>
+            <div class="sidebar-icon active" onclick="navigateTo('dashboard')" title="我的项目" id="nav-dashboard">
+                <i class="fas fa-th-large text-lg"></i>
+            </div>
+            <div class="mt-auto sidebar-icon" title="帮助">
+                <i class="fas fa-question-circle text-lg"></i>
+            </div>
+        </aside>
+
+        <main class="flex-1 p-5 md:p-7 max-w-6xl overflow-y-auto h-screen">
+
+            <!-- ====== 首页 ====== -->
+            <div id="page-dashboard" class="page active">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">我的项目</h1>
+                        <p class="text-sm text-gray-400 mt-0.5">当前所有数据项目的进度总览</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                    <div class="stat-card active-filter" onclick="filterProjects('all', this)">
+                        <div class="number">1</div>
+                        <div class="label">全部项目</div>
+                    </div>
+                    <div class="stat-card" onclick="filterProjects('active', this)">
+                        <div class="number num-amber">0</div>
+                        <div class="label">进行中</div>
+                    </div>
+                    <div class="stat-card" onclick="filterProjects('done', this)">
+                        <div class="number num-green">1</div>
+                        <div class="label">已完成</div>
+                    </div>
+                    <div class="stat-card" onclick="filterProjects('pending', this)">
+                        <div class="number num-gray">0</div>
+                        <div class="label">待启动</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mb-3">
+                    <div class="filter-group">
+                        <button class="active" onclick="filterProjects('all', null, this)">全部</button>
+                        <button onclick="filterProjects('active', null, this)">进行中</button>
+                        <button onclick="filterProjects('done', null, this)">已完成</button>
+                        <button onclick="filterProjects('pending', null, this)">待启动</button>
+                    </div>
+                    <span class="text-xs text-gray-400" id="projectCount">1 个项目</span>
+                </div>
+
+                <div class="space-y-3" id="projectList">
+                    <!-- 由 JavaScript 动态渲染 -->
+                </div>
+
+                <div class="text-xs text-gray-300 mt-4 text-center">点击项目查看完整交付目标与时间线</div>
+            </div>
+
+            <!-- ====== 项目详情页 ====== -->
+            <div id="page-timeline" class="page">
+                <div class="flex items-center gap-3 mb-4">
+                    <button class="text-gray-400 hover:text-gray-600" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-left"></i></button>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <h1 class="text-xl font-bold text-gray-800" id="tlTitle">项目名称</h1>
+                            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full" id="tlStatus">进行中</span>
+                            <span class="phase-tag" id="tlPhase">调研</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-0.5" id="tlClient">创建于 —</p>
+                    </div>
+                    <button class="btn-primary text-sm" onclick="showToast('📄 报告已导出')"><i class="fas fa-file-pdf"></i> 导出</button>
+                </div>
+
+                <!-- ===== 交付目标（第一个卡片，纵向格式） ===== -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-5 mb-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-bullseye text-indigo-500"></i>
+                        <span class="font-semibold text-gray-700">交付目标</span>
+                        <span class="text-xs text-gray-400">| 每个阶段需要交付的内容</span>
+                    </div>
+                    <div id="tlDeliveryTarget">
+                        <!-- 由JS动态渲染 -->
+                    </div>
+                </div>
+
+                <!-- ===== 完整数据蓝图 ===== -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-5 mb-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-code-branch text-indigo-500"></i>
+                        <span class="font-semibold text-gray-700">完整数据蓝图</span>
+                        <span class="text-xs text-gray-400">| 处理流程 + 异常预案</span>
+                    </div>
+                    <div class="mb-3">
+                        <div class="text-xs font-semibold text-blue-500 uppercase tracking-wider mb-2">处理流程</div>
+                        <div id="tlBlueprintSteps" class="blueprint-section"></div>
+                    </div>
+                    <div>
+                        <div class="text-xs font-semibold text-amber-500 uppercase tracking-wider mb-2">异常处理预案</div>
+                        <div id="tlBlueprintExceptions" class="blueprint-section"></div>
+                    </div>
+                </div>
+
+                <!-- ===== 交付时间线 ===== -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-clock text-indigo-400"></i>
+                        <span class="font-semibold text-gray-700">交付时间线</span>
+                        <span class="text-xs text-gray-400">| 每个阶段的交付物</span>
+                    </div>
+                    <div class="timeline" id="tlTimeline"></div>
+                </div>
+
+                <div class="text-center text-xs text-gray-300 mt-4">点击「查看资料」获取交付物文件</div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // ================================================================
+        //  项目数据（仅一个真实项目）
+        // ================================================================
+        const statusMap = {
+            'done': { label: '已完成', cls: 'done' },
+            'active': { label: '进行中', cls: 'active' },
+            'waiting': { label: '待处理', cls: 'waiting' },
+            'todo': { label: '待开始', cls: 'todo' }
+        };
+
+        const projects = {
+            'USPTO受让人标准化与上市公司匹配': {
+                name: 'USPTO受让人标准化与上市公司匹配',
+                client: '金融课题组 · 实证研究',
+                created: '2026-07-01',
+                status: '已完成',
+                currentPhase: '复盘',
+                logic: '清洗 USPTO 受让人名称，通过精确匹配与 n-gram/RapidFuzz 模糊匹配，关联 CRSP / WRDS / COMPUSTAT / CIQ 上市公司映射表，并辅以 AI 审核。',
+                deliveryTarget: [{
+                    phase: '数据准备',
+                    items: [
+                        { name: 'USPTO原始数据下载', status: 'done', dim: '数据' },
+                        { name: '公司名称标准化', status: 'done', dim: '数据' },
+                        { name: '映射表构建(CRSP等)', status: 'done', dim: '数据' }
+                    ]
+                }, {
+                    phase: '匹配与审核',
+                    items: [
+                        { name: '多候选模糊匹配', status: 'done', dim: '数据' },
+                        { name: '规则分流与AI审核', status: 'done', dim: '数据' },
+                        { name: '回填合并导出', status: 'done', dim: '数据' }
+                    ]
+                }, {
+                    phase: '交付',
+                    items: [
+                        { name: '正式交付表(124.7MB)', status: 'done', dim: '数据' },
+                        { name: '详细复核表(334.8MB)', status: 'done', dim: '数据' }
+                    ]
+                }],
+                blueprint: {
+                    steps: [
+                        'USPTO Assignee 原始数据下载/准备：使用 USPTO Trademark Assignment Dataset 中的 Assignee 数据。',
+                        '公司名称标准化：清洗 eename 并生成 name_std，统一大小写、符号、常见后缀等。',
+                        '上市公司映射表构建：整合 CRSP、COMPUSTAT、WRDS、CIQ 等来源，生成统一 map.dta。',
+                        '多候选匹配：先精确匹配，再用 n-gram + RapidFuzz 做模糊匹配，保留多个候选 (candidate_1 至 candidate_5)。',
+                        '规则分流：按匹配类型、核心词相似度、法律后缀、罗马数字等规则自动通过/拒绝/进入审核。',
+                        'AI 审核：对待审核组进行批量 AI 判断，选择候选编号或判定无匹配。',
+                        '回填与合并导出：将自动处理结果和 AI 审核结果回填明细，生成正式交付表和详细复核表。'
+                    ],
+                    exceptions: [
+                        { label: '精确匹配优先', strategy: '自动通过，确保高置信度' },
+                        { label: '无候选', strategy: '自动判定为无匹配' },
+                        { label: '罗马数字不一致', strategy: '自动拒绝，降低误配风险' },
+                        { label: '仅法律后缀差异', strategy: '核心名称一致则自动通过' },
+                        { label: '核心名称包含/缩写等', strategy: '进入 AI / 人工审核，避免误判' }
+                    ]
+                },
+                phases: [{
+                    name: '数据准备与标准化',
+                    status: 'done',
+                    items: [
+                        { name: 'USPTO原始受让人数据', desc: '从USPTO商标转让数据集获取Assignee原始数据', hasDoc: true, type: '原始数据' },
+                        { name: '公司名称标准化', desc: '统一大小写、符号、常见后缀，生成name_std字段', hasDoc: true, type: '处理脚本' }
+                    ]
+                }, {
+                    name: '映射表构建与多候选匹配',
+                    status: 'done',
+                    items: [
+                        { name: '上市公司映射表整合', desc: '整合CRSP/COMPUSTAT/WRDS/CIQ生成统一map.dta', hasDoc: true, type: '映射表' },
+                        { name: '多候选模糊匹配', desc: '精确匹配 + n-gram/RapidFuzz，保留candidate_1至candidate_5', hasDoc: true, type: '匹配结果' }
+                    ]
+                }, {
+                    name: '规则分流、AI审核与最终交付',
+                    status: 'done',
+                    items: [
+                        { name: '规则分流与AI审核', desc: '自动通过/拒绝/进入审核，AI批量决策匹配候选编号', hasDoc: true, type: '审核记录' },
+                        { name: '导出正式交付表', desc: '124.7MB，面向客户的最终匹配结果表', hasDoc: true, type: '交付文件' },
+                        { name: '导出详细复核表', desc: '334.8MB，保留candidate_1至candidate_5，供客户自行筛选', hasDoc: true, type: '交付文件' }
+                    ]
+                }]
+            }
+        };
+
+        // ================================================================
+        //  渲染与交互
+        // ================================================================
+        let currentProject = '';
+        let filter = 'all';
+
+        function navigateTo(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const target = document.getElementById('page-' + page);
+            if (target) {
+                target.classList.add('active');
+                target.classList.add('fade-in');
+                setTimeout(() => target.classList.remove('fade-in'), 300);
+            }
+            document.querySelectorAll('.sidebar-icon').forEach(el => el.classList.remove('active'));
+            const map = { 'dashboard': 'nav-dashboard', 'timeline': 'nav-dashboard' };
+            const navEl = document.getElementById(map[page] || 'nav-dashboard');
+            if (navEl) navEl.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function filterProjects(f, el, btn) {
+            filter = f;
+            document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active-filter'));
+            if (el) el.classList.add('active-filter');
+            document.querySelectorAll('.filter-group button').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.filter-group button').forEach(b => {
+                const map = { 'all': '全部', 'active': '进行中', 'done': '已完成', 'pending': '待启动' };
+                if (b.textContent.trim() === map[f]) b.classList.add('active');
+            });
+            const cards = document.querySelectorAll('#projectList .project-card');
+            let count = 0;
+            cards.forEach(card => {
+                const badge = card.querySelector('.status-badge');
+                let s = 'all';
+                if (badge) {
+                    const t = badge.textContent.trim();
+                    if (t === '进行中') s = 'active';
+                    else if (t === '已完成') s = 'done';
+                    else if (t === '待启动') s = 'pending';
+                }
+                const match = f === 'all' || s === f;
+                card.style.display = match ? '' : 'none';
+                if (match) count++;
+            });
+            document.getElementById('projectCount').textContent = count + ' 个项目';
+        }
+
+        function renderProjects() {
+            const container = document.getElementById('projectList');
+            container.innerHTML = '';
+            Object.keys(projects).forEach(key => {
+                const p = projects[key];
+                const dataStatus = p.status === '已完成' ? '可获取' : (p.status === '进行中' ? '待交付' : '尚未交付');
+                const statusCls = p.status === '已完成' ? 'done' : (p.status === '进行中' ? 'active' : 'pending');
+                const phaseMap = { '调研': 'research', '谈判': 'negotiate', '实施': 'implement', '验收': 'accept', '复盘': 'review' };
+                const phaseCls = phaseMap[p.currentPhase] || 'research';
+
+                let amount = 0,
+                    count = 0;
+                if (p.deliveryTarget) {
+                    p.deliveryTarget.forEach(dt => {
+                        dt.items.forEach(item => {
+                            if (item.status === 'done') count++;
+                        });
+                    });
+                }
+                const total = p.deliveryTarget ? p.deliveryTarget.reduce((acc, dt) => acc + dt.items.length, 0) : 1;
+                const progress = total > 0 ? Math.round((count / total) * 100) : 0;
+                const money = (progress / 100) * 12; // 模拟金额 0~12万
+
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                card.setAttribute('onclick', `showTimeline('${key}')`);
+                card.innerHTML = `
+                    <div class="flex flex-wrap items-start justify-between gap-2">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-semibold text-gray-800">${p.name}</span>
+                                <span class="status-badge ${statusCls}">${p.status}</span>
+                                <span class="phase-tag ${phaseCls}">${p.currentPhase}阶段</span>
+                            </div>
+                            <div class="mt-2 space-y-0.5">
+                                <div class="info-row">
+                                    <span class="label">数据可获取</span>
+                                    <span class="value"><span class="${dataStatus === '可获取' ? 'ready' : (dataStatus === '待交付' ? 'pending' : 'na')}">${dataStatus === '可获取' ? '✅ 可获取' : (dataStatus === '待交付' ? '⏳ 待交付' : '— 尚未交付')}</span></span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">处理逻辑</span>
+                                    <span class="value logic-text">${p.logic}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">交付进度</span>
+                                    <span class="value">¥${money.toFixed(1)}万 · 第${count}次交付</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-gray-400 flex-shrink-0">更新于 2026-07-28</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            // 初始筛选全部
+            filterProjects('all', document.querySelector('.stat-card'));
+        }
+
+        function showTimeline(name) {
+            currentProject = name;
+            const data = projects[name];
+            if (!data) { showToast('项目数据不存在', false); return; }
+
+            document.getElementById('tlTitle').textContent = data.name;
+            document.getElementById('tlClient').textContent = '创建于 ' + data.created;
+            document.getElementById('tlStatus').textContent = data.status;
+
+            const phaseMap = { '调研': 'research', '谈判': 'negotiate', '实施': 'implement', '验收': 'accept', '复盘': 'review' };
+            const phaseTag = document.getElementById('tlPhase');
+            phaseTag.textContent = data.currentPhase;
+            phaseTag.className = 'phase-tag ' + (phaseMap[data.currentPhase] || 'research');
+
+            // 交付目标
+            const container = document.getElementById('tlDeliveryTarget');
+            let html = '';
+            if (data.deliveryTarget && data.deliveryTarget.length > 0) {
+                data.deliveryTarget.forEach(dt => {
+                    const grouped = {};
+                    dt.items.forEach(item => {
+                        if (!grouped[item.dim]) grouped[item.dim] = [];
+                        grouped[item.dim].push(item);
+                    });
+                    const dimOrder = ['项目', '数据', '商务'];
+                    html += `<div class="delivery-card">
+                        <div class="dc-header">
+                            <i class="fas fa-chevron-right text-indigo-400 text-xs"></i>
+                            ${dt.phase}阶段
+                            <span class="text-xs text-gray-400 ml-auto">${dt.items.length} 项</span>
+                        </div>
+                        <div class="dc-items">
+                            ${dimOrder.map(dim => {
+                                const items = grouped[dim] || [];
+                                if (items.length === 0) return '';
+                                return items.map(item => {
+                                    const st = statusMap[item.status] || statusMap['todo'];
+                                    return `
+                                        <span class="dc-item">
+                                            <span class="dc-dim-label">${dim}</span>
+                                            ${item.name}
+                                            <span class="dstatus ${st.cls}">${st.label}</span>
+                                        </span>
+                                    `;
+                                }).join('');
+                            }).join('')}
+                        </div>
+                    </div>`;
+                });
+            } else {
+                html = '<div class="text-sm text-gray-400 p-2">暂无交付目标</div>';
+            }
+            container.innerHTML = html;
+
+            // 蓝图
+            const bp = data.blueprint;
+            if (bp) {
+                const stepsContainer = document.getElementById('tlBlueprintSteps');
+                if (bp.steps && bp.steps.length > 0) {
+                    stepsContainer.innerHTML = bp.steps.map((step, idx) => `
+                        <div class="step-item">
+                            <span class="step-num">${idx + 1}</span>
+                            <span class="step-text">${step}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    stepsContainer.innerHTML = '<div class="text-sm text-gray-400 p-2">暂无处理流程信息</div>';
+                }
+
+                const exContainer = document.getElementById('tlBlueprintExceptions');
+                if (bp.exceptions && bp.exceptions.length > 0) {
+                    exContainer.innerHTML = bp.exceptions.map(ex => `
+                        <div class="exception-item">
+                            <span class="ex-label">${ex.label}</span>
+                            <span class="ex-strategy">${ex.strategy}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    exContainer.innerHTML = '<div class="text-sm text-gray-400 p-2">暂无异常预案</div>';
+                }
+            }
+
+            // 时间线
+            const timeline = document.getElementById('tlTimeline');
+            if (data.phases && data.phases.length > 0) {
+                timeline.innerHTML = data.phases.map((ph) => {
+                    const statusMap2 = { done: '已完成', active: '进行中', waiting: '待开始' };
+                    const statusLabel = statusMap2[ph.status] || '待开始';
+                    const statusCls = ph.status;
+
+                    let itemsHtml = '';
+                    if (ph.items && ph.items.length > 0) {
+                        itemsHtml = ph.items.map(item => `
+                            <div class="tl-deliverable">
+                                <span class="dl-icon"><i class="fas fa-file-alt"></i></span>
+                                <span><strong>${item.name}</strong> — ${item.desc}</span>
+                                ${item.hasDoc ? `<span class="dl-action" onclick="event.stopPropagation();showDoc('${item.name}', '${item.type || '资料'}', '${data.name}')">查看资料</span>` : ''}
+                            </div>
+                        `).join('');
+                    } else {
+                        itemsHtml = `<div class="tl-empty"><i class="fas fa-minus-circle mr-1"></i> 暂无交付物</div>`;
+                    }
+
+                    return `
+                        <div class="timeline-item ${ph.status}">
+                            <div class="tl-header">
+                                <span class="tl-title">${ph.name}</span>
+                                <span class="tl-status ${ph.status}">${statusLabel}</span>
+                                ${ph.items && ph.items.length > 0 ? `<span class="text-xs text-gray-400">${ph.items.length} 项</span>` : ''}
+                            </div>
+                            <div class="tl-deliverables">${itemsHtml}</div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                timeline.innerHTML = '<div class="text-sm text-gray-400 p-2">暂无时间线数据</div>';
+            }
+
+            navigateTo('timeline');
+        }
+
+        // ================================================================
+        //  资料弹窗
+        // ================================================================
+        function showDoc(name, type, project) {
+            document.getElementById('docModalTitle').textContent = name;
+            document.getElementById('docModalSub').textContent = project + ' · ' + type;
+
+            const content = document.getElementById('docModalContent');
+            // 根据名称显示不同的文件列表
+            let files = [];
+            if (name.includes('正式交付表')) {
+                files = [
+                    { name: '正式交付表_Assignee匹配结果.csv', size: '124.7 MB' },
+                    { name: '字段说明_正式表.pdf', size: '0.5 MB' }
+                ];
+            } else if (name.includes('详细复核表')) {
+                files = [
+                    { name: '详细复核表_candidate1-5.csv', size: '334.8 MB' },
+                    { name: '相似度得分矩阵.xlsx', size: '2.1 MB' }
+                ];
+            } else {
+                files = [
+                    { name: name + '.pdf', size: '1.2 MB' },
+                    { name: name + '_summary.md', size: '12 KB' },
+                    { name: 'data_spec.json', size: '45 KB' }
+                ];
+            }
+            // 追加跑数摘要
+            content.innerHTML = `
+                <div class="text-sm text-gray-500 mb-2">以下资料可供下载：</div>
+                ${files.map(f => `
+                    <div class="file-item">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>${f.name}</span>
+                        <span class="text-xs text-gray-400">${f.size}</span>
+                        <span class="file-action" onclick="showToast('📥 下载 ${f.name}')">下载</span>
+                    </div>
+                `).join('')}
+                <div class="text-xs text-gray-400 mt-2 border-t pt-2">
+                    📊 跑数摘要：标准化记录 1,027,729 条 | 最终匹配 299,593 条 | 未匹配 728,136 条
+                </div>
+            `;
+            document.getElementById('docModal').classList.add('active');
+        }
+
+        function closeDocModal() {
+            document.getElementById('docModal').classList.remove('active');
+        }
+
+        // ================================================================
+        //  Toast
+        // ================================================================
+        let toastTimer = null;
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // ================================================================
+        //  初始化
+        // ================================================================
+        document.getElementById('docModal').addEventListener('click', function(e) {
+            if (e.target === this) closeDocModal();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            renderProjects();
+            console.log('✅ 量潮数据 · 真实 USPTO 项目已加载');
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>量潮数据 · 仪表盘</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        body {
+            background: #f1f5f9;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* ── 进度条 ── */
+        .progress-track {
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.6s ease;
+            background: linear-gradient(90deg, #4f46e5, #3b82f6);
+        }
+        .progress-fill.done {
+            background: linear-gradient(90deg, #10b981, #34d399);
+        }
+        .progress-fill.active {
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+        }
+
+        /* ── 项目大卡片（仪表盘风格） ── */
+        .gauge-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem 2rem;
+            border: 1px solid #f1f5f9;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+        .gauge-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .gauge-card .gauge-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1;
+        }
+        .gauge-card .gauge-label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        /* ── 顶部统计小卡片 ── */
+        .stat-pill {
+            background: white;
+            border-radius: 14px;
+            padding: 0.6rem 1.2rem;
+            border: 1px solid #f1f5f9;
+            text-align: center;
+            transition: all 0.15s;
+            cursor: pointer;
+        }
+        .stat-pill:hover {
+            border-color: #cbd5e1;
+        }
+        .stat-pill.active-filter {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.12);
+        }
+        .stat-pill .num {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .stat-pill .lbl {
+            font-size: 0.65rem;
+            color: #94a3b8;
+        }
+
+        /* ── 侧栏 ── */
+        .sidebar-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            cursor: pointer;
+            color: #94a3b8;
+        }
+        .sidebar-icon:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        .sidebar-icon.active {
+            background: #e0e7ff;
+            color: #4f46e5;
+        }
+
+        /* ── 页面切换 ── */
+        .page { display: none; }
+        .page.active { display: block; }
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+
+        /* ── 详情页样式（复用） ── */
+        .timeline {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e2e8f0;
+        }
+        .timeline-item {
+            position: relative;
+            padding: 0.5rem 0 0.5rem 1.2rem;
+            border-left: 3px solid transparent;
+            margin-bottom: 0.5rem;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.5rem;
+            top: 0.6rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #e2e8f0;
+            background: white;
+        }
+        .timeline-item.done::before { border-color: #10b981; background: #10b981; }
+        .timeline-item.done { border-left-color: #10b981; }
+        .timeline-item.active::before { border-color: #3b82f6; background: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+        .timeline-item.active { border-left-color: #3b82f6; }
+        .timeline-item.waiting::before { border-color: #94a3b8; }
+        .tl-deliverable {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 0.8rem; padding: 0.2rem 0;
+        }
+        .tl-deliverable .dl-icon { color: #94a3b8; font-size: 0.6rem; }
+        .tl-deliverable .dl-action {
+            color: #4f46e5; cursor: pointer; margin-left: auto;
+            font-size: 0.7rem; font-weight: 500;
+        }
+        .tl-deliverable .dl-action:hover { text-decoration: underline; }
+
+        .blueprint-section .step-item {
+            display: flex; gap: 0.6rem; align-items: flex-start;
+            padding: 0.3rem 0; font-size: 0.85rem; color: #475569;
+        }
+        .blueprint-section .step-num {
+            background: #4f46e5; color: white;
+            width: 22px; height: 22px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.65rem; font-weight: 600; flex-shrink: 0;
+        }
+        .delivery-card {
+            border: 1px solid #f1f5f9; border-radius: 12px;
+            padding: 0.8rem 1rem; margin-bottom: 0.5rem;
+        }
+        .delivery-card .dc-header {
+            font-weight: 600; font-size: 0.85rem; color: #1e293b;
+            display: flex; align-items: center; gap: 0.4rem;
+        }
+        .delivery-card .dc-item {
+            display: flex; align-items: center; gap: 0.4rem;
+            font-size: 0.8rem; padding: 0.15rem 0; color: #475569;
+        }
+        .dstatus.done { color: #10b981; }
+        .dstatus.active { color: #3b82f6; }
+        .dc-dim-label {
+            font-size: 0.6rem; color: #94a3b8; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            margin: 0.3rem 0 0.1rem;
+        }
+
+        .toast {
+            position: fixed; bottom: 2rem; left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #1e293b; color: white;
+            padding: 0.6rem 1.5rem; border-radius: 12px;
+            font-size: 0.85rem; opacity: 0;
+            transition: all 0.4s ease; z-index: 1000;
+            pointer-events: none;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <div id="app" class="flex min-h-screen">
+
+        <!-- ===== 侧栏 ===== -->
+        <aside class="w-20 bg-white border-r border-gray-100 flex flex-col items-center py-4 gap-0.5 flex-shrink-0 h-screen sticky top-0 z-10">
+            <div class="text-xl font-bold text-indigo-600 mb-3">量</div>
+            <div class="sidebar-icon active" onclick="navigateTo('dashboard')" title="仪表盘" id="nav-dashboard">
+                <i class="fas fa-tachometer-alt text-lg"></i>
+            </div>
+            <div class="mt-auto sidebar-icon" title="帮助">
+                <i class="fas fa-question-circle text-lg"></i>
+            </div>
+        </aside>
+
+        <main class="flex-1 p-6 md:p-8 max-w-6xl overflow-y-auto h-screen">
+
+            <!-- ===== 首页：仪表盘 ===== -->
+            <div id="page-dashboard" class="page active">
+
+                <!-- 顶部标题 -->
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">仪表盘</h1>
+                        <p class="text-sm text-gray-400 mt-0.5">交付进度总览 · 实时更新</p>
+                    </div>
+                    <div class="text-xs text-gray-300" id="updateTime"></div>
+                </div>
+
+                <!-- 统计药丸 -->
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <div class="stat-pill active-filter" onclick="filterProjects('all', this)">
+                        <div class="num" id="statAll">0</div>
+                        <div class="lbl">全部项目</div>
+                    </div>
+                    <div class="stat-pill" onclick="filterProjects('active', this)">
+                        <div class="num text-amber-500" id="statActive">0</div>
+                        <div class="lbl">进行中</div>
+                    </div>
+                    <div class="stat-pill" onclick="filterProjects('done', this)">
+                        <div class="num text-emerald-500" id="statDone">0</div>
+                        <div class="lbl">已完成</div>
+                    </div>
+                    <div class="stat-pill" onclick="filterProjects('pending', this)">
+                        <div class="num text-gray-400" id="statPending">0</div>
+                        <div class="lbl">待启动</div>
+                    </div>
+                </div>
+
+                <!-- 项目列表（仪表盘卡片） -->
+                <div class="space-y-4" id="projectList">
+                    <!-- 由 JS 动态渲染 -->
+                </div>
+
+                <div class="text-xs text-gray-300 mt-6 text-center">点击项目卡片查看完整交付目标与时间线</div>
+            </div>
+
+            <!-- ===== 项目详情页 ===== -->
+            <div id="page-timeline" class="page">
+                <div class="flex items-center gap-3 mb-4">
+                    <button class="text-gray-400 hover:text-gray-600" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-left"></i></button>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <h1 class="text-xl font-bold text-gray-800" id="tlTitle">项目名称</h1>
+                            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full" id="tlStatus">进行中</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full font-medium" id="tlPhase">调研</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-0.5" id="tlClient">创建于 —</p>
+                    </div>
+                    <div class="text-right flex-shrink-0">
+                        <div class="text-2xl font-bold text-gray-800" id="tlProgressPct">0%</div>
+                        <div class="text-xs text-gray-400">交付进度</div>
+                    </div>
+                </div>
+
+                <!-- 交付目标 -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-5 mb-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-bullseye text-indigo-500"></i>
+                        <span class="font-semibold text-gray-700">交付目标</span>
+                        <span class="text-xs text-gray-400">| 每个阶段需要交付的内容</span>
+                    </div>
+                    <div id="tlDeliveryTarget"></div>
+                </div>
+
+                <!-- 完整数据蓝图 -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-5 mb-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-code-branch text-indigo-500"></i>
+                        <span class="font-semibold text-gray-700">完整数据蓝图</span>
+                        <span class="text-xs text-gray-400">| 处理流程 + 异常预案</span>
+                    </div>
+                    <div class="mb-3">
+                        <div class="text-xs font-semibold text-blue-500 uppercase tracking-wider mb-2">处理流程</div>
+                        <div id="tlBlueprintSteps" class="blueprint-section"></div>
+                    </div>
+                    <div>
+                        <div class="text-xs font-semibold text-amber-500 uppercase tracking-wider mb-2">异常处理预案</div>
+                        <div id="tlBlueprintExceptions" class="blueprint-section"></div>
+                    </div>
+                </div>
+
+                <!-- 交付时间线 -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-clock text-indigo-400"></i>
+                        <span class="font-semibold text-gray-700">交付时间线</span>
+                        <span class="text-xs text-gray-400">| 每个阶段的交付物</span>
+                    </div>
+                    <div class="timeline" id="tlTimeline"></div>
+                </div>
+
+                <div class="text-center text-xs text-gray-300 mt-4">点击「查看资料」获取交付物文件</div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // ================================================================
+        //  项目数据
+        // ================================================================
+        const projects = {
+            'USPTO受让人标准化与上市公司匹配': {
+                name: 'USPTO受让人标准化与上市公司匹配',
+                client: '金融课题组 · 实证研究',
+                created: '2026-07-01',
+                contractMonths: 1,
+                status: '已完成',
+                currentPhase: '复盘',
+                deliveryTarget: [{
+                    phase: '数据准备',
+                    items: [
+                        { name: 'USPTO原始数据下载', status: 'done', dim: '数据' },
+                        { name: '公司名称标准化', status: 'done', dim: '数据' },
+                        { name: '映射表构建(CRSP等)', status: 'done', dim: '数据' }
+                    ]
+                }, {
+                    phase: '匹配与审核',
+                    items: [
+                        { name: '多候选模糊匹配', status: 'done', dim: '数据' },
+                        { name: '规则分流与AI审核', status: 'done', dim: '数据' },
+                        { name: '回填合并导出', status: 'done', dim: '数据' }
+                    ]
+                }, {
+                    phase: '交付',
+                    items: [
+                        { name: '正式交付表(124.7MB)', status: 'done', dim: '数据' },
+                        { name: '详细复核表(334.8MB)', status: 'done', dim: '数据' }
+                    ]
+                }],
+                blueprint: {
+                    steps: [
+                        'USPTO Assignee 原始数据下载/准备：使用 USPTO Trademark Assignment Dataset 中的 Assignee 数据。',
+                        '公司名称标准化：清洗 eename 并生成 name_std，统一大小写、符号、常见后缀等。',
+                        '上市公司映射表构建：整合 CRSP、COMPUSTAT、WRDS、CIQ 等来源，生成统一 map.dta。',
+                        '多候选匹配：先精确匹配，再用 n-gram + RapidFuzz 做模糊匹配，保留多个候选 (candidate_1 至 candidate_5)。',
+                        '规则分流：按匹配类型、核心词相似度、法律后缀、罗马数字等规则自动通过/拒绝/进入审核。',
+                        'AI 审核：对待审核组进行批量 AI 判断，选择候选编号或判定无匹配。',
+                        '回填与合并导出：将自动处理结果和 AI 审核结果回填明细，生成正式交付表和详细复核表。'
+                    ],
+                    exceptions: [
+                        { label: '精确匹配优先', strategy: '自动通过，确保高置信度' },
+                        { label: '无候选', strategy: '自动判定为无匹配' },
+                        { label: '罗马数字不一致', strategy: '自动拒绝，降低误配风险' },
+                        { label: '仅法律后缀差异', strategy: '核心名称一致则自动通过' },
+                        { label: '核心名称包含/缩写等', strategy: '进入 AI / 人工审核，避免误判' }
+                    ]
+                },
+                phases: [{
+                    name: '数据准备与标准化',
+                    status: 'done',
+                    items: [
+                        { name: 'USPTO原始受让人数据', desc: '从USPTO商标转让数据集获取Assignee原始数据', hasDoc: true, type: '原始数据' },
+                        { name: '公司名称标准化', desc: '统一大小写、符号、常见后缀，生成name_std字段', hasDoc: true, type: '处理脚本' }
+                    ]
+                }, {
+                    name: '映射表构建与多候选匹配',
+                    status: 'done',
+                    items: [
+                        { name: '上市公司映射表整合', desc: '整合CRSP/COMPUSTAT/WRDS/CIQ生成统一map.dta', hasDoc: true, type: '映射表' },
+                        { name: '多候选模糊匹配', desc: '精确匹配 + n-gram/RapidFuzz，保留candidate_1至candidate_5', hasDoc: true, type: '匹配结果' }
+                    ]
+                }, {
+                    name: '规则分流、AI审核与最终交付',
+                    status: 'done',
+                    items: [
+                        { name: '规则分流与AI审核', desc: '自动通过/拒绝/进入审核，AI批量决策匹配候选编号', hasDoc: true, type: '审核记录' },
+                        { name: '导出正式交付表', desc: '124.7MB，面向客户的最终匹配结果表', hasDoc: true, type: '交付文件' },
+                        { name: '导出详细复核表', desc: '334.8MB，保留candidate_1至candidate_5，供客户自行筛选', hasDoc: true, type: '交付文件' }
+                    ]
+                }]
+            }
+        };
+
+        // ================================================================
+        //  渲染与交互
+        // ================================================================
+        let currentProject = '';
+        let filter = 'all';
+
+        function navigateTo(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const target = document.getElementById('page-' + page);
+            if (target) {
+                target.classList.add('active');
+                target.classList.add('fade-in');
+                setTimeout(() => target.classList.remove('fade-in'), 300);
+            }
+            document.querySelectorAll('.sidebar-icon').forEach(el => el.classList.remove('active'));
+            document.getElementById('nav-dashboard')?.classList.add('active');
+            if (page === 'dashboard') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function filterProjects(val, el) {
+            filter = val;
+            document.querySelectorAll('.stat-pill').forEach(p => p.classList.remove('active-filter'));
+            if (el) el.classList.add('active-filter');
+            renderProjects();
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const s = now.getFullYear() + '-' +
+                String(now.getMonth()+1).padStart(2,'0') + '-' +
+                String(now.getDate()).padStart(2,'0') + ' ' +
+                String(now.getHours()).padStart(2,'0') + ':' +
+                String(now.getMinutes()).padStart(2,'0');
+            document.getElementById('updateTime').textContent = '更新于 ' + s;
+        }
+
+        function renderProjects() {
+            const container = document.getElementById('projectList');
+            container.innerHTML = '';
+            let allCount = 0, activeCount = 0, doneCount = 0, pendingCount = 0;
+
+            Object.entries(projects).forEach(([key, p]) => {
+                // 计算进度
+                let doneItems = 0, totalItems = 0;
+                if (p.deliveryTarget) {
+                    p.deliveryTarget.forEach(dt => {
+                        dt.items.forEach(item => {
+                            totalItems++;
+                            if (item.status === 'done') doneItems++;
+                        });
+                    });
+                }
+                const progress = totalItems > 0 ? Math.round((doneItems / totalItems) * 100) : 0;
+
+                // 状态映射
+                let statusKey = 'active';
+                if (progress >= 100) statusKey = 'done';
+                else if (progress === 0) statusKey = 'pending';
+
+                // 统计
+                allCount++;
+                if (statusKey === 'done') doneCount++;
+                else if (statusKey === 'pending') pendingCount++;
+                else activeCount++;
+
+                // 过滤
+                if (filter === 'active' && statusKey !== 'active') return;
+                if (filter === 'done' && statusKey !== 'done') return;
+                if (filter === 'pending' && statusKey !== 'pending') return;
+
+                // 合同进度模拟
+                const totalDays = (p.contractMonths || 1) * 30;
+                const elapsedDays = Math.min(totalDays, Math.round((progress / 100) * totalDays));
+
+                // 状态标签
+                const statusLabel = statusKey === 'done' ? '已完成' : (statusKey === 'pending' ? '待启动' : '进行中');
+                const statusCls = statusKey === 'done' ? 'bg-emerald-100 text-emerald-700' :
+                    (statusKey === 'pending' ? 'bg-gray-100 text-gray-500' : 'bg-amber-100 text-amber-700');
+
+                // 进度条颜色
+                const barCls = statusKey === 'done' ? 'done' : (statusKey === 'active' ? 'active' : '');
+
+                const card = document.createElement('div');
+                card.className = 'gauge-card fade-in';
+                card.setAttribute('onclick', `showTimeline('${key}')`);
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-3 flex-wrap">
+                                <span class="font-semibold text-gray-800 text-lg">${p.name}</span>
+                                <span class="text-xs px-2 py-0.5 rounded-full font-medium ${statusCls}">${statusLabel}</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mt-1">${p.client}</p>
+                        </div>
+                        <div class="text-right flex-shrink-0">
+                            <div class="gauge-number ${statusKey === 'done' ? 'text-emerald-500' : (statusKey === 'active' ? 'text-amber-500' : 'text-gray-400')}">${progress}%</div>
+                            <div class="gauge-label">交付进度</div>
+                        </div>
+                    </div>
+
+                    <!-- 进度条 -->
+                    <div class="mt-4">
+                        <div class="progress-track">
+                            <div class="progress-fill ${barCls}" style="width:${progress}%"></div>
+                        </div>
+                        <div class="flex justify-between mt-1.5">
+                            <span class="text-xs text-gray-400">${elapsedDays}天 / ${totalDays}天</span>
+                            <span class="text-xs text-gray-400">交付物 ${doneItems}/${totalItems}</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            // 更新统计
+            document.getElementById('statAll').textContent = allCount;
+            document.getElementById('statActive').textContent = activeCount;
+            document.getElementById('statDone').textContent = doneCount;
+            document.getElementById('statPending').textContent = pendingCount;
+        }
+
+        function showTimeline(name) {
+            currentProject = name;
+            const data = projects[name];
+            if (!data) { showToast('项目数据不存在', false); return; }
+
+            // 计算进度
+            let doneItems = 0, totalItems = 0;
+            if (data.deliveryTarget) {
+                data.deliveryTarget.forEach(dt => {
+                    dt.items.forEach(item => {
+                        totalItems++;
+                        if (item.status === 'done') doneItems++;
+                    });
+                });
+            }
+            const progress = totalItems > 0 ? Math.round((doneItems / totalItems) * 100) : 0;
+
+            document.getElementById('tlTitle').textContent = data.name;
+            document.getElementById('tlClient').textContent = '创建于 ' + data.created;
+            document.getElementById('tlStatus').textContent = data.status;
+            document.getElementById('tlProgressPct').textContent = progress + '%';
+
+            const phaseMap = { '调研': 'research', '谈判': 'negotiate', '实施': 'implement', '验收': 'accept', '复盘': 'review' };
+            const phaseTag = document.getElementById('tlPhase');
+            phaseTag.textContent = data.currentPhase + '阶段';
+            phaseTag.className = 'text-xs px-2 py-0.5 rounded-full font-medium phase-tag ' + (phaseMap[data.currentPhase] || '');
+
+            // 交付目标
+            const dtContainer = document.getElementById('tlDeliveryTarget');
+            let html = '';
+            data.deliveryTarget.forEach(dt => {
+                const grouped = {};
+                dt.items.forEach(item => {
+                    if (!grouped[item.dim]) grouped[item.dim] = [];
+                    grouped[item.dim].push(item);
+                });
+                const dimOrder = ['项目', '数据', '商务'];
+                html += `<div class="delivery-card">
+                    <div class="dc-header"><i class="fas fa-chevron-right text-indigo-400 text-xs"></i> ${dt.phase}阶段</div>`;
+                dimOrder.forEach(dim => {
+                    if (!grouped[dim]) return;
+                    html += `<div class="dc-dim-label">${dim}</div>`;
+                    grouped[dim].forEach(item => {
+                        const st = item.status;
+                        html += `<div class="dc-item"><span class="dstatus ${st}"><i class="fas fa-${st === 'done' ? 'check-circle' : (st === 'active' ? 'spinner' : 'circle')}"></i></span> ${item.name}</div>`;
+                    });
+                });
+                html += `</div>`;
+            });
+            dtContainer.innerHTML = html;
+
+            // 蓝图
+            const stepsContainer = document.getElementById('tlBlueprintSteps');
+            stepsContainer.innerHTML = data.blueprint.steps.map((s, i) =>
+                `<div class="step-item"><span class="step-num">${i+1}</span><span class="step-text">${s}</span></div>`
+            ).join('');
+
+            const exContainer = document.getElementById('tlBlueprintExceptions');
+            exContainer.innerHTML = data.blueprint.exceptions.map(e =>
+                `<div class="step-item exception-item"><span class="text-xs font-semibold text-gray-700 min-w-[100px]">${e.label}</span><span class="text-xs text-gray-500">${e.strategy}</span></div>`
+            ).join('');
+
+            // 时间线
+            const timeline = document.getElementById('tlTimeline');
+            const statusMap2 = { 'done': '已完成', 'active': '进行中', 'waiting': '待处理' };
+            let itemsHtml = '';
+            data.phases.forEach(ph => {
+                const statusLabel = statusMap2[ph.status] || ph.status;
+                const statusCls = ph.status;
+                itemsHtml += `<div class="timeline-item ${statusCls}">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="font-semibold text-sm text-gray-700">${ph.name}</span>
+                        <span class="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-500">${statusLabel}</span>
+                    </div>`;
+                ph.items.forEach(item => {
+                    itemsHtml += `<div class="tl-deliverable">
+                        <span class="dl-icon"><i class="fas fa-file"></i></span>
+                        <span>${item.name}</span>
+                        <span class="text-xs text-gray-400">${item.type}</span>
+                        <span class="dl-action" onclick="event.stopPropagation(); showDoc('${item.name}')">查看资料</span>
+                    </div>`;
+                });
+                itemsHtml += `</div>`;
+            });
+            timeline.innerHTML = itemsHtml;
+
+            navigateTo('timeline');
+        }
+
+        function showDoc(name) {
+            showToast('📄 ' + name + ' — 文件资料（模拟）');
+        }
+
+        let toastTimer;
+        function showToast(msg, ok = true) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.style.background = ok ? '#1e293b' : '#dc2626';
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // ================================================================
+        //  初始化
+        // ================================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTime();
+            renderProjects();
+            setInterval(updateTime, 30000); // 每30秒更新时间
+            console.log('✅ 量潮数据 · 仪表盘已加载');
+        });
+    </script>
+</body>
+</html>
