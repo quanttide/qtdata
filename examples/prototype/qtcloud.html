@@ -1,0 +1,2278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>量潮数据云 · 客户端原型</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        body {
+            background: #f1f5f9;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .sidebar-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            cursor: pointer;
+            color: #94a3b8;
+            position: relative;
+        }
+        .sidebar-icon:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        .sidebar-icon.active {
+            background: #e0e7ff;
+            color: #4f46e5;
+        }
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+            padding: 0.5rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.15s;
+        }
+        .btn-primary:hover {
+            background: #4338ca;
+        }
+        .btn-outline {
+            background: white;
+            color: #475569;
+            padding: 0.5rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.15s;
+        }
+        .btn-outline:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+        .btn-success {
+            background: #10b981;
+            color: white;
+            padding: 0.5rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.15s;
+        }
+        .btn-success:hover {
+            background: #059669;
+        }
+        .btn-purple {
+            background: #7c3aed;
+            color: white;
+            padding: 0.5rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.15s;
+        }
+        .btn-purple:hover {
+            background: #6d28d9;
+        }
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.7rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.6rem 0.9rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            background: white;
+            font-family: inherit;
+            transition: all 0.15s;
+            color: #1e293b;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        .form-input::placeholder {
+            color: #94a3b8;
+        }
+        .form-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #1e293b;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1000;
+            pointer-events: none;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .project-card {
+            background: white;
+            border-radius: 14px;
+            padding: 1rem 1.25rem;
+            border: 1px solid #f1f5f9;
+            cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+        .project-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+        .project-card .status-badge {
+            font-size: 0.6rem;
+            padding: 0.1rem 0.6rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        .project-card .status-badge.active {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .project-card .status-badge.done {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .project-card .status-badge.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .project-card .progress-bar-bg {
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .project-card .progress-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        .project-card .progress-bar-fill.blue {
+            background: #4f46e5;
+        }
+        .project-card .progress-bar-fill.green {
+            background: #10b981;
+        }
+        .project-card .progress-bar-fill.amber {
+            background: #f59e0b;
+        }
+
+        .phase-tag {
+            font-size: 0.6rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        .phase-tag.research {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .phase-tag.negotiate {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .phase-tag.implement {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .phase-tag.accept {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+        .phase-tag.review {
+            background: #fce7f3;
+            color: #9d174d;
+        }
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .badge-dot.green {
+            background: #10b981;
+        }
+        .badge-dot.amber {
+            background: #f59e0b;
+        }
+        .badge-dot.blue {
+            background: #4f46e5;
+        }
+        .badge-dot.gray {
+            background: #94a3b8;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.2rem;
+            background: #f1f5f9;
+            padding: 0.2rem;
+            border-radius: 8px;
+        }
+        .filter-group button {
+            padding: 0.2rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-weight: 500;
+        }
+        .filter-group button.active {
+            background: white;
+            color: #1e293b;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+        .filter-group button:hover:not(.active) {
+            color: #1e293b;
+        }
+        .stat-card-click {
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .stat-card-click:hover {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+        }
+        .stat-card-click.active-filter {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+        }
+        .blueprint-card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #f1f5f9;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+        .blueprint-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .exception-config-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.5rem 0.8rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            flex-wrap: wrap;
+        }
+        .exception-config-item .ex-label-input {
+            flex: 1;
+            min-width: 100px;
+        }
+        .exception-config-item .ex-label-input input {
+            width: 100%;
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            background: white;
+            outline: none;
+            font-family: inherit;
+        }
+        .exception-config-item .ex-label-input input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+        }
+        .exception-config-item .ex-desc-input {
+            flex: 1.5;
+            min-width: 120px;
+        }
+        .exception-config-item .ex-desc-input input {
+            width: 100%;
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            background: white;
+            outline: none;
+            font-family: inherit;
+        }
+        .exception-config-item .ex-desc-input input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+        }
+        .exception-config-item select {
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            background: white;
+            outline: none;
+            font-family: inherit;
+            cursor: pointer;
+            min-width: 140px;
+        }
+        .exception-config-item select:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+        }
+        .exception-config-item .ex-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            flex-shrink: 0;
+        }
+        .exception-config-item .ex-actions .btn-danger {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.5rem;
+        }
+        .exception-empty {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            padding: 1.5rem;
+            border: 1px dashed #d1d5db;
+            border-radius: 10px;
+        }
+
+        .editable-textarea {
+            width: 100%;
+            padding: 0.6rem 0.9rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            background: white;
+            font-family: inherit;
+            transition: all 0.15s;
+            color: #1e293b;
+            min-height: 80px;
+            resize: vertical;
+        }
+        .editable-textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        .editable-textarea::placeholder {
+            color: #94a3b8;
+        }
+        .editable-textarea-sm {
+            min-height: 60px;
+        }
+        .auto-select:focus {
+            outline: none;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.2fr;
+            gap: 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .data-grid .grid-header {
+            background: #f8fafc;
+            padding: 0.4rem 0.8rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+            color: #475569;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .data-grid .grid-cell {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #f1f5f9;
+            background: white;
+        }
+        .data-grid .grid-cell .field {
+            font-weight: 500;
+            color: #1e293b;
+        }
+        .data-grid .grid-cell .hint {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            display: block;
+            margin-top: 0.05rem;
+        }
+
+        .step-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .step-timeline .step-item {
+            display: flex;
+            gap: 0.8rem;
+            align-items: flex-start;
+        }
+        .step-timeline .step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #4f46e5;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        .step-timeline .step-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #1e293b;
+        }
+        .step-timeline .step-desc {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 0.05rem;
+        }
+
+        .rule-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.4rem;
+        }
+        .rule-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 0.5rem 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: #1e293b;
+        }
+        .rule-item .check {
+            color: #10b981;
+        }
+        @media (max-width: 640px) {
+            .rule-list {
+                grid-template-columns: 1fr;
+            }
+            .data-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .data-grid .grid-header:last-child {
+                display: none;
+            }
+            .data-grid .grid-cell:last-child {
+                display: none;
+            }
+        }
+
+        .exception-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.5rem 0.8rem;
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: #92400e;
+        }
+        .exception-item .ex-icon {
+            color: #f59e0b;
+            font-size: 1rem;
+        }
+        .exception-item .ex-strategy {
+            background: white;
+            padding: 0.1rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .detail-exception-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.4rem 0.8rem;
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: #92400e;
+            margin-bottom: 0.4rem;
+        }
+        .detail-exception-item .de-icon {
+            color: #f59e0b;
+            font-size: 1rem;
+        }
+        .detail-exception-item .de-strategy {
+            background: white;
+            padding: 0.1rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+            margin-left: auto;
+        }
+
+        .detail-rule-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.75rem;
+            color: #1e293b;
+            display: inline-block;
+            margin: 0.2rem;
+        }
+        .detail-rule-item .check {
+            color: #10b981;
+            margin-right: 0.3rem;
+        }
+
+        .detail-process-step {
+            display: flex;
+            gap: 0.8rem;
+            padding: 0.5rem 0.8rem;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+            margin-bottom: 0.4rem;
+        }
+        .detail-process-step .step-num {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #22c55e;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+        .detail-process-step .step-text {
+            font-size: 0.85rem;
+            color: #1e293b;
+            flex: 1;
+        }
+
+        .delivery-item {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 0.8rem;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            margin-bottom: 0.4rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .delivery-item:hover {
+            border-color: #4f46e5;
+            background: #f8faff;
+        }
+        .delivery-item .delivery-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1rem;
+            font-size: 0.8rem;
+            color: #1e293b;
+        }
+        .delivery-item .delivery-meta .name {
+            font-weight: 500;
+        }
+        .delivery-item .delivery-meta .detail {
+            color: #64748b;
+            font-size: 0.7rem;
+        }
+        .delivery-item .delivery-status {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.6rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        .delivery-status.passed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .delivery-status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .delivery-status.modify {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .quality-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin: 0.3rem 0;
+        }
+        .quality-bar .label {
+            width: 100px;
+            font-size: 0.8rem;
+            color: #475569;
+            flex-shrink: 0;
+        }
+        .quality-bar .bar-bg {
+            flex: 1;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .quality-bar .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        .quality-bar .bar-fill.green {
+            background: #10b981;
+        }
+        .quality-bar .bar-fill.amber {
+            background: #f59e0b;
+        }
+        .quality-bar .bar-fill.red {
+            background: #ef4444;
+        }
+        .quality-bar .value {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #1e293b;
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: white;
+            border-radius: 24px;
+            max-width: 640px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeSlide 0.3s ease;
+        }
+        .modal-box::-webkit-scrollbar {
+            width: 4px;
+        }
+        .modal-box::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .modal-box .file-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0.5rem;
+            background: #f8fafc;
+            border-radius: 6px;
+            font-size: 0.8rem;
+        }
+        .modal-box .file-item i {
+            color: #4f46e5;
+        }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .delivery-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.8rem;
+        }
+        .delivery-stats .stat-item {
+            background: white;
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            text-align: center;
+            border: 1px solid #f1f5f9;
+        }
+        .delivery-stats .stat-item .number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .delivery-stats .stat-item .label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+        .delivery-stats .stat-item .number.green {
+            color: #10b981;
+        }
+        .delivery-stats .stat-item .number.amber {
+            color: #f59e0b;
+        }
+        .delivery-stats .stat-item .number.red {
+            color: #ef4444;
+        }
+        .delivery-stats .stat-item .number.blue {
+            color: #4f46e5;
+        }
+        @media (max-width: 640px) {
+            .delivery-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .opinion-textarea {
+            min-height: 60px;
+        }
+        .opinion-submit-btn {
+            background: #4f46e5;
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .opinion-submit-btn:hover {
+            background: #4338ca;
+        }
+        .opinion-list-item {
+            padding: 0.5rem 0.8rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #1e293b;
+            margin-bottom: 0.4rem;
+        }
+        .opinion-list-item .opinion-meta {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            margin-top: 0.2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- 交付详情弹窗 -->
+    <div id="deliveryDetailModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800" id="deliveryDetailTitle">交付详情</h2>
+                    <p class="text-sm text-gray-400" id="deliveryDetailTime">时间</p>
+                </div>
+                <button class="text-gray-400 hover:text-gray-600 text-xl" onclick="closeDeliveryDetail()">&times;</button>
+            </div>
+            <div class="mb-4">
+                <div class="text-xs font-semibold text-indigo-500 uppercase tracking-wider mb-1">交付物清单</div>
+                <div id="deliveryDetailFiles" class="space-y-1"></div>
+            </div>
+            <div class="mb-4">
+                <div class="text-xs font-semibold text-green-500 uppercase tracking-wider mb-1">质量报告</div>
+                <div id="deliveryDetailQuality" class="bg-gray-50 rounded-xl p-3"></div>
+            </div>
+            <div class="mb-4">
+                <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">处理日志</div>
+                <div id="deliveryDetailLog" class="bg-gray-50 rounded-xl p-3 text-sm text-gray-700"></div>
+            </div>
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-gray-100">
+                <div>
+                    <span class="text-sm text-gray-500">验收状态：</span>
+                    <span id="deliveryDetailStatusBadge" class="delivery-status pending">待验收</span>
+                </div>
+                <button class="btn-primary text-sm" onclick="reDeliver()"><i class="fas fa-redo"></i> 重新交付</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="app" class="flex min-h-screen">
+
+        <!-- 侧边栏 -->
+        <aside class="w-20 bg-white border-r border-gray-100 flex flex-col items-center py-4 gap-0.5 flex-shrink-0 h-screen sticky top-0 z-10">
+            <div class="text-xl font-bold text-indigo-600 mb-3">量</div>
+            <div class="sidebar-icon active" onclick="navigateTo('dashboard')" title="首页看板" id="nav-dashboard">
+                <i class="fas fa-th-large text-lg"></i>
+            </div>
+            <div class="sidebar-icon" onclick="navigateTo('blueprints')" title="蓝图列表" id="nav-blueprints">
+                <i class="fas fa-folder text-lg"></i>
+            </div>
+            <div class="sidebar-icon" onclick="navigateTo('new-request')" title="需求录入" id="nav-new-request">
+                <i class="fas fa-plus-circle text-lg"></i>
+            </div>
+            <div class="mt-auto sidebar-icon" title="设置">
+                <i class="fas fa-user-circle text-lg"></i>
+            </div>
+        </aside>
+
+        <!-- 主内容 -->
+        <main class="flex-1 p-5 md:p-7 max-w-6xl overflow-y-auto h-screen">
+
+            <!-- ====== 首页看板 ====== -->
+            <div id="page-dashboard" class="page active">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                    <div><h1 class="text-2xl font-bold text-gray-800">项目看板</h1><p class="text-sm text-gray-400 mt-0.5">所有数据处理项目的进度总览</p></div>
+                    <button class="btn-primary" onclick="navigateTo('new-request')"><i class="fas fa-plus"></i> 新建需求</button>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                    <div class="bg-white rounded-xl border border-gray-100 p-3 stat-card-click active-filter" onclick="filterProjects('all', this)">
+                        <div class="flex items-center justify-between">
+                            <div><div class="text-xl font-bold text-gray-800">4</div><div class="text-xs text-gray-400">全部项目</div></div>
+                            <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm"><i class="fas fa-folder"></i></div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-100 p-3 stat-card-click" onclick="filterProjects('active', this)">
+                        <div class="flex items-center justify-between">
+                            <div><div class="text-xl font-bold text-amber-500">2</div><div class="text-xs text-gray-400">进行中</div></div>
+                            <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center text-sm"><i class="fas fa-spinner"></i></div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-100 p-3 stat-card-click" onclick="filterProjects('done', this)">
+                        <div class="flex items-center justify-between">
+                            <div><div class="text-xl font-bold text-green-500">1</div><div class="text-xs text-gray-400">已完成</div></div>
+                            <div class="w-8 h-8 rounded-full bg-green-50 text-green-500 flex items-center justify-center text-sm"><i class="fas fa-check"></i></div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-100 p-3 stat-card-click" onclick="filterProjects('pending', this)">
+                        <div class="flex items-center justify-between">
+                            <div><div class="text-xl font-bold text-gray-400">1</div><div class="text-xs text-gray-400">待启动</div></div>
+                            <div class="w-8 h-8 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center text-sm"><i class="fas fa-clock"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mb-3">
+                    <div class="filter-group">
+                        <button class="active" onclick="filterProjects('all', null, this)">全部</button>
+                        <button onclick="filterProjects('active', null, this)">进行中</button>
+                        <button onclick="filterProjects('done', null, this)">已完成</button>
+                        <button onclick="filterProjects('pending', null, this)">待启动</button>
+                    </div>
+                    <span class="text-xs text-gray-400" id="projectCount">共 4 个项目</span>
+                </div>
+
+                <div class="space-y-3" id="projectList">
+                    <!-- 项目1：客户画像标准化 → 交付记录 -->
+                    <div class="project-card" onclick="showDeliveryProgress('客户画像标准化')">
+                        <div class="flex flex-wrap items-start justify-between gap-2">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-semibold text-gray-800">客户画像标准化</span>
+                                    <span class="status-badge active">进行中</span>
+                                    <span class="phase-tag research">调研</span>
+                                    <span class="text-xs text-gray-400">v1.2</span>
+                                </div>
+                                <div class="text-sm text-gray-500 mt-0.5 flex-wrap gap-3 flex">
+                                    <span><i class="far fa-user text-gray-300 mr-1"></i> 某股份制银行</span>
+                                    <span><i class="far fa-calendar text-gray-300 mr-1"></i> 2026-07-10</span>
+                                </div>
+                                <div class="flex items-center gap-3 mt-1.5">
+                                    <div class="flex-1 max-w-xs"><div class="progress-bar-bg"><div class="progress-bar-fill blue" style="width:65%;"></div></div></div>
+                                    <span class="text-xs text-gray-400">65%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-gray-400 flex-shrink-0">
+                                <span class="flex items-center gap-1"><span class="badge-dot amber"></span> 执行中</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 项目2：问卷清洗 → 交付记录 -->
+                    <div class="project-card" onclick="showDeliveryProgress('问卷清洗')">
+                        <div class="flex flex-wrap items-start justify-between gap-2">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-semibold text-gray-800">问卷清洗</span>
+                                    <span class="status-badge active">进行中</span>
+                                    <span class="phase-tag research">调研</span>
+                                    <span class="text-xs text-gray-400">v1.0</span>
+                                </div>
+                                <div class="text-sm text-gray-500 mt-0.5 flex-wrap gap-3 flex">
+                                    <span><i class="far fa-user text-gray-300 mr-1"></i> 某高校课题组</span>
+                                    <span><i class="far fa-calendar text-gray-300 mr-1"></i> 2026-07-15</span>
+                                </div>
+                                <div class="flex items-center gap-3 mt-1.5">
+                                    <div class="flex-1 max-w-xs"><div class="progress-bar-bg"><div class="progress-bar-fill blue" style="width:30%;"></div></div></div>
+                                    <span class="text-xs text-gray-400">30%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-gray-400 flex-shrink-0">
+                                <span class="flex items-center gap-1"><span class="badge-dot amber"></span> 执行中</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 项目3：电商价格数据库 → 交付记录 -->
+                    <div class="project-card" onclick="showDeliveryProgress('电商价格数据库')">
+                        <div class="flex flex-wrap items-start justify-between gap-2">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-semibold text-gray-800">电商价格数据库</span>
+                                    <span class="status-badge done">已完成</span>
+                                    <span class="phase-tag accept">验收</span>
+                                    <span class="text-xs text-gray-400">v1.0</span>
+                                </div>
+                                <div class="text-sm text-gray-500 mt-0.5 flex-wrap gap-3 flex">
+                                    <span><i class="far fa-user text-gray-300 mr-1"></i> CPP课题组</span>
+                                    <span><i class="far fa-calendar text-gray-300 mr-1"></i> 2026-06-01</span>
+                                </div>
+                                <div class="flex items-center gap-3 mt-1.5">
+                                    <div class="flex-1 max-w-xs"><div class="progress-bar-bg"><div class="progress-bar-fill green" style="width:100%;"></div></div></div>
+                                    <span class="text-xs text-gray-400">100%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-gray-400 flex-shrink-0">
+                                <span class="flex items-center gap-1"><span class="badge-dot green"></span> 已交付</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 项目4：社交媒体舆情监控 → 交付记录 -->
+                    <div class="project-card" onclick="showDeliveryProgress('社交媒体舆情监控')">
+                        <div class="flex flex-wrap items-start justify-between gap-2">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-semibold text-gray-800">社交媒体舆情监控</span>
+                                    <span class="status-badge pending">待启动</span>
+                                    <span class="phase-tag negotiate">谈判</span>
+                                    <span class="text-xs text-gray-400">草稿</span>
+                                </div>
+                                <div class="text-sm text-gray-500 mt-0.5 flex-wrap gap-3 flex">
+                                    <span><i class="far fa-user text-gray-300 mr-1"></i> 某品牌方</span>
+                                    <span><i class="far fa-calendar text-gray-300 mr-1"></i> 需求确认中</span>
+                                </div>
+                                <div class="flex items-center gap-3 mt-1.5">
+                                    <div class="flex-1 max-w-xs"><div class="progress-bar-bg"><div class="progress-bar-fill amber" style="width:10%;"></div></div></div>
+                                    <span class="text-xs text-gray-400">10%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-gray-400 flex-shrink-0">
+                                <span class="flex items-center gap-1"><span class="badge-dot gray"></span> 待启动</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-xs text-gray-300 mt-4 text-center"><i class="fas fa-info-circle mr-1"></i> 点击项目卡片查看交付记录</div>
+            </div>
+
+            <!-- ====== 交付进度页面 ====== -->
+            <div id="page-delivery-progress" class="page">
+                <div class="flex items-center gap-3 mb-4">
+                    <button class="text-gray-400 hover:text-gray-600" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-left"></i></button>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <h1 class="text-xl font-bold text-gray-800" id="deliveryProjectTitle">客户画像标准化</h1>
+                            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full" id="deliveryStatusBadge">进行中</span>
+                            <span class="phase-tag research" id="deliveryProjectPhase">调研</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-0.5" id="deliveryProjectClient">客户：某股份制银行 · 创建于 2026-07-10</p>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <button class="btn-outline text-sm" onclick="showToast('📋 已复制分享链接')"><i class="fas fa-share-alt"></i></button>
+                        <button class="btn-primary text-sm" onclick="showToast('📄 报告已导出')"><i class="fas fa-file-pdf"></i> 导出</button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-gray-100 p-4 mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-600">项目阶段</span>
+                        <span class="text-xs text-gray-400" id="deliveryPhaseText">调研阶段 · 65%</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="flex items-center gap-1 text-xs text-green-600"><span class="w-2 h-2 rounded-full bg-green-500 inline-block"></span> 调研</span>
+                        <span class="text-gray-300 text-xs">→</span>
+                        <span class="flex items-center gap-1 text-xs text-indigo-600"><span class="w-2 h-2 rounded-full bg-indigo-500 inline-block"></span> 谈判</span>
+                        <span class="text-gray-300 text-xs">→</span>
+                        <span class="flex items-center gap-1 text-xs text-gray-400"><span class="w-2 h-2 rounded-full bg-gray-300 inline-block"></span> 实施</span>
+                        <span class="text-gray-300 text-xs">→</span>
+                        <span class="flex items-center gap-1 text-xs text-gray-400"><span class="w-2 h-2 rounded-full bg-gray-300 inline-block"></span> 验收</span>
+                        <span class="text-gray-300 text-xs">→</span>
+                        <span class="flex items-center gap-1 text-xs text-gray-400"><span class="w-2 h-2 rounded-full bg-gray-300 inline-block"></span> 复盘</span>
+                    </div>
+                </div>
+
+                <div class="delivery-stats mb-4">
+                    <div class="stat-item"><div class="number blue" id="statTotal">0</div><div class="label">总交付次数</div></div>
+                    <div class="stat-item"><div class="number green" id="statPassed">0</div><div class="label">已通过</div></div>
+                    <div class="stat-item"><div class="number amber" id="statPending">0</div><div class="label">待验收</div></div>
+                    <div class="stat-item"><div class="number red" id="statModify">0</div><div class="label">需修改</div></div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-gray-100 p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-box-archive text-indigo-400"></i>
+                            <span class="font-semibold text-gray-700">交付记录</span>
+                            <span class="text-xs text-gray-400">| 按时间倒序</span>
+                        </div>
+                        <button class="btn-primary text-sm py-1 px-3" onclick="createNewDelivery()"><i class="fas fa-plus"></i> 发起新交付</button>
+                    </div>
+                    <div id="deliveryList"></div>
+                </div>
+                <div class="text-center text-xs text-gray-300 mt-4"><i class="fas fa-info-circle mr-1"></i> 点击交付记录查看详情和质量报告</div>
+            </div>
+
+            <!-- ====== 蓝图列表 ====== -->
+            <div id="page-blueprints" class="page">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+                    <div><h1 class="text-2xl font-bold text-gray-800">数据蓝图</h1><p class="text-sm text-gray-400 mt-0.5">已生成的数据处理方案 · 契约 + 异常处理</p></div>
+                    <button class="btn-primary" onclick="navigateTo('new-request')"><i class="fas fa-plus"></i> 新建蓝图</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="blueprintList">
+                    <div class="blueprint-card" onclick="navigateTo('blueprint-detail-profile')">
+                        <div class="flex items-start justify-between">
+                            <div><div class="font-semibold text-gray-800 text-lg">客户画像标准化</div><div class="text-sm text-gray-400">v1.2 · 更新于 2026-07-20</div></div>
+                            <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">已发布</span>
+                        </div>
+                        <div class="mt-2 flex flex-wrap gap-2 text-xs">
+                            <span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded">契约: CSV → 标准化</span>
+                            <span class="bg-amber-50 text-amber-700 px-2 py-0.5 rounded">异常: 3项预案</span>
+                            <span class="bg-green-50 text-green-700 px-2 py-0.5 rounded">验收: 4条规则</span>
+                        </div>
+                        <div class="mt-2 text-xs text-gray-400">进度 65% · 进行中</div>
+                    </div>
+                    <div class="blueprint-card" onclick="navigateTo('blueprint-detail-survey')">
+                        <div class="flex items-start justify-between">
+                            <div><div class="font-semibold text-gray-800 text-lg">问卷清洗</div><div class="text-sm text-gray-400">v1.0 · 更新于 2026-07-18</div></div>
+                            <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">已发布</span>
+                        </div>
+                        <div class="mt-2 flex flex-wrap gap-2 text-xs">
+                            <span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded">契约: CSV → 标准化</span>
+                            <span class="bg-amber-50 text-amber-700 px-2 py-0.5 rounded">异常: 2项预案</span>
+                            <span class="bg-green-50 text-green-700 px-2 py-0.5 rounded">验收: 4条规则</span>
+                        </div>
+                        <div class="mt-2 text-xs text-gray-400">进度 30% · 进行中</div>
+                    </div>
+                    <div id="newBlueprintPlaceholder" class="border-2 border-dashed border-gray-200 rounded-xl p-6 flex flex-col items-center justify-center min-h-[160px] cursor-pointer hover:border-indigo-400 transition" onclick="navigateTo('new-request')">
+                        <div class="text-4xl text-gray-300 mb-2"><i class="fas fa-plus-circle"></i></div>
+                        <div class="text-gray-500 font-medium">新建蓝图</div>
+                        <div class="text-xs text-gray-400 mt-1">从需求录入开始</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====== 需求录入 ====== -->
+            <div id="page-new-request" class="page">
+                <div class="flex items-center gap-3 mb-5">
+                    <button class="text-gray-400 hover:text-gray-600" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-left"></i></button>
+                    <div><h1 class="text-2xl font-bold text-gray-800">录入数据需求</h1><p class="text-sm text-gray-400 mt-0.5">填写需求 → 配置异常 → 生成蓝图</p></div>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 max-w-3xl">
+                    <form id="requestForm">
+                        <div class="space-y-4">
+                            <div><label class="form-label">项目名称 *</label><input class="form-input" id="reqName" placeholder="例如：某银行客户画像项目" required /></div>
+                            <div><label class="form-label">客户名称 *</label><input class="form-input" id="reqClient" placeholder="例如：某股份制银行" required /></div>
+                            <div><label class="form-label">数据来源 *</label>
+                                <select class="form-input" id="reqSource" required>
+                                    <option value="">请选择</option><option value="电商平台">电商平台</option><option value="社交媒体">社交媒体</option>
+                                    <option value="政务数据">政务数据</option><option value="问卷调研">问卷调研</option><option value="内部数据库">内部数据库</option><option value="其他">其他</option>
+                                </select>
+                            </div>
+                            <div><label class="form-label">数据目标</label><textarea class="form-input" id="reqGoal" rows="2" placeholder="客户想要达到什么目的？"></textarea></div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label class="form-label">采集频率</label>
+                                    <select class="form-input" id="reqFrequency"><option value="">请选择</option><option value="每小时">每小时</option><option value="每天">每天</option><option value="每周">每周</option><option value="每月">每月</option><option value="一次性">一次性</option></select>
+                                </div>
+                                <div><label class="form-label">采集周期</label><div class="flex items-center gap-2"><input class="form-input" id="reqStart" type="date" /><span class="text-gray-400">至</span><input class="form-input" id="reqEnd" type="date" /></div></div>
+                            </div>
+                            <div>
+                                <label class="form-label">关键字段 <span class="text-xs text-gray-400">（至少填写1个）</span></label>
+                                <div class="flex flex-wrap gap-2" id="fieldTags">
+                                    <span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm flex items-center gap-1">客户编号 <i class="fas fa-times text-indigo-300 cursor-pointer hover:text-indigo-600" onclick="this.parentElement.remove()"></i></span>
+                                    <span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm flex items-center gap-1">年龄 <i class="fas fa-times text-indigo-300 cursor-pointer hover:text-indigo-600" onclick="this.parentElement.remove()"></i></span>
+                                    <span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm flex items-center gap-1">性别 <i class="fas fa-times text-indigo-300 cursor-pointer hover:text-indigo-600" onclick="this.parentElement.remove()"></i></span>
+                                    <input class="form-input !w-32 !text-sm !py-1" id="newField" placeholder="添加字段" onkeydown="if(event.key==='Enter'){addField();event.preventDefault();}" />
+                                    <button type="button" class="text-sm text-indigo-500 hover:text-indigo-700" onclick="addField()">+ 添加</button>
+                                </div>
+                            </div>
+                            <div><label class="form-label">特殊要求</label><textarea class="form-input" id="reqSpecial" rows="2" placeholder="例如：需要脱敏处理、数据格式要求等"></textarea></div>
+                            <div class="flex items-center gap-3 pt-3 border-t border-gray-100">
+                                <button type="button" class="btn-purple px-6 py-2.5" onclick="submitRequest()">
+                                    <i class="fas fa-wand-magic-sparkles"></i> 生成蓝图
+                                </button>
+                                <button type="reset" class="btn-outline" onclick="resetForm()">清空</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ====== 生成数据蓝图（完整版） ====== -->
+            <div id="page-generate-blueprint" class="page">
+                <div class="flex items-center gap-3 mb-5">
+                    <button class="text-gray-400 hover:text-gray-600" onclick="navigateTo('new-request')"><i class="fas fa-arrow-left"></i></button>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">生成数据蓝图</h1>
+                        <p class="text-sm text-gray-400 mt-0.5">编辑方案概要、处理步骤、异常处理、验收标准和契约概览，然后生成蓝图</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 max-w-3xl">
+
+                    <div class="bg-gray-50 rounded-xl p-4 mb-6">
+                        <div class="flex flex-wrap gap-4 text-sm">
+                            <div><span class="text-gray-400">项目：</span><span class="font-medium" id="genProjectName">—</span></div>
+                            <div><span class="text-gray-400">客户：</span><span class="font-medium" id="genProjectClient">—</span></div>
+                            <div><span class="text-gray-400">来源：</span><span class="font-medium" id="genProjectSource">—</span></div>
+                            <div><span class="text-gray-400">字段：</span><span class="font-medium" id="genProjectFields">—</span></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-file-alt text-indigo-500"></i>
+                            <span class="font-semibold text-gray-700">方案概要</span>
+                            <span class="text-xs text-gray-400">| 一句话描述项目目标</span>
+                        </div>
+                        <textarea class="editable-textarea auto-select" id="genSummary" placeholder="例如：将多源原始客户数据清洗、标准化，输出统一的用户画像格式，确保数据质量符合下游分析要求。" onclick="this.select()">将多源原始客户数据清洗、标准化，输出统一的用户画像格式，确保数据质量符合下游分析要求。</textarea>
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-diagram-project text-blue-500"></i>
+                            <span class="font-semibold text-gray-700">数据处理过程详解</span>
+                            <span class="text-xs text-gray-400">| 每行一个步骤</span>
+                        </div>
+                        <textarea class="editable-textarea auto-select" id="genProcessSteps" placeholder="每行一个处理步骤，例如：&#10;1. 数据接收与格式校验&#10;2. 数据清洗与标准化&#10;3. 字段映射与结构化处理&#10;4. 质量验证与报告生成" onclick="this.select()">1. 数据接收与格式校验
+2. 数据清洗与标准化
+3. 字段映射与结构化处理
+4. 质量验证与报告生成</textarea>
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-shield-alt text-amber-500"></i>
+                                <span class="font-semibold text-gray-700">异常处理配置</span>
+                                <span class="text-xs text-gray-400">| 可增删改</span>
+                            </div>
+                            <button class="btn-outline text-sm py-1 px-3" onclick="addExceptionItem()">
+                                <i class="fas fa-plus"></i> 添加异常项
+                            </button>
+                        </div>
+                        <div id="exceptionList" class="space-y-2"></div>
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-check-double text-green-500"></i>
+                            <span class="font-semibold text-gray-700">验收标准</span>
+                            <span class="text-xs text-gray-400">| 每条占一行</span>
+                        </div>
+                        <textarea class="editable-textarea auto-select" id="genAcceptanceCriteria" placeholder="每行一条验收标准，例如：&#10;所有必填字段无缺失&#10;格式校验通过率 ≥ 99%&#10;异常值已标记&#10;重复数据已去重" onclick="this.select()">所有必填字段无缺失
+格式校验通过率 ≥ 99%
+异常值已标记
+重复数据已去重</textarea>
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-file-contract text-indigo-500"></i>
+                            <span class="font-semibold text-gray-700">契约概览</span>
+                            <span class="text-xs text-gray-400">| 描述输入输出关系</span>
+                        </div>
+                        <textarea class="editable-textarea editable-textarea-sm auto-select" id="genContractSummary" placeholder="描述输入输出关系，例如：&#10;输入：CSV 格式的原始客户数据（含客户编号、年龄、性别、注册日期）&#10;输出：标准化后的客户画像数据（含标准化客户编号、年龄段、性别中文、注册季度）" onclick="this.select()">输入：CSV 格式的原始客户数据（含客户编号、年龄、性别、注册日期）
+输出：标准化后的客户画像数据（含标准化客户编号、年龄段、性别中文、注册季度）</textarea>
+                        <div class="text-xs text-gray-400 mt-1"><i class="fas fa-info-circle mr-1"></i> 技术团队将根据此描述生成具体的字段映射配置</div>
+                    </div>
+
+                    <div class="flex items-center gap-3 pt-3 border-t border-gray-100">
+                        <button class="btn-success px-6 py-2.5" onclick="confirmGenerateBlueprint()"><i class="fas fa-check"></i> 确认生成蓝图</button>
+                        <button class="btn-outline" onclick="navigateTo('new-request')">返回修改</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====== 蓝图详情页（功能最全版本） ====== -->
+            <div id="page-blueprint-detail" class="page">
+                <div class="flex items-center gap-3 mb-4">
+                    <button class="text-gray-400 hover:text-gray-600" onclick="navigateTo('blueprints')"><i class="fas fa-arrow-left"></i></button>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <h1 class="text-xl font-bold text-gray-800" id="bdTitle">蓝图名称</h1>
+                            <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full" id="bdVersion">v1.0</span>
+                            <span class="phase-tag research" id="bdPhase">调研</span>
+                            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full" id="bdStatus">进行中</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-0.5" id="bdClient">客户：— · 创建于 —</p>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <button class="btn-outline text-sm" onclick="showToast('📋 已复制分享链接')"><i class="fas fa-share-alt"></i></button>
+                        <button class="btn-primary text-sm" onclick="showToast('📄 报告已导出')"><i class="fas fa-file-pdf"></i> 导出</button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-gray-100 p-4 mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-600">项目阶段</span>
+                        <span class="text-xs text-gray-400" id="bdPhaseText">调研阶段 · 65%</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="flex items-center gap-1 text-xs text-green-600"><span class="w-2 h-2 rounded-full bg-green-500 inline-block"></span> 调研</span>
+                        <span class="text-gray-300 text-xs">→</span>
+                        <span class="flex items-center gap-1 text-xs text-indigo-600"><span class="w-2 h-2 rounded-full bg-indigo-500 inline-block"></span> 谈判</span>
+                        <span class="text-gray-300 text-xs">→</span>
+                        <span class="flex items-center gap-1 text-xs text-gray-400"><span class="w-2 h-2 rounded-full bg-gray-300 inline-block"></span> 实施</span>
+                        <span class="text-gray-300 text-xs">→</span>
+                        <span class="flex items-center gap-1 text-xs text-gray-400"><span class="w-2 h-2 rounded-full bg-gray-300 inline-block"></span> 验收</span>
+                        <span class="text-gray-300 text-xs">→</span>
+                        <span class="flex items-center gap-1 text-xs text-gray-400"><span class="w-2 h-2 rounded-full bg-gray-300 inline-block"></span> 复盘</span>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-gray-100 p-5 mb-4">
+                    <div class="flex items-start gap-3">
+                        <div class="bg-indigo-50 p-2 rounded-xl flex-shrink-0"><i class="fas fa-file-alt text-indigo-500"></i></div>
+                        <div>
+                            <div class="text-xs font-semibold text-indigo-500 uppercase tracking-wider">方案概要</div>
+                            <p class="text-gray-700 text-sm mt-0.5 leading-relaxed" id="bdSummary">将多源原始客户数据清洗、标准化，输出统一的用户画像格式，确保数据质量符合下游分析要求。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-gray-100 p-5 mb-4">
+                    <div class="flex items-center gap-2 text-sm font-medium text-gray-600 mb-4">
+                        <i class="fas fa-code-branch text-indigo-500"></i>
+                        <span>数据蓝图</span>
+                        <span class="text-xs text-gray-400">| 契约 + 处理步骤 + 异常处理</span>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="text-xs font-semibold text-indigo-500 uppercase tracking-wider mb-2">契约概览</div>
+                        <div class="bg-gray-50 rounded-xl p-3 text-sm text-gray-700" id="bdContract">
+                            输入：CSV 格式的原始客户数据（含客户编号、年龄、性别、注册日期）<br>
+                            输出：标准化后的客户画像数据（含标准化客户编号、年龄段、性别中文、注册季度）
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="text-xs font-semibold text-blue-500 uppercase tracking-wider mb-2">数据处理过程详解</div>
+                        <div id="bdProcess">
+                            <div class="detail-process-step"><span class="step-num">1</span><span class="step-text">数据接收与格式校验</span></div>
+                            <div class="detail-process-step"><span class="step-num">2</span><span class="step-text">数据清洗与标准化</span></div>
+                            <div class="detail-process-step"><span class="step-num">3</span><span class="step-text">字段映射与结构化处理</span></div>
+                            <div class="detail-process-step"><span class="step-num">4</span><span class="step-text">质量验证与报告生成</span></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="text-xs font-semibold text-amber-500 uppercase tracking-wider mb-2">异常处理预案</div>
+                        <div id="bdExceptions">
+                            <div class="detail-exception-item"><span class="de-icon"><i class="fas fa-exclamation-triangle"></i></span><span class="flex-1"><strong>字段缺失</strong> — 必填字段为空</span><span class="de-strategy">策略：标记为缺失，记录日志，继续处理</span></div>
+                            <div class="detail-exception-item"><span class="de-icon"><i class="fas fa-code"></i></span><span class="flex-1"><strong>格式异常</strong> — 数据格式与预期不符</span><span class="de-strategy">策略：告警通知，人工介入修正</span></div>
+                            <div class="detail-exception-item"><span class="de-icon"><i class="fas fa-database"></i></span><span class="flex-1"><strong>数据量异常</strong> — 某批次数据量骤降</span><span class="de-strategy">策略：告警，继续处理，标记可疑</span></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="text-xs font-semibold text-green-500 uppercase tracking-wider mb-2">验收标准</div>
+                        <div id="bdRules">
+                            <span class="detail-rule-item"><span class="check"><i class="fas fa-check-circle"></i></span> 所有必填字段无缺失值</span>
+                            <span class="detail-rule-item"><span class="check"><i class="fas fa-check-circle"></i></span> 年龄字段均在 0-120 范围内</span>
+                            <span class="detail-rule-item"><span class="check"><i class="fas fa-check-circle"></i></span> 性别字段已全部映射为中文</span>
+                            <span class="detail-rule-item"><span class="check"><i class="fas fa-check-circle"></i></span> 客户编号去重完成，无重复记录</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-gray-100 p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-comment-dots text-indigo-400"></i>
+                        <span class="font-semibold text-gray-700">意见与反馈</span>
+                        <span class="text-xs text-gray-400">| 对当前蓝图方案提出您的建议</span>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <textarea class="editable-textarea opinion-textarea" id="bdOpinionInput" placeholder="请输入您的意见或建议……" rows="2"></textarea>
+                        <div class="flex items-center gap-3">
+                            <button class="opinion-submit-btn" onclick="submitBdOpinion()"><i class="fas fa-paper-plane"></i> 提交意见</button>
+                            <span class="text-xs text-gray-400" id="bdOpinionCount">共 0 条意见</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-gray-100" id="bdOpinionList">
+                        <div class="text-xs text-gray-400 text-center py-2">暂无意见</div>
+                    </div>
+                </div>
+
+                <div class="text-center text-xs text-gray-300 mt-4"><i class="fas fa-info-circle mr-1"></i> 蓝图包含契约 + 异常处理预案 · 欢迎提出宝贵意见</div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // ================================================================
+        //  全局数据
+        // ================================================================
+        let exceptionItems = [
+            { id: 1, label: '字段缺失', desc: '必填字段为空或null', strategy: '标记缺失 · 记录日志 · 继续处理' },
+            { id: 2, label: '格式异常', desc: '数据格式与预期不符', strategy: '告警 · 人工介入修正' },
+            { id: 3, label: '数据量异常', desc: '某批次数据量骤降或骤增', strategy: '告警 · 继续处理' },
+            { id: 4, label: '逻辑校验不通过', desc: '数据不符合业务规则', strategy: '标记异常 · 记录日志' },
+            { id: 5, label: '重复数据', desc: '相同主键的多条记录', strategy: '去重 · 保留最新' }
+        ];
+        let nextExceptionId = 6;
+        const STRATEGY_OPTIONS = [
+            '标记缺失 · 记录日志 · 继续处理', '告警 · 人工介入修正', '告警 · 继续处理',
+            '标记异常 · 记录日志', '去重 · 保留最新', '去重 · 保留最早',
+            '跳过该条记录', '用默认值填充', '告警并暂停',
+            '剔除该记录', '标记重复 · 人工处理', '自动尝试修正格式',
+            '标记异常并跳过', '忽略'
+        ];
+
+        let generatedBlueprints = [];
+        let currentBlueprintIndex = -1;
+
+        // ===== 交付数据（所有4个项目） =====
+        const deliveryDataMap = {
+            '客户画像标准化': {
+                projectName: '客户画像标准化',
+                client: '某股份制银行',
+                phase: '调研阶段',
+                phasePercent: '65%',
+                status: '进行中',
+                deliveries: [
+                    { id: 'del-1', name: '客户画像数据_v1.2', time: '2026-07-20T14:30:00', size: '2.3 MB',
+                        format: 'CSV', status: '已通过',
+                        files: [{ name: 'customer_profile_cleaned.csv', size: '1.8 MB' }, { name: 'data_dictionary.pdf',
+                            size: '0.5 MB' }],
+                        quality: [
+                            { label: '缺失率', value: 5, target: 30, unit: '%', status: 'pass' },
+                            { label: '格式准确率', value: 99.5, target: 99, unit: '%', status: 'pass' },
+                            { label: '空值率', value: 0.8, target: 1, unit: '%', status: 'pass' },
+                            { label: '重复率', value: 0, target: 0, unit: '%', status: 'pass' }
+                        ],
+                        log: '数据校验通过，清洗完成，字段映射成功，已生成交付文件。客户验收通过。'
+                    },
+                    { id: 'del-2', name: '客户画像数据_v1.1', time: '2026-07-10T10:15:00', size: '2.1 MB',
+                        format: 'CSV', status: '已通过',
+                        files: [{ name: 'customer_profile_v1.1.csv', size: '1.6 MB' }, { name: 'quality_report.pdf',
+                            size: '0.5 MB' }],
+                        quality: [
+                            { label: '缺失率', value: 8, target: 30, unit: '%', status: 'pass' },
+                            { label: '格式准确率', value: 98.7, target: 99, unit: '%', status: 'pass' },
+                            { label: '空值率', value: 0.9, target: 1, unit: '%', status: 'pass' },
+                            { label: '重复率', value: 0.1, target: 0, unit: '%', status: 'pass' }
+                        ],
+                        log: '数据清洗完成，字段映射完成，发现少量重复数据已处理。客户验收通过。'
+                    },
+                    { id: 'del-3', name: '客户画像数据_v1.0', time: '2026-06-28T09:00:00', size: '1.8 MB',
+                        format: 'CSV', status: '需修改',
+                        files: [{ name: 'customer_profile_v1.0.csv', size: '1.3 MB' }, { name: 'processing_log.txt',
+                            size: '0.5 MB' }],
+                        quality: [
+                            { label: '缺失率', value: 25, target: 30, unit: '%', status: 'pass' },
+                            { label: '格式准确率', value: 95.2, target: 99, unit: '%', status: 'amber' },
+                            { label: '空值率', value: 1.5, target: 1, unit: '%', status: 'red' },
+                            { label: '重复率', value: 0.3, target: 0, unit: '%', status: 'amber' }
+                        ],
+                        log: '首次交付，客户反馈字段映射有误，部分数据格式不符合要求，需修改后重新交付。'
+                    },
+                    { id: 'del-4', name: '客户画像数据_试点交付', time: '2026-06-20T16:45:00', size: '1.2 MB',
+                        format: 'CSV', status: '已通过',
+                        files: [{ name: 'pilot_data.csv', size: '0.9 MB' }, { name: 'pilot_report.pdf',
+                            size: '0.3 MB' }],
+                        quality: [
+                            { label: '缺失率', value: 12, target: 30, unit: '%', status: 'pass' },
+                            { label: '格式准确率', value: 99.1, target: 99, unit: '%', status: 'pass' },
+                            { label: '空值率', value: 0.5, target: 1, unit: '%', status: 'pass' },
+                            { label: '重复率', value: 0, target: 0, unit: '%', status: 'pass' }
+                        ],
+                        log: '试点数据交付，用于客户验证数据处理流程，验收通过。'
+                    },
+                    { id: 'del-5', name: '客户画像数据_初版', time: '2026-06-10T11:20:00', size: '0.8 MB',
+                        format: 'CSV', status: '待验收',
+                        files: [{ name: 'initial_data.csv', size: '0.6 MB' }, { name: 'initial_log.txt',
+                            size: '0.2 MB' }],
+                        quality: [
+                            { label: '缺失率', value: 18, target: 30, unit: '%', status: 'pass' },
+                            { label: '格式准确率', value: 97.8, target: 99, unit: '%', status: 'amber' },
+                            { label: '空值率', value: 0.7, target: 1, unit: '%', status: 'pass' },
+                            { label: '重复率', value: 0.2, target: 0, unit: '%', status: 'amber' }
+                        ],
+                        log: '初始版本交付，包含基础数据清洗和字段映射，等待客户验收。'
+                    },
+                    { id: 'del-6', name: '客户画像数据_需求验证', time: '2026-06-01T13:00:00', size: '0.5 MB',
+                        format: 'CSV', status: '已通过',
+                        files: [{ name: 'requirement_validation.csv', size: '0.4 MB' }, { name: 'validation_report.pdf',
+                            size: '0.1 MB' }],
+                        quality: [
+                            { label: '缺失率', value: 10, target: 30, unit: '%', status: 'pass' },
+                            { label: '格式准确率', value: 99.3, target: 99, unit: '%', status: 'pass' },
+                            { label: '空值率', value: 0.3, target: 1, unit: '%', status: 'pass' },
+                            { label: '重复率', value: 0, target: 0, unit: '%', status: 'pass' }
+                        ],
+                        log: '需求验证阶段的交付，用于确认数据需求和规格，客户确认通过。'
+                    }
+                ]
+            },
+            '问卷清洗': {
+                projectName: '问卷清洗',
+                client: '某高校课题组',
+                phase: '调研阶段',
+                phasePercent: '30%',
+                status: '进行中',
+                deliveries: [
+                    { id: 'del-s1', name: '问卷清洗数据_v1.0', time: '2026-07-20T14:30:00', size: '4.5 MB',
+                        format: 'CSV', status: '待验收',
+                        files: [{ name: 'survey_cleaned_v1.0.csv', size: '3.8 MB' }, { name: 'data_dictionary_v1.0.pdf',
+                            size: '0.7 MB' }],
+                        quality: [
+                            { label: '缺失率', value: 8, target: 30, unit: '%', status: 'pass' },
+                            { label: '格式准确率', value: 99.2, target: 99, unit: '%', status: 'pass' },
+                            { label: '空值率', value: 0.6, target: 5, unit: '%', status: 'pass' },
+                            { label: '重复率', value: 0.1, target: 0, unit: '%', status: 'pass' }
+                        ],
+                        log: '问卷清洗完成，开放题分词处理完毕，选择题选项已映射，等待客户验收。'
+                    },
+                    { id: 'del-s2', name: '问卷清洗数据_试交付', time: '2026-07-15T10:00:00', size: '2.1 MB',
+                        format: 'CSV', status: '需修改',
+                        files: [{ name: 'survey_pilot_clean.csv', size: '1.8 MB' }, { name: 'quality_report_pilot.pdf',
+                            size: '0.3 MB' }],
+                        quality: [
+                            { label: '缺失率', value: 15, target: 30, unit: '%', status: 'pass' },
+                            { label: '格式准确率', value: 96.5, target: 99, unit: '%', status: 'amber' },
+                            { label: '空值率', value: 2.1, target: 5, unit: '%', status: 'pass' },
+                            { label: '重复率', value: 0.5, target: 0, unit: '%', status: 'red' }
+                        ],
+                        log: '试交付版本，客户反馈部分选项映射错误，重复数据需要处理，需修改后重新交付。'
+                    },
+                    { id: 'del-s3', name: '问卷清洗数据_初版', time: '2026-07-08T09:30:00', size: '1.8 MB',
+                        format: 'CSV', status: '已通过',
+                        files: [{ name: 'survey_initial_clean.csv', size: '1.5 MB' }, { name: 'processing_summary.txt',
+                            size: '0.3 MB' }],
+                        quality: [
+                            { label: '缺失率', value: 12, target: 30, unit: '%', status: 'pass' },
+                            { label: '格式准确率', value: 98.1, target: 99, unit: '%', status: 'pass' },
+                            { label: '空值率', value: 1.2, target: 5, unit: '%', status: 'pass' },
+                            { label: '重复率', value: 0.2, target: 0, unit: '%', status: 'pass' }
+                        ],
+                        log: '初版问卷数据清洗完成，基本满足分析需求，客户验收通过。'
+                    }
+                ]
+            },
+            '电商价格数据库': {
+                projectName: '电商价格数据库',
+                client: 'CPP课题组',
+                phase: '验收阶段',
+                phasePercent: '100%',
+                status: '已完成',
+                deliveries: [
+                    { id: 'del-e1', name: '电商价格数据_第1-30天', time: '2026-06-30T12:00:00', size: '15.6 MB',
+                        format: 'CSV', status: '已通过',
+                        files: [{ name: 'ecom_price_day1_30.csv', size: '12.3 MB' }, { name: 'price_quality_report.pdf',
+                            size: '3.3 MB' }],
+                        quality: [
+                            { label: '缺失率', value: 12, target: 30, unit: '%', status: 'pass' },
+                            { label: '格式准确率', value: 99.8, target: 99, unit: '%', status: 'pass' },
+                            { label: '数据量一致性', value: 98.5, target: 95, unit: '%', status: 'pass' },
+                            { label: '采集延迟', value: 2, target: 24, unit: '小时', status: 'pass' }
+                        ],
+                        log: '第1-30天数据采集完成，已打包交付CPP课题组，数据质量符合契约要求。'
+                    },
+                    { id: 'del-e2', name: '电商价格数据_第31-60天', time: '2026-07-25T12:00:00', size: '14.8 MB',
+                        format: 'CSV', status: '已通过',
+                        files: [{ name: 'ecom_price_day31_60.csv', size: '11.9 MB' }, { name: 'price_quality_report_v2.pdf',
+                            size: '2.9 MB' }],
+                        quality: [
+                            { label: '缺失率', value: 8, target: 30, unit: '%', status: 'pass' },
+                            { label: '格式准确率', value: 99.9, target: 99, unit: '%', status: 'pass' },
+                            { label: '数据量一致性', value: 99.2, target: 95, unit: '%', status: 'pass' },
+                            { label: '采集延迟', value: 1.5, target: 24, unit: '小时', status: 'pass' }
+                        ],
+                        log: '第31-60天数据采集完成，采集器稳定运行，数据质量良好。'
+                    },
+                    { id: 'del-e3', name: '电商价格数据_第61-90天', time: '2026-08-20T12:00:00', size: '13.2 MB',
+                        format: 'CSV', status: '待验收',
+                        files: [{ name: 'ecom_price_day61_90.csv', size: '10.8 MB' }, { name: 'price_quality_report_v3.pdf',
+                            size: '2.4 MB' }],
+                        quality: [
+                            { label: '缺失率', value: 18, target: 30, unit: '%', status: 'pass' },
+                            { label: '格式准确率', value: 98.7, target: 99, unit: '%', status: 'amber' },
+                            { label: '数据量一致性', value: 96.8, target: 95, unit: '%', status: 'pass' },
+                            { label: '采集延迟', value: 4, target: 24, unit: '小时', status: 'pass' }
+                        ],
+                        log: '第61-90天采集完成，期间出现一次反爬告警，已自动处理，整体数据质量可接受。'
+                    }
+                ]
+            },
+            '社交媒体舆情监控': {
+                projectName: '社交媒体舆情监控',
+                client: '某品牌方',
+                phase: '谈判阶段',
+                phasePercent: '10%',
+                status: '待启动',
+                deliveries: [
+                    { id: 'del-s1', name: '舆情监控_需求确认样本', time: '2026-07-28T09:00:00', size: '0.8 MB',
+                        format: 'CSV', status: '待验收',
+                        files: [{ name: 'social_sample_data.csv', size: '0.6 MB' }, { name: 'sample_data_spec.pdf',
+                            size: '0.2 MB' }],
+                        quality: [
+                            { label: '数据完整性', value: 95, target: 90, unit: '%', status: 'pass' },
+                            { label: '字段映射准确率', value: 92, target: 90, unit: '%', status: 'pass' },
+                            { label: '采样覆盖度', value: 85, target: 80, unit: '%', status: 'pass' },
+                            { label: '数据新鲜度', value: 2, target: 6, unit: '小时', status: 'pass' }
+                        ],
+                        log: '品牌方需求确认阶段的样本数据交付，用于验证数据采集方案和字段映射逻辑。'
+                    }
+                ]
+            }
+        };
+
+        // 预设蓝图数据
+        const PRESET_BLUEPRINTS = {
+            profile: {
+                name: '客户画像标准化',
+                version: 'v1.2',
+                phase: '调研',
+                phasePercent: '65%',
+                status: '进行中',
+                client: '某股份制银行',
+                created: '2026-07-10',
+                summary: '将多源原始客户数据清洗、标准化，输出统一的用户画像格式，确保数据质量符合下游分析要求。',
+                contract: '输入：CSV 格式的原始客户数据（含客户编号、年龄、性别、注册日期）<br>输出：标准化后的客户画像数据（含标准化客户编号、年龄段、性别中文、注册季度）',
+                process: ['数据接收与格式校验', '数据清洗与标准化', '字段映射与结构化处理', '质量验证与报告生成'],
+                exceptions: [
+                    { label: '字段缺失', desc: '必填字段为空', strategy: '标记为缺失，记录日志，继续处理' },
+                    { label: '格式异常', desc: '数据格式与预期不符', strategy: '告警通知，人工介入修正' },
+                    { label: '数据量异常', desc: '某批次数据量骤降', strategy: '告警，继续处理，标记可疑' }
+                ],
+                rules: ['所有必填字段无缺失值', '年龄字段均在 0-120 范围内', '性别字段已全部映射为中文', '客户编号去重完成，无重复记录']
+            },
+            survey: {
+                name: '问卷清洗',
+                version: 'v1.0',
+                phase: '调研',
+                phasePercent: '30%',
+                status: '进行中',
+                client: '某高校课题组',
+                created: '2026-07-15',
+                summary: '对原始问卷数据进行清洗和结构化处理，去除无效回答，标准化字段格式，输出可直接用于分析的结构化数据集。',
+                contract: '输入：问卷原始数据（含受访者编号、开放题回答、选择题选项、提交时间）<br>输出：清洗后的结构化数据集（含清洗后编号、分词结果、选项标签、答题时长）',
+                process: ['问卷完整性检查', '开放题文本清洗', '选择题选项映射', '输出格式化'],
+                exceptions: [
+                    { label: '问卷不完整', desc: '必答题未作答', strategy: '标记为无效问卷，不进入后续处理' },
+                    { label: '答题时长异常', desc: '过快或过慢', strategy: '标记可疑，人工复核' }
+                ],
+                rules: ['所有必填字段无缺失值', '答题时长在合理范围内', '选项ID均已映射为文字标签', '开放题分词结果已去停用词']
+            }
+        };
+
+        let blueprintOpinions = {};
+        let currentProjectKey = '';
+
+        // ================================================================
+        //  异常列表渲染
+        // ================================================================
+        function renderExceptionList() {
+            const container = document.getElementById('exceptionList');
+            if (exceptionItems.length === 0) {
+                container.innerHTML = `<div class="exception-empty"><i class="fas fa-inbox mr-1"></i> 暂无异常项，点击下方「添加异常项」添加</div>`;
+                return;
+            }
+            container.innerHTML = exceptionItems.map(item => `
+                <div class="exception-config-item" data-id="${item.id}">
+                    <div class="ex-label-input">
+                        <input type="text" value="${item.label}" placeholder="异常名称" onchange="updateException(${item.id}, 'label', this.value)" onclick="this.select()" />
+                    </div>
+                    <div class="ex-desc-input">
+                        <input type="text" value="${item.desc}" placeholder="异常描述" onchange="updateException(${item.id}, 'desc', this.value)" onclick="this.select()" />
+                    </div>
+                    <select onchange="updateException(${item.id}, 'strategy', this.value)">
+                        ${STRATEGY_OPTIONS.map(opt => `<option value="${opt}" ${opt === item.strategy ? 'selected' : ''}>${opt}</option>`).join('')}
+                    </select>
+                    <div class="ex-actions">
+                        <button class="btn-danger" onclick="deleteException(${item.id})"><i class="fas fa-trash-alt"></i> 删除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateException(id, field, value) {
+            const item = exceptionItems.find(e => e.id === id);
+            if (item) item[field] = value;
+        }
+
+        function deleteException(id) {
+            if (exceptionItems.length <= 1) { showToast('至少保留一项异常配置', false); return; }
+            exceptionItems = exceptionItems.filter(e => e.id !== id);
+            renderExceptionList();
+            showToast('已删除该异常项', true);
+        }
+
+        function addExceptionItem() {
+            const newItem = { id: nextExceptionId++, label: '自定义异常项', desc: '请填写异常情况描述', strategy: '告警 · 继续处理' };
+            exceptionItems.push(newItem);
+            renderExceptionList();
+            const container = document.getElementById('exceptionList');
+            const lastItem = container.lastElementChild;
+            if (lastItem) {
+                const firstInput = lastItem.querySelector('input');
+                if (firstInput) { setTimeout(() => { firstInput.focus();
+                        firstInput.select(); }, 200); }
+                lastItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                lastItem.style.transition = 'background 0.6s';
+                lastItem.style.background = '#ede9fe';
+                setTimeout(() => { lastItem.style.background = ''; }, 800);
+            }
+            showToast('已添加新异常项，请填写信息', true);
+        }
+
+        // ================================================================
+        //  导航
+        // ================================================================
+        function navigateTo(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const target = document.getElementById('page-' + page);
+            if (target) {
+                target.classList.add('active');
+                target.classList.add('fade-in');
+                setTimeout(() => target.classList.remove('fade-in'), 300);
+            }
+            document.querySelectorAll('.sidebar-icon').forEach(el => el.classList.remove('active'));
+            const map = {
+                'dashboard': 'nav-dashboard',
+                'blueprints': 'nav-blueprints',
+                'new-request': 'nav-new-request',
+                'generate-blueprint': 'nav-new-request',
+                'delivery-progress': 'nav-dashboard',
+                'blueprint-detail': 'nav-blueprints',
+                'blueprint-detail-profile': 'nav-blueprints',
+                'blueprint-detail-survey': 'nav-blueprints'
+            };
+            const navEl = document.getElementById(map[page] || 'nav-dashboard');
+            if (navEl) navEl.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ================================================================
+        //  筛选
+        // ================================================================
+        let currentFilter = 'all';
+
+        function filterProjects(filter, cardEl, btnEl) {
+            currentFilter = filter;
+            document.querySelectorAll('.stat-card-click').forEach(c => c.classList.remove('active-filter'));
+            if (cardEl) cardEl.classList.add('active-filter');
+            document.querySelectorAll('.filter-group button').forEach(b => b.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+            const cards = document.querySelectorAll('#projectList .project-card');
+            let count = 0;
+            cards.forEach(card => {
+                const statusEl = card.querySelector('.status-badge');
+                let status = 'all';
+                if (statusEl) {
+                    const text = statusEl.textContent.trim();
+                    if (text === '进行中') status = 'active';
+                    else if (text === '已完成') status = 'done';
+                    else if (text === '待启动') status = 'pending';
+                }
+                const match = filter === 'all' || status === filter;
+                card.style.display = match ? '' : 'none';
+                if (match) count++;
+            });
+            document.getElementById('projectCount').textContent = '共 ' + count + ' 个项目';
+        }
+
+        // ================================================================
+        //  字段管理
+        // ================================================================
+        function addField() {
+            const input = document.getElementById('newField');
+            const val = input.value.trim();
+            if (!val) return;
+            const container = document.getElementById('fieldTags');
+            const span = document.createElement('span');
+            span.className = 'bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm flex items-center gap-1';
+            span.innerHTML = val +
+                ' <i class="fas fa-times text-indigo-300 cursor-pointer hover:text-indigo-600" onclick="this.parentElement.remove()"></i>';
+            container.insertBefore(span, input);
+            input.value = '';
+            input.focus();
+        }
+
+        // ================================================================
+        //  提交需求
+        // ================================================================
+        function submitRequest() {
+            const name = document.getElementById('reqName').value.trim();
+            const client = document.getElementById('reqClient').value.trim();
+            const source = document.getElementById('reqSource').value;
+            if (!name || !client || !source) { showToast('请填写完整信息', false); return; }
+            const fieldEls = document.querySelectorAll('#fieldTags .bg-indigo-50');
+            const fields = [];
+            fieldEls.forEach(el => {
+                const text = el.textContent.replace('×', '').trim();
+                if (text) fields.push(text);
+            });
+            if (fields.length === 0) { showToast('请至少添加一个关键字段', false); return; }
+
+            document.getElementById('genProjectName').textContent = name;
+            document.getElementById('genProjectClient').textContent = client;
+            document.getElementById('genProjectSource').textContent = source;
+            document.getElementById('genProjectFields').textContent = fields.join('、');
+
+            exceptionItems = [
+                { id: 1, label: '字段缺失', desc: '必填字段为空或null', strategy: '标记缺失 · 记录日志 · 继续处理' },
+                { id: 2, label: '格式异常', desc: '数据格式与预期不符', strategy: '告警 · 人工介入修正' },
+                { id: 3, label: '数据量异常', desc: '某批次数据量骤降或骤增', strategy: '告警 · 继续处理' },
+                { id: 4, label: '逻辑校验不通过', desc: '数据不符合业务规则', strategy: '标记异常 · 记录日志' },
+                { id: 5, label: '重复数据', desc: '相同主键的多条记录', strategy: '去重 · 保留最新' }
+            ];
+            nextExceptionId = 6;
+            renderExceptionList();
+
+            document.getElementById('genSummary').value = '将多源原始客户数据清洗、标准化，输出统一的用户画像格式，确保数据质量符合下游分析要求。';
+            document.getElementById('genProcessSteps').value = '1. 数据接收与格式校验\n2. 数据清洗与标准化\n3. 字段映射与结构化处理\n4. 质量验证与报告生成';
+            document.getElementById('genAcceptanceCriteria').value = '所有必填字段无缺失\n格式校验通过率 ≥ 99%\n异常值已标记\n重复数据已去重';
+            document.getElementById('genContractSummary').value = '输入：CSV 格式的原始客户数据（含客户编号、年龄、性别、注册日期）\n输出：标准化后的客户画像数据（含标准化客户编号、年龄段、性别中文、注册季度）';
+
+            navigateTo('generate-blueprint');
+            showToast('📋 请编辑蓝图内容', true);
+        }
+
+        // ================================================================
+        //  确认生成蓝图
+        // ================================================================
+        function confirmGenerateBlueprint() {
+            const name = document.getElementById('genProjectName').textContent || '新项目';
+            const client = document.getElementById('genProjectClient').textContent || '';
+            const source = document.getElementById('genProjectSource').textContent || '';
+            const fields = document.getElementById('genProjectFields').textContent || '';
+            const summary = document.getElementById('genSummary').value;
+            const processSteps = document.getElementById('genProcessSteps').value;
+            const acceptance = document.getElementById('genAcceptanceCriteria').value;
+            const contract = document.getElementById('genContractSummary').value;
+
+            const exceptions = exceptionItems.map(e => ({ label: e.label, desc: e.desc, strategy: e.strategy }));
+
+            const blueprintData = {
+                name,
+                client,
+                source,
+                fields,
+                summary,
+                processSteps,
+                acceptance,
+                contract,
+                exceptions,
+                created: new Date().toISOString().slice(0, 10),
+                isDynamic: true
+            };
+            const index = generatedBlueprints.length;
+            generatedBlueprints.push(blueprintData);
+
+            const placeholder = document.getElementById('newBlueprintPlaceholder');
+            const card = document.createElement('div');
+            card.className = 'blueprint-card';
+            card.onclick = function() { showBlueprintDetail('dynamic', index); };
+            card.innerHTML = `
+                <div class="flex items-start justify-between">
+                    <div><div class="font-semibold text-gray-800 text-lg">${name}</div><div class="text-sm text-gray-400">v1.0 · 刚刚创建</div></div>
+                    <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">草稿</span>
+                </div>
+                <div class="mt-2 flex flex-wrap gap-2 text-xs">
+                    <span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded">契约: 已定义</span>
+                    <span class="bg-amber-50 text-amber-700 px-2 py-0.5 rounded">异常: ${exceptions.length}项预案</span>
+                    <span class="bg-green-50 text-green-700 px-2 py-0.5 rounded">验收: ${acceptance.split('\n').filter(s => s.trim()).length}条规则</span>
+                </div>
+                <div class="mt-2 text-xs text-gray-400">待启动</div>
+            `;
+            placeholder.parentNode.insertBefore(card, placeholder);
+            showToast(`✅ 蓝图 "${name}" 已生成！`, true);
+            setTimeout(() => { navigateTo('blueprints');
+                showToast('📋 新蓝图已添加到列表，点击可查看详情', true); }, 600);
+        }
+
+        // ================================================================
+        //  交付进度功能
+        // ================================================================
+        function showDeliveryProgress(projectName) {
+            currentProjectKey = projectName;
+            const data = deliveryDataMap[projectName];
+            if (!data) {
+                showToast('项目数据不存在', false);
+                return;
+            }
+
+            document.getElementById('deliveryProjectTitle').textContent = data.projectName;
+            document.getElementById('deliveryProjectClient').textContent = '客户：' + data.client + ' · 创建于 2026-07-10';
+            document.getElementById('deliveryProjectPhase').textContent = data.phase;
+            document.getElementById('deliveryPhaseText').textContent = data.phase + ' · ' + data.phasePercent;
+            document.getElementById('deliveryStatusBadge').textContent = data.status || '进行中';
+
+            const stats = getDeliveryStats(data.deliveries);
+            document.getElementById('statTotal').textContent = stats.total;
+            document.getElementById('statPassed').textContent = stats.passed;
+            document.getElementById('statPending').textContent = stats.pending;
+            document.getElementById('statModify').textContent = stats.modify;
+
+            renderDeliveries(projectName);
+            navigateTo('delivery-progress');
+        }
+
+        function getDeliveryStats(deliveries) {
+            let total = deliveries.length,
+                passed = 0,
+                pending = 0,
+                modify = 0;
+            deliveries.forEach(d => {
+                if (d.status === '已通过') passed++;
+                else if (d.status === '待验收') pending++;
+                else if (d.status === '需修改') modify++;
+            });
+            return { total, passed, pending, modify };
+        }
+
+        function renderDeliveries(projectName) {
+            const data = deliveryDataMap[projectName];
+            const container = document.getElementById('deliveryList');
+            if (!data || !data.deliveries || data.deliveries.length === 0) {
+                container.innerHTML = '<div class="text-sm text-gray-400 text-center py-4">暂无交付记录</div>';
+                return;
+            }
+            const sorted = [...data.deliveries].sort((a, b) => new Date(b.time) - new Date(a.time));
+            container.innerHTML = sorted.map(d => `
+                <div class="delivery-item" onclick="showDeliveryDetail('${projectName}', '${d.id}')">
+                    <div class="delivery-meta">
+                        <span class="name">${d.name}</span>
+                        <span class="detail">${d.size} · ${d.format}</span>
+                        <span class="detail">${new Date(d.time).toLocaleString()}</span>
+                    </div>
+                    <span class="delivery-status ${d.status === '已通过' ? 'passed' : d.status === '需修改' ? 'modify' : 'pending'}">${d.status}</span>
+                </div>
+            `).join('');
+        }
+
+        function showDeliveryDetail(projectName, deliveryId) {
+            const data = deliveryDataMap[projectName];
+            if (!data) { showToast('项目数据不存在', false); return; }
+            const delivery = data.deliveries.find(d => d.id === deliveryId);
+            if (!delivery) { showToast('交付记录不存在', false); return; }
+
+            document.getElementById('deliveryDetailTitle').textContent = delivery.name;
+            document.getElementById('deliveryDetailTime').textContent = '交付时间：' + new Date(delivery.time).toLocaleString();
+
+            const filesContainer = document.getElementById('deliveryDetailFiles');
+            filesContainer.innerHTML = delivery.files.map(f =>
+                `<div class="file-item"><i class="fas fa-file"></i> ${f.name} (${f.size}) <span class="text-xs text-indigo-500 ml-2 cursor-pointer" onclick="event.stopPropagation();showToast('📥 开始下载')">下载</span></div>`
+            ).join('');
+
+            const qualityContainer = document.getElementById('deliveryDetailQuality');
+            qualityContainer.innerHTML = delivery.quality.map(q => {
+                const fillPercent = Math.min((q.value / q.target) * 100, 100);
+                const barColor = q.status === 'pass' ? 'green' : (q.value > q.target * 1.2 ? 'red' : 'amber');
+                return `<div class="quality-bar">
+                    <span class="label">${q.label}</span>
+                    <div class="bar-bg"><div class="bar-fill ${barColor}" style="width:${fillPercent}%;"></div></div>
+                    <span class="value">${q.value}${q.unit}（目标≤${q.target}${q.unit}）</span>
+                </div>`;
+            }).join('');
+
+            document.getElementById('deliveryDetailLog').textContent = delivery.log;
+
+            const statusBadge = document.getElementById('deliveryDetailStatusBadge');
+            statusBadge.textContent = delivery.status;
+            statusBadge.className = `delivery-status ${delivery.status === '已通过' ? 'passed' : delivery.status === '需修改' ? 'modify' : 'pending'}`;
+
+            window._currentDelivery = { projectName, deliveryId };
+            document.getElementById('deliveryDetailModal').classList.add('active');
+        }
+
+        function closeDeliveryDetail() {
+            document.getElementById('deliveryDetailModal').classList.remove('active');
+        }
+
+        function reDeliver() {
+            const info = window._currentDelivery;
+            if (!info) { showToast('请先选择一条交付记录', false); return; }
+            const data = deliveryDataMap[info.projectName];
+            if (!data) { showToast('项目数据不存在', false); return; }
+            const delivery = data.deliveries.find(d => d.id === info.deliveryId);
+            if (!delivery) { showToast('交付记录不存在', false); return; }
+
+            delivery.status = '待验收';
+            delivery.log += '；已重新交付，等待客户验收。';
+            delivery.quality.forEach(q => { q.value = Math.min(q.value + 0.5, q.target * 0.9); });
+            const versionMatch = delivery.name.match(/v(\d+\.\d+)/);
+            if (versionMatch) {
+                const parts = versionMatch[1].split('.');
+                const newVersion = parts[0] + '.' + (parseInt(parts[1]) + 1);
+                delivery.name = delivery.name.replace(/v\d+\.\d+/, 'v' + newVersion);
+            } else {
+                delivery.name += '_v1.1';
+            }
+            delivery.time = new Date().toISOString();
+
+            showToast('✅ 已重新交付，等待客户验收', true);
+            closeDeliveryDetail();
+            renderDeliveries(info.projectName);
+            const stats = getDeliveryStats(data.deliveries);
+            document.getElementById('statTotal').textContent = stats.total;
+            document.getElementById('statPassed').textContent = stats.passed;
+            document.getElementById('statPending').textContent = stats.pending;
+            document.getElementById('statModify').textContent = stats.modify;
+        }
+
+        function createNewDelivery() {
+            const data = deliveryDataMap[currentProjectKey];
+            if (!data) { showToast('请先打开一个项目', false); return; }
+
+            const now = new Date();
+            const id = 'del-new-' + Date.now();
+            const version = data.deliveries.length + 1;
+            const newDelivery = {
+                id: id,
+                name: data.projectName + '_交付_v1.' + version,
+                time: now.toISOString(),
+                size: (1.5 + Math.random() * 3).toFixed(1) + ' MB',
+                format: 'CSV',
+                status: '待验收',
+                files: [
+                    { name: data.projectName + '_cleaned_v1.' + version + '.csv', size: (1.0 + Math.random() * 2).toFixed(
+                            1) + ' MB' },
+                    { name: 'data_dictionary_v1.' + version + '.pdf', size: (0.3 + Math.random() * 0.5).toFixed(1) +
+                        ' MB' }
+                ],
+                quality: [
+                    { label: '缺失率', value: Math.round(3 + Math.random() * 8), target: 30, unit: '%', status: 'pass' },
+                    { label: '格式准确率', value: Math.round(97 + Math.random() * 2.5), target: 99, unit: '%',
+                        status: 'pass' },
+                    { label: '空值率', value: Math.round(0.2 + Math.random() * 0.8), target: 1, unit: '%',
+                    status: 'pass' },
+                    { label: '重复率', value: Math.round(Math.random() * 0.3 * 10) / 10, target: 0, unit: '%',
+                        status: 'pass' }
+                ],
+                log: '新交付版本，数据已完成清洗和标准化处理，等待客户验收。'
+            };
+            data.deliveries.push(newDelivery);
+            renderDeliveries(currentProjectKey);
+            const stats = getDeliveryStats(data.deliveries);
+            document.getElementById('statTotal').textContent = stats.total;
+            document.getElementById('statPassed').textContent = stats.passed;
+            document.getElementById('statPending').textContent = stats.pending;
+            document.getElementById('statModify').textContent = stats.modify;
+            showToast('✅ 新交付已创建', true);
+        }
+
+        // ================================================================
+        //  重置表单
+        // ================================================================
+        function resetForm() {
+            document.getElementById('requestForm').reset();
+            document.querySelectorAll('#fieldTags .bg-indigo-50').forEach(el => {
+                if (el.querySelector('.fa-times')) el.remove();
+            });
+            const container = document.getElementById('fieldTags');
+            const input = document.getElementById('newField');
+            ['客户编号', '年龄', '性别'].forEach(d => {
+                const span = document.createElement('span');
+                span.className =
+                    'bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm flex items-center gap-1';
+                span.innerHTML = d +
+                    ' <i class="fas fa-times text-indigo-300 cursor-pointer hover:text-indigo-600" onclick="this.parentElement.remove()"></i>';
+                container.insertBefore(span, input);
+            });
+        }
+
+        // ================================================================
+        //  蓝图详情（预设）
+        // ================================================================
+        function navigateToBlueprintDetail(type) {
+            const data = PRESET_BLUEPRINTS[type];
+            if (!data) { showToast('蓝图数据不存在', false); return; }
+            const opinionKey = type;
+            if (!blueprintOpinions[opinionKey]) blueprintOpinions[opinionKey] = [];
+            window._currentOpinionKey = opinionKey;
+
+            document.getElementById('bdTitle').textContent = data.name;
+            document.getElementById('bdVersion').textContent = data.version || 'v1.0';
+            document.getElementById('bdPhase').textContent = data.phase || '调研';
+            document.getElementById('bdPhaseText').textContent = (data.phase || '调研') + ' · ' + (data.phasePercent || '0%');
+            document.getElementById('bdStatus').textContent = data.status || '进行中';
+            document.getElementById('bdClient').textContent = '客户：' + (data.client || '—') + ' · 创建于 ' + (data.created ||
+                '—');
+            document.getElementById('bdSummary').textContent = data.summary || '方案概要待补充';
+            document.getElementById('bdContract').innerHTML = data.contract || '契约待补充';
+
+            const processContainer = document.getElementById('bdProcess');
+            const steps = data.process || [];
+            if (steps.length > 0) {
+                processContainer.innerHTML = steps.map((step, idx) =>
+                    `<div class="detail-process-step"><span class="step-num">${idx+1}</span><span class="step-text">${step}</span></div>`
+                ).join('');
+            } else {
+                processContainer.innerHTML = '<div class="text-sm text-gray-400">暂无处理步骤</div>';
+            }
+
+            const exContainer = document.getElementById('bdExceptions');
+            const exceptions = data.exceptions || [];
+            if (exceptions.length > 0) {
+                exContainer.innerHTML = exceptions.map(e =>
+                    `<div class="detail-exception-item"><span class="de-icon"><i class="fas fa-exclamation-triangle"></i></span><span class="flex-1"><strong>${e.label}</strong> — ${e.desc}</span><span class="de-strategy">策略：${e.strategy}</span></div>`
+                ).join('');
+            } else {
+                exContainer.innerHTML = '<div class="text-sm text-gray-400">暂无异常配置</div>';
+            }
+
+            const rulesContainer = document.getElementById('bdRules');
+            const rules = data.rules || [];
+            if (rules.length > 0) {
+                rulesContainer.innerHTML = rules.map(r =>
+                    `<span class="detail-rule-item"><span class="check"><i class="fas fa-check-circle"></i></span> ${r}</span>`
+                ).join('');
+            } else {
+                rulesContainer.innerHTML = '<span class="detail-rule-item"><span class="check"><i class="fas fa-check-circle"></i></span> 待定义</span>';
+            }
+
+            renderBlueprintOpinions(opinionKey);
+            navigateTo('blueprint-detail');
+        }
+
+        // ================================================================
+        //  动态蓝图详情
+        // ================================================================
+        function showBlueprintDetail(type, index) {
+            let data;
+            let opinionKey;
+
+            if (type === 'dynamic' && index !== undefined && generatedBlueprints[index]) {
+                data = generatedBlueprints[index];
+                opinionKey = 'dynamic_' + index;
+                currentBlueprintIndex = index;
+            } else {
+                showToast('蓝图数据不存在', false);
+                return;
+            }
+
+            if (!blueprintOpinions[opinionKey]) blueprintOpinions[opinionKey] = [];
+            window._currentOpinionKey = opinionKey;
+
+            document.getElementById('bdTitle').textContent = data.name;
+            document.getElementById('bdVersion').textContent = 'v1.0';
+            document.getElementById('bdPhase').textContent = '草稿';
+            document.getElementById('bdPhaseText').textContent = '草稿阶段';
+            document.getElementById('bdStatus').textContent = '草稿';
+            document.getElementById('bdClient').textContent = '客户：' + (data.client || '—') + ' · 创建于 ' + (data.created ||
+                '—');
+            document.getElementById('bdSummary').textContent = data.summary || '方案概要待补充';
+            document.getElementById('bdContract').innerHTML = data.contract || '契约待补充';
+
+            const processContainer = document.getElementById('bdProcess');
+            const steps = data.processSteps ? data.processSteps.split('\n').filter(s => s.trim()) : [];
+            if (steps.length > 0) {
+                processContainer.innerHTML = steps.map((step, idx) => {
+                    const text = step.replace(/^\d+[\.\、]\s*/, '');
+                    return `<div class="detail-process-step"><span class="step-num">${idx+1}</span><span class="step-text">${text}</span></div>`;
+                }).join('');
+            } else {
+                processContainer.innerHTML = '<div class="text-sm text-gray-400">暂无处理步骤</div>';
+            }
+
+            const exContainer = document.getElementById('bdExceptions');
+            const exceptions = data.exceptions || [];
+            if (exceptions.length > 0) {
+                exContainer.innerHTML = exceptions.map(e =>
+                    `<div class="detail-exception-item"><span class="de-icon"><i class="fas fa-exclamation-triangle"></i></span><span class="flex-1"><strong>${e.label}</strong> — ${e.desc}</span><span class="de-strategy">策略：${e.strategy}</span></div>`
+                ).join('');
+            } else {
+                exContainer.innerHTML = '<div class="text-sm text-gray-400">暂无异常配置</div>';
+            }
+
+            const rulesContainer = document.getElementById('bdRules');
+            const rules = data.acceptance ? data.acceptance.split('\n').filter(s => s.trim()) : [];
+            if (rules.length > 0) {
+                rulesContainer.innerHTML = rules.map(r =>
+                    `<span class="detail-rule-item"><span class="check"><i class="fas fa-check-circle"></i></span> ${r.trim()}</span>`
+                ).join('');
+            } else {
+                rulesContainer.innerHTML = '<span class="detail-rule-item"><span class="check"><i class="fas fa-check-circle"></i></span> 待定义</span>';
+            }
+
+            renderBlueprintOpinions(opinionKey);
+            navigateTo('blueprint-detail');
+        }
+
+        // ================================================================
+        //  蓝图意见功能
+        // ================================================================
+        function renderBlueprintOpinions(key) {
+            const list = document.getElementById('bdOpinionList');
+            const opinions = blueprintOpinions[key] || [];
+            const countEl = document.getElementById('bdOpinionCount');
+            if (countEl) countEl.textContent = `共 ${opinions.length} 条意见`;
+            if (opinions.length === 0) {
+                list.innerHTML = `<div class="text-xs text-gray-400 text-center py-2">暂无意见</div>`;
+                return;
+            }
+            list.innerHTML = opinions.map((op, i) =>
+                `<div class="opinion-list-item"><div>${op.text}</div><div class="opinion-meta">#${i+1} · ${op.time}</div></div>`
+            ).join('');
+        }
+
+        function submitBdOpinion() {
+            const input = document.getElementById('bdOpinionInput');
+            const text = input.value.trim();
+            if (!text) { showToast('请输入意见内容', false); return; }
+            const key = window._currentOpinionKey;
+            if (!key) { showToast('请先打开一个蓝图', false); return; }
+            const now = new Date();
+            const timeStr = now.toISOString().slice(0, 10) + ' ' + now.toTimeString().slice(0, 5);
+            if (!blueprintOpinions[key]) blueprintOpinions[key] = [];
+            blueprintOpinions[key].push({ text, time: timeStr });
+            input.value = '';
+            renderBlueprintOpinions(key);
+            showToast('✅ 意见已提交', true);
+        }
+
+        // ================================================================
+        //  Toast
+        // ================================================================
+        let toastTimer = null;
+
+        function showToast(msg, isSuccess = true) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.style.background = isSuccess ? '#1e293b' : '#dc2626';
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+                toast.style.background = '#1e293b';
+            }, 3000);
+        }
+
+        // ================================================================
+        //  初始化
+        // ================================================================
+        document.getElementById('deliveryDetailModal').addEventListener('click', function(e) {
+            if (e.target === this) closeDeliveryDetail();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('newField').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') { e.preventDefault();
+                    addField(); }
+            });
+            filterProjects('all', document.querySelector('.stat-card-click'), document.querySelector('.filter-group button'));
+            renderExceptionList();
+            // 预置蓝图详情导航
+            window.navigateToBlueprintDetail = navigateToBlueprintDetail;
+            window.showBlueprintDetail = showBlueprintDetail;
+            console.log('✅ 数据云客户端原型已加载（所有项目点击跳转交付记录）');
+            console.log('📌 看板4个项目全部点击进入交付记录页面');
+        });
+    </script>
+
+</body>
+</html>

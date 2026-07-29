@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>量潮数据 · 我的项目</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        body {
+            background: #f1f5f9;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .project-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.25rem 1.5rem;
+            border: 1px solid #f1f5f9;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+        .project-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+            transform: translateY(-1px);
+        }
+        .status-badge {
+            font-size: 0.6rem;
+            padding: 0.1rem 0.6rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        .status-badge.active {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .status-badge.done {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status-badge.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .phase-tag {
+            font-size: 0.6rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        .phase-tag.research {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .phase-tag.negotiate {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .phase-tag.implement {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .phase-tag.accept {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+        .phase-tag.review {
+            background: #fce7f3;
+            color: #9d174d;
+        }
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            padding: 0.15rem 0;
+        }
+        .info-row .label {
+            color: #94a3b8;
+            min-width: 72px;
+            font-weight: 400;
+            flex-shrink: 0;
+            padding-top: 0.05rem;
+        }
+        .info-row .value .ready {
+            color: #10b981;
+        }
+        .info-row .value .pending {
+            color: #f59e0b;
+        }
+        .info-row .value .na {
+            color: #94a3b8;
+        }
+        .info-row .value .logic-text {
+            color: #475569;
+            line-height: 1.4;
+        }
+        .filter-group {
+            display: flex;
+            gap: 0.2rem;
+            background: #f1f5f9;
+            padding: 0.2rem;
+            border-radius: 8px;
+        }
+        .filter-group button {
+            padding: 0.2rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-weight: 500;
+        }
+        .filter-group button.active {
+            background: white;
+            color: #1e293b;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            border: 1px solid #f1f5f9;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-align: center;
+        }
+        .stat-card:hover {
+            border-color: #cbd5e1;
+        }
+        .stat-card .number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .stat-card .label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+        .stat-card.active-filter {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+        }
+        .stat-card .num-green {
+            color: #10b981;
+        }
+        .stat-card .num-amber {
+            color: #f59e0b;
+        }
+        .stat-card .num-blue {
+            color: #4f46e5;
+        }
+        .stat-card .num-gray {
+            color: #94a3b8;
+        }
+        .sidebar-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            cursor: pointer;
+            color: #94a3b8;
+        }
+        .sidebar-icon:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        .sidebar-icon.active {
+            background: #e0e7ff;
+            color: #4f46e5;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #1e293b;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1000;
+            pointer-events: none;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e2e8f0;
+        }
+        .timeline-item {
+            position: relative;
+            padding: 0.5rem 0 0.5rem 1.2rem;
+            border-left: 3px solid transparent;
+            margin-bottom: 0.5rem;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.5rem;
+            top: 0.6rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #e2e8f0;
+            background: white;
+        }
+        .timeline-item.done::before {
+            background: #10b981;
+            border-color: #10b981;
+        }
+        .timeline-item.done {
+            border-left-color: #10b981;
+        }
+        .timeline-item.active::before {
+            background: #4f46e5;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+        .timeline-item.active {
+            border-left-color: #4f46e5;
+        }
+        .timeline-item.waiting::before {
+            background: #e2e8f0;
+            border-color: #d1d5db;
+        }
+        .timeline-item.waiting {
+            border-left-color: #d1d5db;
+        }
+        .timeline-item .tl-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .timeline-item .tl-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1e293b;
+        }
+        .timeline-item .tl-status {
+            font-size: 0.6rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 10px;
+        }
+        .timeline-item .tl-status.done {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .timeline-item .tl-status.active {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .timeline-item .tl-status.waiting {
+            background: #f1f5f9;
+            color: #94a3b8;
+        }
+        .tl-deliverable {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.2rem 0.5rem;
+            background: #f8fafc;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: #1e293b;
+            margin-top: 0.2rem;
+        }
+        .tl-deliverable .dl-icon {
+            color: #94a3b8;
+        }
+        .tl-deliverable .dl-action {
+            margin-left: auto;
+            font-size: 0.7rem;
+            color: #4f46e5;
+            cursor: pointer;
+        }
+        .tl-deliverable .dl-action:hover {
+            text-decoration: underline;
+        }
+        .tl-empty {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            padding: 0.2rem 0.5rem;
+        }
+
+        /* 蓝图模块 */
+        .blueprint-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            border: 1px solid #e2e8f0;
+        }
+        .blueprint-section .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.85rem;
+            color: #334155;
+        }
+        .blueprint-section .step-item:last-child {
+            border-bottom: none;
+        }
+        .blueprint-section .step-num {
+            background: #4f46e5;
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: 600;
+            flex-shrink: 0;
+            margin-top: 0.05rem;
+        }
+        .blueprint-section .step-text {
+            flex: 1;
+            line-height: 1.5;
+        }
+        .blueprint-section .exception-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.3rem 0;
+            font-size: 0.8rem;
+            color: #334155;
+            border-bottom: 1px solid #f8fafc;
+        }
+        .blueprint-section .exception-item:last-child {
+            border-bottom: none;
+        }
+        .blueprint-section .exception-item .ex-label {
+            font-weight: 500;
+            min-width: 80px;
+            color: #1e293b;
+        }
+        .blueprint-section .exception-item .ex-strategy {
+            color: #64748b;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: white;
+            border-radius: 24px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeSlide 0.3s ease;
+        }
+        .modal-box::-webkit-scrollbar {
+            width: 4px;
+        }
+        .modal-box::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .modal-box .file-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.5rem;
+            background: #f8fafc;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .modal-box .file-item:last-child {
+            border-bottom: none;
+        }
+        .modal-box .file-item i {
+            color: #4f46e5;
+        }
+        .modal-box .file-item .file-action {
+            margin-left: auto;
+            color: #4f46e5;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+        .modal-box .file-item .file-action:hover {
+            text-decoration: underline;
+        }
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all 0.15s;
+        }
+        .btn-primary:hover {
+            background: #4338ca;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- 资料弹窗 -->
+    <div id="docModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="flex items-center justify-between mb-3">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-800" id="docModalTitle">资料详情</h2>
+                    <p class="text-xs text-gray-400" id="docModalSub">交付物</p>
+                </div>
+                <button class="text-gray-400 hover:text-gray-600 text-xl" onclick="closeDocModal()">&times;</button>
+            </div>
+            <div id="docModalContent"></div>
+        </div>
+    </div>
+
+    <div id="app" class="flex min-h-screen">
+
+        <aside class="w-20 bg-white border-r border-gray-100 flex flex-col items-center py-4 gap-0.5 flex-shrink-0 h-screen sticky top-0 z-10">
+            <div class="text-xl font-bold text-indigo-600 mb-3">量</div>
+            <div class="sidebar-icon active" onclick="navigateTo('dashboard')" title="我的项目" id="nav-dashboard">
+                <i class="fas fa-th-large text-lg"></i>
+            </div>
+            <div class="mt-auto sidebar-icon" title="帮助">
+                <i class="fas fa-question-circle text-lg"></i>
+            </div>
+        </aside>
+
+        <main class="flex-1 p-5 md:p-7 max-w-5xl overflow-y-auto h-screen">
+
+            <!-- ====== 首页：我的项目 ====== -->
+            <div id="page-dashboard" class="page active">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">我的项目</h1>
+                        <p class="text-sm text-gray-400 mt-0.5">当前所有数据项目的进度总览</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                    <div class="stat-card active-filter" onclick="filterProjects('all', this)">
+                        <div class="number">4</div>
+                        <div class="label">全部项目</div>
+                    </div>
+                    <div class="stat-card" onclick="filterProjects('active', this)">
+                        <div class="number num-amber">2</div>
+                        <div class="label">进行中</div>
+                    </div>
+                    <div class="stat-card" onclick="filterProjects('done', this)">
+                        <div class="number num-green">1</div>
+                        <div class="label">已完成</div>
+                    </div>
+                    <div class="stat-card" onclick="filterProjects('pending', this)">
+                        <div class="number num-gray">1</div>
+                        <div class="label">待启动</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mb-3">
+                    <div class="filter-group">
+                        <button class="active" onclick="filterProjects('all', null, this)">全部</button>
+                        <button onclick="filterProjects('active', null, this)">进行中</button>
+                        <button onclick="filterProjects('done', null, this)">已完成</button>
+                        <button onclick="filterProjects('pending', null, this)">待启动</button>
+                    </div>
+                    <span class="text-xs text-gray-400" id="projectCount">4 个项目</span>
+                </div>
+
+                <div class="space-y-3" id="projectList">
+
+                    <div class="project-card" onclick="showTimeline('客户画像标准化')">
+                        <div class="flex flex-wrap items-start justify-between gap-2">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-semibold text-gray-800">客户画像标准化</span>
+                                    <span class="status-badge active">进行中</span>
+                                    <span class="phase-tag negotiate">谈判阶段</span>
+                                </div>
+                                <div class="mt-2 space-y-0.5">
+                                    <div class="info-row">
+                                        <span class="label">数据可获取</span>
+                                        <span class="value"><span class="ready">✅ 可获取</span> · v1.2</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label">处理逻辑</span>
+                                        <span class="value logic-text">将多源客户数据清洗、标准化，输出统一画像格式</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label">交付进度</span>
+                                        <span class="value">¥12,000 · 第 3 次交付</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-xs text-gray-400 flex-shrink-0">更新于 2小时前</div>
+                        </div>
+                    </div>
+
+                    <div class="project-card" onclick="showTimeline('问卷清洗')">
+                        <div class="flex flex-wrap items-start justify-between gap-2">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-semibold text-gray-800">问卷清洗</span>
+                                    <span class="status-badge active">进行中</span>
+                                    <span class="phase-tag research">调研阶段</span>
+                                </div>
+                                <div class="mt-2 space-y-0.5">
+                                    <div class="info-row">
+                                        <span class="label">数据可获取</span>
+                                        <span class="value"><span class="pending">⏳ 待交付</span></span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label">处理逻辑</span>
+                                        <span class="value logic-text">清洗问卷数据，去除无效回答，标准化为结构化数据集</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label">交付进度</span>
+                                        <span class="value">¥8,000 · 第 1 次交付</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-xs text-gray-400 flex-shrink-0">更新于 1天前</div>
+                        </div>
+                    </div>
+
+                    <div class="project-card" onclick="showTimeline('电商价格数据库')">
+                        <div class="flex flex-wrap items-start justify-between gap-2">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-semibold text-gray-800">电商价格数据库</span>
+                                    <span class="status-badge done">已完成</span>
+                                    <span class="phase-tag accept">验收阶段</span>
+                                </div>
+                                <div class="mt-2 space-y-0.5">
+                                    <div class="info-row">
+                                        <span class="label">数据可获取</span>
+                                        <span class="value"><span class="ready">✅ 已交付</span> · 3 批数据</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label">处理逻辑</span>
+                                        <span class="value logic-text">从淘宝、京东每天采集固定关键词商品价格和销量，清洗后输出CSV</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label">交付进度</span>
+                                        <span class="value">¥25,000 · 已完成</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-xs text-gray-400 flex-shrink-0">更新于 3天前</div>
+                        </div>
+                    </div>
+
+                    <div class="project-card" onclick="showTimeline('社交媒体舆情监控')">
+                        <div class="flex flex-wrap items-start justify-between gap-2">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-semibold text-gray-800">社交媒体舆情监控</span>
+                                    <span class="status-badge pending">待启动</span>
+                                    <span class="phase-tag negotiate">谈判阶段</span>
+                                </div>
+                                <div class="mt-2 space-y-0.5">
+                                    <div class="info-row">
+                                        <span class="label">数据可获取</span>
+                                        <span class="value"><span class="na">— 尚未交付</span></span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label">处理逻辑</span>
+                                        <span class="value logic-text">从微博、抖音采集品牌相关舆情，进行情感分析和关键词提取</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label">交付进度</span>
+                                        <span class="value">¥15,000 · 待启动</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-xs text-gray-400 flex-shrink-0">更新于 5天前</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="text-xs text-gray-300 mt-4 text-center">点击项目查看完整交付时间线</div>
+            </div>
+
+            <!-- ====== 详情页：阶段时间线 + 完整数据蓝图 ====== -->
+            <div id="page-timeline" class="page">
+                <div class="flex items-center gap-3 mb-4">
+                    <button class="text-gray-400 hover:text-gray-600" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-left"></i></button>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <h1 class="text-xl font-bold text-gray-800" id="tlTitle">项目名称</h1>
+                            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full" id="tlStatus">进行中</span>
+                            <span class="phase-tag" id="tlPhase">调研</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-0.5" id="tlClient">创建于 —</p>
+                    </div>
+                    <button class="btn-primary text-sm" onclick="showToast('📄 报告已导出')"><i class="fas fa-file-pdf"></i> 导出</button>
+                </div>
+
+                <!-- 阶段进度 -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-4 mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-600">阶段进度</span>
+                        <span class="text-xs text-gray-400" id="tlPhaseText">调研阶段</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 flex-wrap" id="tlDots"></div>
+                </div>
+
+                <!-- ===== 完整数据蓝图 ===== -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-5 mb-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-code-branch text-indigo-500"></i>
+                        <span class="font-semibold text-gray-700">完整数据蓝图</span>
+                        <span class="text-xs text-gray-400">| 处理流程 + 异常预案</span>
+                    </div>
+
+                    <!-- 处理流程 -->
+                    <div class="mb-3">
+                        <div class="text-xs font-semibold text-blue-500 uppercase tracking-wider mb-2">处理流程</div>
+                        <div id="tlBlueprintSteps" class="blueprint-section">
+                            <!-- 由JS动态渲染 -->
+                        </div>
+                    </div>
+
+                    <!-- 异常预案 -->
+                    <div>
+                        <div class="text-xs font-semibold text-amber-500 uppercase tracking-wider mb-2">异常处理预案</div>
+                        <div id="tlBlueprintExceptions" class="blueprint-section">
+                            <!-- 由JS动态渲染 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 时间线 -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-clock text-indigo-400"></i>
+                        <span class="font-semibold text-gray-700">交付时间线</span>
+                        <span class="text-xs text-gray-400">| 每个阶段的交付物</span>
+                    </div>
+                    <div class="timeline" id="tlTimeline"></div>
+                </div>
+
+                <div class="text-center text-xs text-gray-300 mt-4">点击「查看资料」获取交付物文件</div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // ================================================================
+        //  项目数据（含完整蓝图）
+        // ================================================================
+        const projects = {
+            '客户画像标准化': {
+                name: '客户画像标准化',
+                client: '某股份制银行',
+                created: '2026-07-10',
+                status: '进行中',
+                currentPhase: '谈判',
+                logic: '将多源客户数据清洗、标准化，输出统一画像格式',
+                blueprint: {
+                    steps: [
+                        '数据接收与格式校验 — 检查必填字段是否为空，验证日期/数字格式合规',
+                        '缺失值处理 — 年龄为负数或大于120的记录标记为异常并置空',
+                        '字段标准化映射 — 性别（M/F）→（男/女），年龄→年龄段（18-25/26-35/36-45/46+）',
+                        '去重与封装 — 基于客户编号去重，生成最终交付文件'
+                    ],
+                    exceptions: [
+                        { label: '字段缺失', strategy: '标记为缺失，记录日志，继续处理' },
+                        { label: '格式异常', strategy: '告警通知，人工介入修正' },
+                        { label: '数据量异常', strategy: '告警，继续处理，标记可疑' }
+                    ]
+                },
+                phases: [{
+                    name: '调研',
+                    status: 'done',
+                    items: [
+                        { name: '需求验证报告', desc: '数据需求和规格已确认', hasDoc: true, type: '需求规格书' },
+                        { name: '项目背景确认书', desc: '客户背景与目标已确认', hasDoc: true, type: '项目背景' }
+                    ]
+                }, {
+                    name: '谈判',
+                    status: 'active',
+                    items: [
+                        { name: '客户画像数据_v1.0', desc: '首次交付，需修改', hasDoc: true, type: '数据文件' },
+                        { name: '客户画像数据_v1.1', desc: '修正后已通过', hasDoc: true, type: '数据文件' },
+                        { name: '客户画像数据_v1.2', desc: '最新版本，待验收', hasDoc: true, type: '数据文件' }
+                    ]
+                }, {
+                    name: '实施',
+                    status: 'waiting',
+                    items: []
+                }, {
+                    name: '验收',
+                    status: 'waiting',
+                    items: []
+                }, {
+                    name: '复盘',
+                    status: 'waiting',
+                    items: []
+                }]
+            },
+            '问卷清洗': {
+                name: '问卷清洗',
+                client: '某高校课题组',
+                created: '2026-07-15',
+                status: '进行中',
+                currentPhase: '调研',
+                logic: '清洗问卷数据，去除无效回答，标准化为结构化数据集',
+                blueprint: {
+                    steps: [
+                        '问卷完整性检查 — 检查每份问卷的必答题是否全部作答，筛除答题时长异常的记录',
+                        '开放题文本清洗 — 对开放题回答进行分词、去停用词处理，生成标准化的词条列表',
+                        '选择题选项映射 — 将选项ID映射为对应的标签文本',
+                        '输出格式化 — 汇总所有清洗后的字段，生成最终数据集，附带数据质量报告'
+                    ],
+                    exceptions: [
+                        { label: '问卷不完整', strategy: '标记为无效问卷，不进入后续处理' },
+                        { label: '答题时长异常', strategy: '标记可疑，人工复核' }
+                    ]
+                },
+                phases: [{
+                    name: '调研',
+                    status: 'active',
+                    items: [
+                        { name: '问卷清洗数据_初版', desc: '已通过', hasDoc: true, type: '数据报告' },
+                        { name: '问卷清洗数据_试交付', desc: '需修改', hasDoc: true, type: '数据报告' },
+                        { name: '问卷清洗数据_v1.0', desc: '待验收', hasDoc: true, type: '数据文件' }
+                    ]
+                }, {
+                    name: '谈判',
+                    status: 'waiting',
+                    items: []
+                }, {
+                    name: '实施',
+                    status: 'waiting',
+                    items: []
+                }, {
+                    name: '验收',
+                    status: 'waiting',
+                    items: []
+                }, {
+                    name: '复盘',
+                    status: 'waiting',
+                    items: []
+                }]
+            },
+            '电商价格数据库': {
+                name: '电商价格数据库',
+                client: 'CPP课题组',
+                created: '2026-06-01',
+                status: '已完成',
+                currentPhase: '验收',
+                logic: '从淘宝、京东每天采集固定关键词商品价格和销量，清洗后输出CSV',
+                blueprint: {
+                    steps: [
+                        '商品类别分配 — 根据关键词列表分配采集任务至对应类别',
+                        '商品列表采集 — 进入搜索页获取商品列表、价格、销量数据',
+                        '商品详情采集 — 进入商品详情页获取规格信息，补全数据',
+                        '数据封装与交付 — 汇总每日数据，生成CSV文件并交付'
+                    ],
+                    exceptions: [
+                        { label: '采集器故障', strategy: '前后两天数据无变化则沿用，促销日视为违约' },
+                        { label: '平台反爬', strategy: '自动切换代理IP，重试3次' },
+                        { label: 'API格式变化', strategy: '告警通知技术团队，暂停采集' },
+                        { label: '字段缺失', strategy: '标记为"部分缺失"，计入缺失率' }
+                    ]
+                },
+                phases: [{
+                    name: '调研',
+                    status: 'done',
+                    items: [
+                        { name: '需求确认文档', desc: '采集方案已确认', hasDoc: true, type: '需求规格书' }
+                    ]
+                }, {
+                    name: '谈判',
+                    status: 'done',
+                    items: [
+                        { name: '数据契约确认书', desc: '质量指标已约定', hasDoc: true, type: '契约文档' }
+                    ]
+                }, {
+                    name: '实施',
+                    status: 'done',
+                    items: [
+                        { name: '电商价格数据_第1-30天', desc: '首月完成', hasDoc: true, type: '数据文件' },
+                        { name: '电商价格数据_第31-60天', desc: '次月完成', hasDoc: true, type: '数据文件' }
+                    ]
+                }, {
+                    name: '验收',
+                    status: 'active',
+                    items: [
+                        { name: '电商价格数据_第61-90天', desc: '待验收', hasDoc: true, type: '数据文件' }
+                    ]
+                }, {
+                    name: '复盘',
+                    status: 'waiting',
+                    items: []
+                }]
+            },
+            '社交媒体舆情监控': {
+                name: '社交媒体舆情监控',
+                client: '某品牌方',
+                created: '2026-07-20',
+                status: '待启动',
+                currentPhase: '谈判',
+                logic: '从微博、抖音采集品牌相关舆情，进行情感分析和关键词提取',
+                blueprint: {
+                    steps: [
+                        '关键词配置 — 配置品牌相关关键词和监控平台',
+                        '舆情数据采集 — 从微博、抖音采集指定关键词的舆情数据',
+                        '情感分析 — 对采集到的内容进行情感倾向分析（正面/负面/中性）',
+                        '关键词提取与汇总 — 提取高频关键词，生成舆情摘要报告'
+                    ],
+                    exceptions: [
+                        { label: '平台反爬', strategy: '自动切换代理，降低采集频率' },
+                        { label: '数据量异常', strategy: '告警，继续处理，标记可疑' },
+                        { label: '格式变化', strategy: '告警，人工介入修正解析规则' }
+                    ]
+                },
+                phases: [{
+                    name: '调研',
+                    status: 'waiting',
+                    items: []
+                }, {
+                    name: '谈判',
+                    status: 'active',
+                    items: [
+                        { name: '舆情监控_需求确认样本', desc: '样本数据用于需求确认', hasDoc: true, type: '样本数据' }
+                    ]
+                }, {
+                    name: '实施',
+                    status: 'waiting',
+                    items: []
+                }, {
+                    name: '验收',
+                    status: 'waiting',
+                    items: []
+                }, {
+                    name: '复盘',
+                    status: 'waiting',
+                    items: []
+                }]
+            }
+        };
+
+        let currentProject = '';
+
+        // ================================================================
+        //  导航
+        // ================================================================
+        function navigateTo(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const target = document.getElementById('page-' + page);
+            if (target) {
+                target.classList.add('active');
+                target.classList.add('fade-in');
+                setTimeout(() => target.classList.remove('fade-in'), 300);
+            }
+            document.querySelectorAll('.sidebar-icon').forEach(el => el.classList.remove('active'));
+            const map = { 'dashboard': 'nav-dashboard', 'timeline': 'nav-dashboard' };
+            const navEl = document.getElementById(map[page] || 'nav-dashboard');
+            if (navEl) navEl.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ================================================================
+        //  筛选
+        // ================================================================
+        let filter = 'all';
+
+        function filterProjects(f, el) {
+            filter = f;
+            document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active-filter'));
+            if (el) el.classList.add('active-filter');
+            document.querySelectorAll('.filter-group button').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.filter-group button').forEach(b => {
+                if (b.textContent.trim() === { all: '全部', active: '进行中', done: '已完成', pending: '待启动' } [f]) {
+                    b.classList.add('active');
+                }
+            });
+            const cards = document.querySelectorAll('#projectList .project-card');
+            let count = 0;
+            cards.forEach(card => {
+                const badge = card.querySelector('.status-badge');
+                let s = 'all';
+                if (badge) {
+                    const t = badge.textContent.trim();
+                    if (t === '进行中') s = 'active';
+                    else if (t === '已完成') s = 'done';
+                    else if (t === '待启动') s = 'pending';
+                }
+                const match = f === 'all' || s === f;
+                card.style.display = match ? '' : 'none';
+                if (match) count++;
+            });
+            document.getElementById('projectCount').textContent = count + ' 个项目';
+        }
+
+        // ================================================================
+        //  显示项目详情（时间线 + 蓝图）
+        // ================================================================
+        function showTimeline(name) {
+            currentProject = name;
+            const data = projects[name];
+            if (!data) { showToast('项目数据不存在', false); return; }
+
+            // 基本信息
+            document.getElementById('tlTitle').textContent = data.name;
+            document.getElementById('tlClient').textContent = '创建于 ' + data.created;
+            document.getElementById('tlStatus').textContent = data.status;
+
+            const phaseMap = { '调研': 'research', '谈判': 'negotiate', '实施': 'implement', '验收': 'accept', '复盘': 'review' };
+            const phaseTag = document.getElementById('tlPhase');
+            phaseTag.textContent = data.currentPhase;
+            phaseTag.className = 'phase-tag ' + (phaseMap[data.currentPhase] || 'research');
+            document.getElementById('tlPhaseText').textContent = data.currentPhase + '阶段';
+
+            // 阶段点
+            const allPhases = ['调研', '谈判', '实施', '验收', '复盘'];
+            const dots = document.getElementById('tlDots');
+            dots.innerHTML = allPhases.map((p, i) => {
+                const ph = data.phases.find(x => x.name === p);
+                const st = ph ? ph.status : 'waiting';
+                let color = 'bg-gray-300',
+                    label = 'text-gray-400';
+                if (st === 'done') { color = 'bg-green-500';
+                    label = 'text-green-600'; } else if (st === 'active') { color = 'bg-indigo-500';
+                    label = 'text-indigo-600'; }
+                return `
+                    <span class="flex items-center gap-1 text-xs ${label}">
+                        <span class="w-2 h-2 rounded-full ${color} inline-block"></span>
+                        ${p}
+                        ${i < allPhases.length-1 ? '<span class="text-gray-300">→</span>' : ''}
+                    </span>
+                `;
+            }).join('');
+
+            // ----- 数据蓝图 -----
+            const blueprint = data.blueprint;
+            if (blueprint) {
+                // 处理步骤
+                const stepsContainer = document.getElementById('tlBlueprintSteps');
+                if (blueprint.steps && blueprint.steps.length > 0) {
+                    stepsContainer.innerHTML = blueprint.steps.map((step, idx) => `
+                        <div class="step-item">
+                            <span class="step-num">${idx + 1}</span>
+                            <span class="step-text">${step}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    stepsContainer.innerHTML = '<div class="text-sm text-gray-400 p-2">暂无处理流程信息</div>';
+                }
+
+                // 异常预案
+                const exContainer = document.getElementById('tlBlueprintExceptions');
+                if (blueprint.exceptions && blueprint.exceptions.length > 0) {
+                    exContainer.innerHTML = blueprint.exceptions.map(ex => `
+                        <div class="exception-item">
+                            <span class="ex-label">${ex.label}</span>
+                            <span class="ex-strategy">${ex.strategy}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    exContainer.innerHTML = '<div class="text-sm text-gray-400 p-2">暂无异常预案</div>';
+                }
+            }
+
+            // ----- 时间线 -----
+            const timeline = document.getElementById('tlTimeline');
+            timeline.innerHTML = data.phases.map((ph) => {
+                const statusMap = { done: '已完成', active: '进行中', waiting: '待开始' };
+                const statusLabel = statusMap[ph.status] || '待开始';
+                const statusCls = ph.status;
+
+                let itemsHtml = '';
+                if (ph.items.length > 0) {
+                    itemsHtml = ph.items.map(item => `
+                        <div class="tl-deliverable">
+                            <span class="dl-icon"><i class="fas fa-file-alt"></i></span>
+                            <span><strong>${item.name}</strong> — ${item.desc}</span>
+                            ${item.hasDoc ? `<span class="dl-action" onclick="event.stopPropagation();showDoc('${item.name}', '${item.type || '资料'}', '${name}')">查看资料</span>` : ''}
+                        </div>
+                    `).join('');
+                } else {
+                    itemsHtml = `<div class="tl-empty"><i class="fas fa-minus-circle mr-1"></i> 暂无交付物</div>`;
+                }
+
+                return `
+                    <div class="timeline-item ${ph.status}">
+                        <div class="tl-header">
+                            <span class="tl-title">${ph.name}</span>
+                            <span class="tl-status ${ph.status}">${statusLabel}</span>
+                            ${ph.items.length > 0 ? `<span class="text-xs text-gray-400">${ph.items.length} 项</span>` : ''}
+                        </div>
+                        <div class="tl-deliverables">${itemsHtml}</div>
+                    </div>
+                `;
+            }).join('');
+
+            navigateTo('timeline');
+        }
+
+        // ================================================================
+        //  资料弹窗
+        // ================================================================
+        function showDoc(name, type, project) {
+            document.getElementById('docModalTitle').textContent = name;
+            document.getElementById('docModalSub').textContent = project + ' · ' + type;
+
+            const content = document.getElementById('docModalContent');
+            content.innerHTML = `
+                <div class="text-sm text-gray-500 mb-2">以下资料可供下载：</div>
+                ${[
+                    { name: name + '.pdf', size: '2.3 MB' },
+                    { name: name + '_summary.md', size: '12 KB' },
+                    { name: 'data_spec.json', size: '45 KB' }
+                ].map(f => `
+                    <div class="file-item">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>${f.name}</span>
+                        <span class="text-xs text-gray-400">${f.size}</span>
+                        <span class="file-action" onclick="showToast('📥 下载 ${f.name}')">下载</span>
+                    </div>
+                `).join('')}
+                <div class="text-xs text-gray-400 mt-2">点击下载获取资料</div>
+            `;
+            document.getElementById('docModal').classList.add('active');
+        }
+
+        function closeDocModal() {
+            document.getElementById('docModal').classList.remove('active');
+        }
+
+        // ================================================================
+        //  Toast
+        // ================================================================
+        let toastTimer = null;
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // ================================================================
+        //  初始化
+        // ================================================================
+        document.getElementById('docModal').addEventListener('click', function(e) {
+            if (e.target === this) closeDocModal();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            filterProjects('all', document.querySelector('.stat-card'));
+            console.log('✅ 量潮数据 · 含完整蓝图的客户项目看板已加载');
+        });
+    </script>
+
+</body>
+</html>
