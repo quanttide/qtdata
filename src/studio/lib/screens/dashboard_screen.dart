@@ -62,8 +62,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       backgroundColor: const Color(0xFFF1F5F9),
       body: SafeArea(
@@ -141,7 +139,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       )
                     : ListView.separated(
                         itemCount: _filteredProjects.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 12),
+                        separatorBuilder: (_, _) => const SizedBox(height: 12),
                         itemBuilder: (context, index) {
                           final project = _filteredProjects[index];
                           return ProjectCard(

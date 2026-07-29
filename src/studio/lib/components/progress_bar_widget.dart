@@ -13,12 +13,6 @@ class ProgressBarWidget extends StatelessWidget {
     this.animated = true,
   });
 
-  Color get _fillColor {
-    if (progress >= 100) return const Color(0xFF10B981);
-    if (progress > 0) return const Color(0xFFF59E0B);
-    return const Color(0xFF94A3B8);
-  }
-
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
