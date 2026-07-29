@@ -404,16 +404,12 @@ class ProjectDetailScreen extends StatelessWidget {
 
   Widget _buildTimelinePhase(ProjectPhaseDetail ph) {
     final Color dotColor;
-    final Color borderColor;
     if (ph.status.isDone) {
       dotColor = const Color(0xFF10B981);
-      borderColor = const Color(0xFF10B981);
     } else if (ph.status.isActive) {
       dotColor = const Color(0xFF3B82F6);
-      borderColor = const Color(0xFF3B82F6);
     } else {
       dotColor = const Color(0xFF94A3B8);
-      borderColor = const Color(0xFFE2E8F0);
     }
 
     final statusLabel = ph.status.isDone
