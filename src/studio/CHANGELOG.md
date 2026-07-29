@@ -1,5 +1,20 @@
 # Changelog
 
+## [studio/v0.1.0-alpha.1] - 2026-07-29
+
+### 重构
+- 基于最新仪表盘原型（cloud4.html）重写首页
+- 删除 qtdata-project 包及所有旧依赖（bloc/provider/quanttide_data）
+
+### 新增
+- 仪表盘首页：项目进度条可视化、过滤药丸、统计计数
+- 项目详情页：进度条、交付目标、完整数据蓝图、交付时间线
+- `Project` 数据模型，绑定真实项目数据（客户 受让人标准化）
+
+### 依赖变更
+- 移除 `flutter_bloc`、`provider`、`quanttide_data`、`qtdata_project`
+- 仅保留 Flutter SDK + `cupertino_icons`
+
 ## [studio/v0.0.4] - 2026-05-14
 
 ### 变更
