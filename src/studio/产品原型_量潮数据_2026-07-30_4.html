@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>量潮数据 · 我的项目</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        body {
+            background: #f1f5f9;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .project-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.25rem 1.5rem;
+            border: 1px solid #f1f5f9;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+        .project-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+            transform: translateY(-1px);
+        }
+        .status-badge {
+            font-size: 0.6rem;
+            padding: 0.1rem 0.6rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        .status-badge.active {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .status-badge.done {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status-badge.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .phase-tag {
+            font-size: 0.6rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        .phase-tag.research {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .phase-tag.negotiate {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .phase-tag.implement {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .phase-tag.accept {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+        .phase-tag.review {
+            background: #fce7f3;
+            color: #9d174d;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            border: 1px solid #f1f5f9;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-align: center;
+        }
+        .stat-card:hover {
+            border-color: #cbd5e1;
+        }
+        .stat-card .number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .stat-card .label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+        .stat-card.active-filter {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+        }
+        .stat-card .num-green {
+            color: #10b981;
+        }
+        .stat-card .num-amber {
+            color: #f59e0b;
+        }
+        .stat-card .num-blue {
+            color: #4f46e5;
+        }
+        .stat-card .num-gray {
+            color: #94a3b8;
+        }
+
+        .deliverable-dashboard {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .deliverable-dashboard .dash-item {
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+            font-size: 0.7rem;
+            padding: 0.05rem 0.5rem 0.05rem 0.3rem;
+            border-radius: 8px;
+            font-weight: 500;
+            border: 1px solid #e2e8f0;
+            background: white;
+        }
+        .deliverable-dashboard .dash-item .dash-num {
+            font-size: 0.9rem;
+            font-weight: 700;
+            min-width: 16px;
+            text-align: center;
+        }
+        .deliverable-dashboard .dash-item.done {
+            border-color: #a7f3d0;
+            background: #f0fdf4;
+            color: #065f46;
+        }
+        .deliverable-dashboard .dash-item.done .dash-num {
+            color: #10b981;
+        }
+        .deliverable-dashboard .dash-item.active {
+            border-color: #93c5fd;
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+        .deliverable-dashboard .dash-item.active .dash-num {
+            color: #3b82f6;
+        }
+        .deliverable-dashboard .dash-item.todo {
+            border-color: #e2e8f0;
+            background: #f8fafc;
+            color: #64748b;
+        }
+        .deliverable-dashboard .dash-item.todo .dash-num {
+            color: #94a3b8;
+        }
+
+        .progress-value-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .progress-value-row .progress-wrap {
+            flex: 1;
+            min-width: 100px;
+        }
+        .progress-value-row .progress-wrap .progress-bar {
+            height: 5px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 2px;
+        }
+        .progress-value-row .progress-wrap .progress-bar .progress-fill {
+            height: 100%;
+            background: #4f46e5;
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+        .progress-value-row .value-metric {
+            font-size: 0.7rem;
+            color: #475569;
+            white-space: nowrap;
+            background: #f1f5f9;
+            padding: 0.1rem 0.5rem;
+            border-radius: 12px;
+        }
+        .progress-value-row .value-metric .amount {
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .progress-value-row .value-metric .total {
+            color: #94a3b8;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.2rem;
+            background: #f1f5f9;
+            padding: 0.2rem;
+            border-radius: 8px;
+        }
+        .filter-group button {
+            padding: 0.2rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-weight: 500;
+        }
+        .filter-group button.active {
+            background: white;
+            color: #1e293b;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .sidebar-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            cursor: pointer;
+            color: #94a3b8;
+        }
+        .sidebar-icon:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        .sidebar-icon.active {
+            background: #e0e7ff;
+            color: #4f46e5;
+        }
+
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #1e293b;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1000;
+            pointer-events: none;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e2e8f0;
+        }
+        .timeline-item {
+            position: relative;
+            padding: 0.5rem 0 0.5rem 1.2rem;
+            border-left: 3px solid transparent;
+            margin-bottom: 0.5rem;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.5rem;
+            top: 0.6rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #e2e8f0;
+            background: white;
+        }
+        .timeline-item.done::before {
+            background: #10b981;
+            border-color: #10b981;
+        }
+        .timeline-item.done {
+            border-left-color: #10b981;
+        }
+        .timeline-item.active::before {
+            background: #4f46e5;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+        .timeline-item.active {
+            border-left-color: #4f46e5;
+        }
+        .timeline-item.todo::before {
+            background: #e2e8f0;
+            border-color: #d1d5db;
+        }
+        .timeline-item.todo {
+            border-left-color: #d1d5db;
+        }
+        .timeline-item .tl-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .timeline-item .tl-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1e293b;
+        }
+        .timeline-item .tl-status {
+            font-size: 0.6rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 10px;
+        }
+        .timeline-item .tl-status.done {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .timeline-item .tl-status.active {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .timeline-item .tl-status.todo {
+            background: #f1f5f9;
+            color: #94a3b8;
+        }
+        .tl-deliverable {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.2rem 0.5rem;
+            background: #f8fafc;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: #1e293b;
+            margin-top: 0.2rem;
+        }
+        .tl-deliverable .dl-icon {
+            color: #94a3b8;
+        }
+        .tl-deliverable .dl-action {
+            margin-left: auto;
+            font-size: 0.7rem;
+            color: #4f46e5;
+            cursor: pointer;
+        }
+        .tl-deliverable .dl-action:hover {
+            text-decoration: underline;
+        }
+        .tl-empty {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            padding: 0.2rem 0.5rem;
+        }
+
+        .blueprint-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            border: 1px solid #e2e8f0;
+        }
+        .blueprint-section .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.85rem;
+            color: #334155;
+        }
+        .blueprint-section .step-item:last-child {
+            border-bottom: none;
+        }
+        .blueprint-section .step-num {
+            background: #4f46e5;
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: 600;
+            flex-shrink: 0;
+            margin-top: 0.05rem;
+        }
+        .blueprint-section .step-text {
+            flex: 1;
+            line-height: 1.5;
+        }
+        .blueprint-section .exception-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.3rem 0;
+            font-size: 0.8rem;
+            color: #334155;
+            border-bottom: 1px solid #f8fafc;
+        }
+        .blueprint-section .exception-item:last-child {
+            border-bottom: none;
+        }
+        .blueprint-section .exception-item .ex-label {
+            font-weight: 500;
+            min-width: 80px;
+            color: #1e293b;
+        }
+        .blueprint-section .exception-item .ex-strategy {
+            color: #64748b;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: white;
+            border-radius: 24px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeSlide 0.3s ease;
+        }
+        .modal-box::-webkit-scrollbar {
+            width: 4px;
+        }
+        .modal-box::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .modal-box .file-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.5rem;
+            background: #f8fafc;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .modal-box .file-item:last-child {
+            border-bottom: none;
+        }
+        .modal-box .file-item i {
+            color: #4f46e5;
+        }
+        .modal-box .file-item .file-action {
+            margin-left: auto;
+            color: #4f46e5;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+        .modal-box .file-item .file-action:hover {
+            text-decoration: underline;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all 0.15s;
+        }
+        .btn-primary:hover {
+            background: #4338ca;
+        }
+
+        /* ===== 二维网格样式 ===== */
+        .grid-matrix {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.75rem;
+        }
+        .grid-matrix th,
+        .grid-matrix td {
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 0.5rem;
+            vertical-align: middle;
+            text-align: center;
+            background: white;
+        }
+        .grid-matrix th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #475569;
+        }
+        .grid-matrix .row-label {
+            font-weight: 500;
+            color: #1e293b;
+            min-width: 60px;
+            background: #fafcff;
+        }
+        .grid-matrix .cell-done {
+            border-left: 3px solid #10b981;
+        }
+        .grid-matrix .cell-active {
+            border-left: 3px solid #3b82f6;
+        }
+        .grid-matrix .cell-todo {
+            border-left: 3px solid #d1d5db;
+        }
+        .grid-matrix .cell-empty {
+            border-left: 3px solid transparent;
+            color: #cbd5e1;
+            font-size: 0.6rem;
+        }
+        .grid-matrix .delivery-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.78rem;
+        }
+        .grid-matrix .status-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-right: 0.2rem;
+        }
+        .grid-matrix .status-dot.done {
+            background: #10b981;
+        }
+        .grid-matrix .status-dot.active {
+            background: #3b82f6;
+        }
+        .grid-matrix .status-dot.todo {
+            background: #94a3b8;
+        }
+        .grid-matrix .phase-status-tag {
+            font-size: 0.55rem;
+            padding: 0.05rem 0.4rem;
+            border-radius: 10px;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 2px;
+        }
+        .grid-matrix .phase-status-tag.done {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .grid-matrix .phase-status-tag.active {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .grid-matrix .phase-status-tag.todo {
+            background: #f1f5f9;
+            color: #94a3b8;
+        }
+        @media (max-width: 768px) {
+            .grid-matrix {
+                font-size: 0.65rem;
+            }
+            .grid-matrix th,
+            .grid-matrix td {
+                padding: 0.3rem 0.3rem;
+            }
+            .grid-matrix .row-label {
+                min-width: 40px;
+                font-size: 0.6rem;
+            }
+            .grid-matrix .delivery-name {
+                font-size: 0.65rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <div id="docModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="flex items-center justify-between mb-3">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-800" id="docModalTitle">资料详情</h2>
+                    <p class="text-xs text-gray-400" id="docModalSub">交付物</p>
+                </div>
+                <button class="text-gray-400 hover:text-gray-600 text-xl" onclick="closeDocModal()">&times;</button>
+            </div>
+            <div id="docModalContent"></div>
+        </div>
+    </div>
+
+    <div id="app" class="flex min-h-screen">
+
+        <aside class="w-20 bg-white border-r border-gray-100 flex flex-col items-center py-4 gap-0.5 flex-shrink-0 h-screen sticky top-0 z-10">
+            <div class="text-xl font-bold text-indigo-600 mb-3">量</div>
+            <div class="sidebar-icon active" onclick="navigateTo('dashboard')" title="我的项目" id="nav-dashboard">
+                <i class="fas fa-th-large text-lg"></i>
+            </div>
+            <div class="mt-auto sidebar-icon" title="帮助">
+                <i class="fas fa-question-circle text-lg"></i>
+            </div>
+        </aside>
+
+        <main class="flex-1 p-5 md:p-7 max-w-6xl overflow-y-auto h-screen">
+
+            <!-- ====== 首页 ====== -->
+            <div id="page-dashboard" class="page active">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">我的项目</h1>
+                        <p class="text-sm text-gray-400 mt-0.5">当前所有数据项目的进度总览</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                    <div class="stat-card active-filter" onclick="filterProjects('all', this)">
+                        <div class="number">1</div>
+                        <div class="label">全部项目</div>
+                    </div>
+                    <div class="stat-card" onclick="filterProjects('active', this)">
+                        <div class="number num-amber">1</div>
+                        <div class="label">进行中</div>
+                    </div>
+                    <div class="stat-card" onclick="filterProjects('done', this)">
+                        <div class="number num-green">0</div>
+                        <div class="label">已完成</div>
+                    </div>
+                    <div class="stat-card" onclick="filterProjects('pending', this)">
+                        <div class="number num-gray">0</div>
+                        <div class="label">待启动</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mb-3">
+                    <div class="filter-group">
+                        <button class="active" onclick="filterProjects('all', null, this)">全部</button>
+                        <button onclick="filterProjects('active', null, this)">进行中</button>
+                        <button onclick="filterProjects('done', null, this)">已完成</button>
+                        <button onclick="filterProjects('pending', null, this)">待启动</button>
+                    </div>
+                    <span class="text-xs text-gray-400" id="projectCount">1 个项目</span>
+                </div>
+
+                <div class="space-y-3" id="projectList"></div>
+
+                <div class="text-xs text-gray-300 mt-4 text-center">点击项目查看全流程进度与时间线</div>
+            </div>
+
+            <!-- ====== 项目详情页 ====== -->
+            <div id="page-timeline" class="page">
+                <div class="flex items-center gap-3 mb-4">
+                    <button class="text-gray-400 hover:text-gray-600" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-left"></i></button>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <h1 class="text-xl font-bold text-gray-800" id="tlTitle">项目名称</h1>
+                            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full" id="tlStatus">进行中</span>
+                            <span class="phase-tag" id="tlPhase">实施</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-0.5" id="tlClient">创建于 —</p>
+                    </div>
+                    <button class="btn-primary text-sm" onclick="showToast('📄 报告已导出')"><i class="fas fa-file-pdf"></i> 导出</button>
+                </div>
+
+                <!-- ===== 全流程进度总览（二维网格） ===== -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-5 mb-4 overflow-x-auto">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-table text-indigo-500"></i>
+                        <span class="font-semibold text-gray-700">全流程进度总览</span>
+                    </div>
+                    <div id="tlPhaseMatrix"></div>
+                </div>
+
+                <!-- 完整数据蓝图 -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-5 mb-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-code-branch text-indigo-500"></i>
+                        <span class="font-semibold text-gray-700">完整数据蓝图</span>
+                        <span class="text-xs text-gray-400">| 处理流程 + 异常预案</span>
+                    </div>
+                    <div class="mb-3">
+                        <div class="text-xs font-semibold text-blue-500 uppercase tracking-wider mb-2">处理流程</div>
+                        <div id="tlBlueprintSteps" class="blueprint-section"></div>
+                    </div>
+                    <div>
+                        <div class="text-xs font-semibold text-amber-500 uppercase tracking-wider mb-2">异常处理预案</div>
+                        <div id="tlBlueprintExceptions" class="blueprint-section"></div>
+                    </div>
+                </div>
+
+                <!-- 交付时间线 -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-clock text-indigo-400"></i>
+                        <span class="font-semibold text-gray-700">交付时间线</span>
+                        <span class="text-xs text-gray-400">| 每个阶段的交付物</span>
+                    </div>
+                    <div class="timeline" id="tlTimeline"></div>
+                </div>
+
+                <div class="text-center text-xs text-gray-300 mt-4">点击「查看资料」获取交付物文件</div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // ================================================================
+        //  项目数据
+        // ================================================================
+        const statusMap = {
+            'done': { label: '已完成', cls: 'done' },
+            'active': { label: '进行中', cls: 'active' },
+            'todo': { label: '待启动', cls: 'todo' }
+        };
+
+        const projects = {
+            '量潮科技数字化': {
+                name: '量潮科技数字化',
+                client: '内部客户',
+                created: '2026-01-12',
+                status: '进行中',
+                currentPhase: '实施',
+                contractAmount: 15,
+                deliverables: [
+                    { name: '交付结果表 A', status: 'done' },
+                    { name: '交付结果表 B', status: 'active' },
+                    { name: '交付结果表 C', status: 'todo' }
+                ],
+                matrix: {
+                    rows: [
+                        { label: '📋 项目', key: 'project' },
+                        { label: '📊 数据', key: 'data' },
+                        { label: '💼 商务', key: 'business' }
+                    ],
+                    columns: [
+                        { label: '调研', key: 'research', status: 'done' },
+                        { label: '谈判', key: 'negotiate', status: 'active' },
+                        { label: '实施', key: 'implement', status: 'todo' },
+                        { label: '验收', key: 'accept', status: 'todo' },
+                        { label: '复盘', key: 'review', status: 'todo' }
+                    ],
+                    cells: {
+                        'project_research': { name: '项目背景确认书', status: 'done' },
+                        'project_negotiate': { name: '启动约定确认书', status: 'active' },
+                        'project_implement': { name: '进度同步记录', status: 'todo' },
+                        'project_accept': { name: '验收确认书', status: 'todo' },
+                        'project_review': { name: '复盘报告', status: 'todo' },
+                        'data_research': { name: '数据需求确认书', status: 'done' },
+                        'data_negotiate': { name: '数据规格书', status: 'active' },
+                        'data_implement': { name: '数据清洗与匹配', status: 'todo' },
+                        'data_accept': { name: '数据报告', status: 'todo' },
+                        'data_review': { name: '异常沉淀', status: 'todo' },
+                        'business_research': { name: '报价单', status: 'done' },
+                        'business_negotiate': { name: '合同', status: 'active' },
+                        'business_implement': { name: '商务变更确认书', status: 'todo' },
+                        'business_accept': { name: '交付与收款', status: 'todo' },
+                        'business_review': { name: '结算与归档', status: 'todo' }
+                    }
+                },
+                blueprint: {
+                    steps: [
+                        '加载原始数据 — 加载 TMC owner.dta、TMA assignee.dta、TMA assignor.dta',
+                        '业务规则筛选 — 仅保留美国公司、剔除个人申请人、保留原始申请人和注册人',
+                        '公司名称标准化 — 统一大小写、符号、常见后缀等（参考客户提供的标准化 do 文件）',
+                        '上市公司数据库整合 — 加载 5 个数据源，按优先级排序，将 CIQ ID 映射为 GVKEY',
+                        '多级匹配 — 精确匹配优先，模糊匹配使用 模糊匹配算法，计算调整后相似度分数（原始相似度 + 惩罚项）',
+                        '阈值分流与 AI 审核 — ≥95% 自动通过，85%~95% 进入人工审核队列，<85% 自动拒绝',
+                        '结果回填与输出 — 生成三个匹配结果表（TMC Owner / TMA Assignee / TMA Assignor）及未匹配记录'
+                    ],
+                    exceptions: [
+                        { label: '精确匹配', strategy: '优先自动通过，确保高置信度匹配' },
+                        { label: '无候选', strategy: '自动判定为无匹配' },
+                        { label: '罗马数字不一致', strategy: '自动拒绝，降低同名不同实体误配风险' },
+                        { label: '仅法律后缀差异', strategy: '核心名称一致则自动通过' },
+                        { label: '核心名称包含/缩写等', strategy: '进入人工审核，避免误判' }
+                    ]
+                },
+                phases: [{
+                    name: '数据预处理与标准化',
+                    status: 'done',
+                    items: [
+                        { name: '客户 原始数据清洗', desc: 'owner/assignee/assignor 三表清洗完成', hasDoc: true,
+                            type: '清洗脚本' },
+                        { name: '公司名称标准化', desc: '统一大小写、符号、后缀，参考 do 文件', hasDoc: true,
+                            type: '标准化规则' },
+                        { name: '上市公司数据库整合', desc: '5 个数据源整合为统一匹配字典', hasDoc: true, type: '映射表' }
+                    ]
+                }, {
+                    name: '匹配引擎开发',
+                    status: 'active',
+                    items: [
+                        { name: '精确匹配 + 模糊匹配实现', desc: '模糊匹配算法 算法，调整后分数 = 原始相似度 + 惩罚项',
+                            hasDoc: true, type: '匹配代码' },
+                        { name: '阈值分流方案', desc: '≥95% 自动通过，85%~95% 人工审核，<85% 自动拒绝', hasDoc: true,
+                            type: '方案文档' },
+                        { name: 'AI 审核方案', desc: '2026-04-07 客户已同意 AI 审核方案', hasDoc: true, type: '方案文档' }
+                    ]
+                }, {
+                    name: 'Assignor 交付',
+                    status: 'done',
+                    items: [
+                        { name: 'Assignor 初步交付', desc: '2026-02-11 向客户交付成果', hasDoc: true, type: '交付文件' },
+                        { name: 'Assignor AI 审核完成', desc: '全部记录完成 AI 审核并自动通过',
+                            hasDoc: true, type: '审核报告' },
+                        { name: 'Assignor 结果同步客户', desc: '2026-05-09 同步客户，待反馈', hasDoc: true,
+                            type: '沟通记录' }
+                    ]
+                }, {
+                    name: 'Assignee 推进中',
+                    status: 'active',
+                    items: [
+                        { name: '代码压缩包', desc: '由 PM 保管，原技术离职时未跑完', hasDoc: true, type: '代码包' },
+                        { name: '新技术接手', desc: '团队成员甲 / 团队成员乙 接手推进中', hasDoc: false, type: '' }
+                    ]
+                }, {
+                    name: 'Owner 待启动',
+                    status: 'todo',
+                    items: [
+                        { name: 'Owner 匹配', desc: '费用待确认，等上一阶段结果确认后再推进', hasDoc: false,
+                            type: '' }
+                    ]
+                }]
+            }
+        };
+
+        // ================================================================
+        //  渲染与交互
+        // ================================================================
+        let currentProject = '';
+        let filter = 'all';
+
+        function navigateTo(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const target = document.getElementById('page-' + page);
+            if (target) {
+                target.classList.add('active');
+                target.classList.add('fade-in');
+                setTimeout(() => target.classList.remove('fade-in'), 300);
+            }
+            document.querySelectorAll('.sidebar-icon').forEach(el => el.classList.remove('active'));
+            const map = { 'dashboard': 'nav-dashboard', 'timeline': 'nav-dashboard' };
+            const navEl = document.getElementById(map[page] || 'nav-dashboard');
+            if (navEl) navEl.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function filterProjects(f, el, btn) {
+            filter = f;
+            document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active-filter'));
+            if (el) el.classList.add('active-filter');
+            document.querySelectorAll('.filter-group button').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.filter-group button').forEach(b => {
+                const map = { 'all': '全部', 'active': '进行中', 'done': '已完成', 'pending': '待启动' };
+                if (b.textContent.trim() === map[f]) b.classList.add('active');
+            });
+            const cards = document.querySelectorAll('#projectList .project-card');
+            let count = 0;
+            cards.forEach(card => {
+                const badge = card.querySelector('.status-badge');
+                let s = 'all';
+                if (badge) {
+                    const t = badge.textContent.trim();
+                    if (t === '进行中') s = 'active';
+                    else if (t === '已完成') s = 'done';
+                    else if (t === '待启动') s = 'pending';
+                }
+                const match = f === 'all' || s === f;
+                card.style.display = match ? '' : 'none';
+                if (match) count++;
+            });
+            document.getElementById('projectCount').textContent = count + ' 个项目';
+        }
+
+        function countDeliverableStatus(deliverables) {
+            const counts = { done: 0, active: 0, todo: 0 };
+            if (!deliverables) return counts;
+            deliverables.forEach(d => {
+                if (d.status === 'done') counts.done++;
+                else if (d.status === 'active') counts.active++;
+                else counts.todo++;
+            });
+            return counts;
+        }
+
+        function renderProjects() {
+            const container = document.getElementById('projectList');
+            container.innerHTML = '';
+            Object.keys(projects).forEach(key => {
+                const p = projects[key];
+                const statusCls = p.status === '已完成' ? 'done' : (p.status === '进行中' ? 'active' : 'pending');
+                const phaseMap = { '调研': 'research', '谈判': 'negotiate', '实施': 'implement', '验收': 'accept',
+                    '复盘': 'review' };
+                const phaseCls = phaseMap[p.currentPhase] || 'research';
+
+                const counts = countDeliverableStatus(p.deliverables);
+                const total = counts.done + counts.active + counts.todo;
+                const progress = total > 0 ? Math.round((counts.done / total) * 100) : 0;
+                const confirmedIncome = p.contractAmount ? (p.contractAmount * (counts.done / total)) : 0;
+
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                card.setAttribute('onclick', `showTimeline('${key}')`);
+                card.innerHTML = `
+                    <div class="flex flex-wrap items-start justify-between gap-2">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-semibold text-gray-800">${p.name}</span>
+                                <span class="status-badge ${statusCls}">${p.status}</span>
+                                <span class="phase-tag ${phaseCls}">${p.currentPhase}阶段</span>
+                            </div>
+                            <div class="mt-2 space-y-1.5">
+                                <div class="deliverable-dashboard">
+                                    <span class="dash-item done"><span class="dash-num">${counts.done}</span> 已完成</span>
+                                    <span class="dash-item active"><span class="dash-num">${counts.active}</span> 进行中</span>
+                                    <span class="dash-item todo"><span class="dash-num">${counts.todo}</span> 待启动</span>
+                                    <span class="text-xs text-gray-400 ml-1">共 ${total} 项</span>
+                                </div>
+                                <div class="progress-value-row">
+                                    <div class="progress-wrap">
+                                        <div class="flex items-center justify-between text-xs text-gray-500">
+                                            <span>交付完成度</span>
+                                            <span class="font-semibold text-gray-700">${progress}%</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width:${progress}%"></div>
+                                        </div>
+                                    </div>
+                                    <span class="value-metric">
+                                        💰 <span class="amount">${confirmedIncome.toFixed(1)}</span> <span class="total">/ ${p.contractAmount.toFixed(1)} 万元</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-gray-400 flex-shrink-0">更新于 2026-07-28</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            filterProjects('all', document.querySelector('.stat-card'));
+        }
+
+        // ===== 渲染二维网格（无灰字、无多余说明文字） =====
+        function renderMatrix(data) {
+            const container = document.getElementById('tlPhaseMatrix');
+            if (!data || !data.matrix) {
+                container.innerHTML = '<div class="text-sm text-gray-400 p-2">暂无数据</div>';
+                return;
+            }
+
+            const m = data.matrix;
+            const rows = m.rows;
+            const cols = m.columns;
+            const cells = m.cells;
+
+            let html = `
+                <div style="overflow-x:auto;">
+                    <table class="grid-matrix">
+                        <thead>
+                            <tr>
+                                <th style="min-width:60px;border-bottom:2px solid #e2e8f0;">维度 \\ 阶段</th>
+                    `;
+            cols.forEach(col => {
+                const st = statusMap[col.status] || statusMap['todo'];
+                html += `
+                            <th style="border-bottom:2px solid #e2e8f0;">
+                                ${col.label}
+                                <span class="phase-status-tag ${col.status}" style="display:block;margin-top:2px;">${st.label}</span>
+                            </th>
+                        `;
+            });
+            html += `
+                            </tr>
+                        </thead>
+                        <tbody>
+                    `;
+
+            rows.forEach(row => {
+                html += `<tr>`;
+                html += `<td class="row-label" style="font-weight:600;text-align:left;padding-left:0.8rem;">${row.label}</td>`;
+                cols.forEach(col => {
+                    const cellKey = row.key + '_' + col.key;
+                    const cell = cells[cellKey];
+                    if (cell) {
+                        const st = statusMap[cell.status] || statusMap['todo'];
+                        html += `
+                            <td class="cell-${cell.status}">
+                                <div class="delivery-name">${cell.name}</div>
+                                <div style="margin-top:0.2rem;">
+                                    <span class="status-dot ${cell.status}"></span>
+                                    <span style="font-size:0.55rem;color:#94a3b8;">${st.label}</span>
+                                </div>
+                            </td>
+                        `;
+                    } else {
+                        html += `
+                            <td class="cell-empty" style="color:#cbd5e1;font-size:0.6rem;">
+                                —
+                            </td>
+                        `;
+                    }
+                });
+                html += `</tr>`;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+                <div style="display:flex;gap:0.8rem;margin-top:0.5rem;font-size:0.6rem;color:#94a3b8;flex-wrap:wrap;border-top:1px solid #f1f5f9;padding-top:0.5rem;">
+                    <span><span class="status-dot done" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#10b981;margin-right:0.2rem;"></span>已完成</span>
+                    <span><span class="status-dot active" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#3b82f6;margin-right:0.2rem;"></span>进行中</span>
+                    <span><span class="status-dot todo" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#94a3b8;margin-right:0.2rem;"></span>待启动</span>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function showTimeline(name) {
+            currentProject = name;
+            const data = projects[name];
+            if (!data) { showToast('项目数据不存在', false); return; }
+
+            document.getElementById('tlTitle').textContent = data.name;
+            document.getElementById('tlClient').textContent = '客户：' + data.client + ' ｜ 创建于 ' + data.created;
+            document.getElementById('tlStatus').textContent = data.status;
+
+            const phaseMap = { '调研': 'research', '谈判': 'negotiate', '实施': 'implement', '验收': 'accept',
+                '复盘': 'review' };
+            const phaseTag = document.getElementById('tlPhase');
+            phaseTag.textContent = data.currentPhase;
+            phaseTag.className = 'phase-tag ' + (phaseMap[data.currentPhase] || 'research');
+
+            // 渲染二维网格
+            renderMatrix(data);
+
+            // 蓝图
+            const bp = data.blueprint;
+            if (bp) {
+                const stepsContainer = document.getElementById('tlBlueprintSteps');
+                if (bp.steps && bp.steps.length > 0) {
+                    stepsContainer.innerHTML = bp.steps.map((step, idx) => `
+                        <div class="step-item">
+                            <span class="step-num">${idx + 1}</span>
+                            <span class="step-text">${step}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    stepsContainer.innerHTML = '<div class="text-sm text-gray-400 p-2">暂无处理流程信息</div>';
+                }
+
+                const exContainer = document.getElementById('tlBlueprintExceptions');
+                if (bp.exceptions && bp.exceptions.length > 0) {
+                    exContainer.innerHTML = bp.exceptions.map(ex => `
+                        <div class="exception-item">
+                            <span class="ex-label">${ex.label}</span>
+                            <span class="ex-strategy">${ex.strategy}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    exContainer.innerHTML = '<div class="text-sm text-gray-400 p-2">暂无异常预案</div>';
+                }
+            }
+
+            // 时间线
+            const timeline = document.getElementById('tlTimeline');
+            if (data.phases && data.phases.length > 0) {
+                timeline.innerHTML = data.phases.map((ph) => {
+                    const statusMap2 = { done: '已完成', active: '进行中', todo: '待启动' };
+                    const statusLabel = statusMap2[ph.status] || '待启动';
+                    const statusCls = ph.status;
+
+                    let itemsHtml = '';
+                    if (ph.items && ph.items.length > 0) {
+                        itemsHtml = ph.items.map(item => `
+                            <div class="tl-deliverable">
+                                <span class="dl-icon"><i class="fas fa-file-alt"></i></span>
+                                <span><strong>${item.name}</strong> — ${item.desc}</span>
+                                ${item.hasDoc ? `<span class="dl-action" onclick="event.stopPropagation();showDoc('${item.name}', '${item.type || '资料'}', '${data.name}')">查看资料</span>` : ''}
+                            </div>
+                        `).join('');
+                    } else {
+                        itemsHtml = `<div class="tl-empty"><i class="fas fa-minus-circle mr-1"></i> 暂无交付物</div>`;
+                    }
+
+                    return `
+                        <div class="timeline-item ${ph.status}">
+                            <div class="tl-header">
+                                <span class="tl-title">${ph.name}</span>
+                                <span class="tl-status ${ph.status}">${statusLabel}</span>
+                                ${ph.items && ph.items.length > 0 ? `<span class="text-xs text-gray-400">${ph.items.length} 项</span>` : ''}
+                            </div>
+                            <div class="tl-deliverables">${itemsHtml}</div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                timeline.innerHTML = '<div class="text-sm text-gray-400 p-2">暂无时间线数据</div>';
+            }
+
+            navigateTo('timeline');
+        }
+
+        function showDoc(name, type, project) {
+            document.getElementById('docModalTitle').textContent = name;
+            document.getElementById('docModalSub').textContent = project + ' · ' + type;
+            const content = document.getElementById('docModalContent');
+            let files = [];
+            if (name.includes('Assignor')) {
+                files = [
+                    { name: 'TMA_assignor_matched.csv', size: '12.7 MB' },
+                    { name: 'Assignor_AI审核摘要.pdf', size: '0.8 MB' },
+                    { name: 'assignor_threshold_log.xlsx', size: '0.3 MB' }
+                ];
+            } else if (name.includes('Assignee')) {
+                files = [
+                    { name: 'TMA_assignee_matched.csv', size: '8.3 MB' },
+                    { name: 'assignee_code_package.zip', size: '45.2 MB' },
+                    { name: 'assignee_progress_log.docx', size: '0.2 MB' }
+                ];
+            } else if (name.includes('Owner')) {
+                files = [
+                    { name: 'TMC_owner_matched.csv', size: '6.1 MB' },
+                    { name: 'owner_matching_spec.pdf', size: '0.5 MB' }
+                ];
+            } else if (name.includes('标准化')) {
+                files = [
+                    { name: 'name_standardization_rules.xlsx', size: '0.4 MB' },
+                    { name: 'standardized_names_sample.csv', size: '2.1 MB' }
+                ];
+            } else if (name.includes('合同')) {
+                files = [
+                    { name: '内部客户_合同扫描件.pdf', size: '1.8 MB' },
+                    { name: '合同签署记录.jpg', size: '0.3 MB' }
+                ];
+            } else {
+                files = [
+                    { name: name + '.pdf', size: '1.2 MB' },
+                    { name: name + '_data.csv', size: '0.8 MB' }
+                ];
+            }
+            content.innerHTML = `
+                <div class="text-sm text-gray-500 mb-2">以下资料可供下载：</div>
+                ${files.map(f => `
+                    <div class="file-item">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>${f.name}</span>
+                        <span class="text-xs text-gray-400">${f.size}</span>
+                        <span class="file-action" onclick="showToast('📥 下载 ${f.name}')">下载</span>
+                    </div>
+                `).join('')}
+                <div class="text-xs text-gray-400 mt-2 border-t pt-2">
+                    📊 Assignor 跑数摘要：58,797 条进入 AI 审核 | 5,067 条自动通过（8.6%）| 91.4% 判定无匹配
+                </div>
+            `;
+            document.getElementById('docModal').classList.add('active');
+        }
+
+        function closeDocModal() {
+            document.getElementById('docModal').classList.remove('active');
+        }
+
+        let toastTimer = null;
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        document.getElementById('docModal').addEventListener('click', function(e) {
+            if (e.target === this) closeDocModal();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            renderProjects();
+            console.log('✅ 量潮数据云 · V0.1.1 二维网格精简版已加载');
+        });
+    </script>
+
+</body>
+</html>
