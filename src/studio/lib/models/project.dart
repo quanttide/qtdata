@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart' show Color;
+
 enum ProjectPhase {
   research('调研'),
   negotiate('谈判'),
@@ -38,6 +40,32 @@ enum ItemStatus {
     (s) => s.name == key,
     orElse: () => ItemStatus.todo,
   );
+}
+
+/// 状态三态语义色（主色/徽章底色/徽章前景色），各组件共用
+/// 归一点：todo 浅灰 D1D5DB/E2E8F0 → 94A3B8；active 3B82F6 → 品牌靛蓝 4F46E5
+
+extension ItemStatusColors on ItemStatus {
+  /// 状态主色（圆点、边框、强调线）
+  Color get color => switch (this) {
+    ItemStatus.done => const Color(0xFF10B981),
+    ItemStatus.active => const Color(0xFF4F46E5),
+    ItemStatus.todo => const Color(0xFF94A3B8),
+  };
+
+  /// 状态徽章底色
+  Color get badgeBg => switch (this) {
+    ItemStatus.done => const Color(0xFFD1FAE5),
+    ItemStatus.active => const Color(0xFFDBEAFE),
+    ItemStatus.todo => const Color(0xFFF1F5F9),
+  };
+
+  /// 状态徽章前景色
+  Color get badgeFg => switch (this) {
+    ItemStatus.done => const Color(0xFF065F46),
+    ItemStatus.active => const Color(0xFF1D4ED8),
+    ItemStatus.todo => const Color(0xFF94A3B8),
+  };
 }
 
 /// 交付物（首页卡片上的交付物仪表）

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/project.dart';
+import 'phase_tag.dart';
 import 'progress_bar_widget.dart';
+import 'status_badge.dart';
 
 class ProjectCard extends StatelessWidget {
   final Project project;
@@ -8,36 +10,8 @@ class ProjectCard extends StatelessWidget {
 
   const ProjectCard({super.key, required this.project, required this.onTap});
 
-  Color get _statusBg {
-    if (project.status == '已完成') return const Color(0xFFD1FAE5);
-    if (project.status == '进行中') return const Color(0xFFDBEAFE);
-    return const Color(0xFFFEF3C7);
-  }
-
-  Color get _statusFg {
-    if (project.status == '已完成') return const Color(0xFF065F46);
-    if (project.status == '进行中') return const Color(0xFF1D4ED8);
-    return const Color(0xFF92400E);
-  }
-
-  (Color, Color) get _phaseColors {
-    switch (project.currentPhase) {
-      case ProjectPhase.research:
-        return (const Color(0xFFDBEAFE), const Color(0xFF1D4ED8));
-      case ProjectPhase.negotiate:
-        return (const Color(0xFFFEF3C7), const Color(0xFF92400E));
-      case ProjectPhase.implement:
-        return (const Color(0xFFD1FAE5), const Color(0xFF065F46));
-      case ProjectPhase.accept:
-        return (const Color(0xFFEDE9FE), const Color(0xFF5B21B6));
-      case ProjectPhase.review:
-        return (const Color(0xFFFCE7F3), const Color(0xFF9D174D));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final phaseColors = _phaseColors;
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -79,11 +53,10 @@ class ProjectCard extends StatelessWidget {
                               color: Color(0xFF1E293B),
                             ),
                           ),
-                          _chip(project.status, _statusBg, _statusFg),
-                          _chip(
-                            '${project.currentPhase.label}阶段',
-                            phaseColors.$1,
-                            phaseColors.$2,
+                          StatusBadge(status: project.status),
+                          PhaseTag(
+                            phase: project.currentPhase,
+                            withSuffix: true,
                           ),
                         ],
                       ),
@@ -216,20 +189,6 @@ class ProjectCard extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _chip(String text, Color bg, Color fg) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: fg),
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/project.dart';
 import '../widgets/project_card.dart';
+import '../widgets/sidebar.dart';
 import 'project_detail_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -80,7 +81,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildSidebar(),
+            const Sidebar(),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(28, 28, 28, 0),
@@ -154,48 +155,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         final project = _filteredProjects[index];
         return ProjectCard(project: project, onTap: () => _openDetail(project));
       },
-    );
-  }
-
-  // ===== 侧边栏 =====
-  Widget _buildSidebar() {
-    return Container(
-      width: 80,
-      color: Colors.white,
-      child: Column(
-        children: [
-          const SizedBox(height: 20),
-          const Text(
-            '量',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF4F46E5),
-            ),
-          ),
-          const SizedBox(height: 16),
-          _sidebarIcon(Icons.space_dashboard_outlined, active: true),
-          const Spacer(),
-          _sidebarIcon(Icons.help_outline),
-          const SizedBox(height: 20),
-        ],
-      ),
-    );
-  }
-
-  Widget _sidebarIcon(IconData icon, {bool active = false}) {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        color: active ? const Color(0xFFE0E7FF) : Colors.transparent,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Icon(
-        icon,
-        size: 20,
-        color: active ? const Color(0xFF4F46E5) : const Color(0xFF94A3B8),
-      ),
     );
   }
 
