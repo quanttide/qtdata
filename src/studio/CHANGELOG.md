@@ -1,5 +1,11 @@
 # Changelog
 
+## [studio/v0.1.0-beta.2] - 2026-08-08
+
+### 修复
+- PWA manifest 品牌化：应用名改为「量潮数据」，主题色/启动色对齐品牌（#4F46E5 / #F1F5F9）
+- 部署 workflow：manifest.json 单独 no-cache，避免一年长缓存导致 PWA 元信息更新不生效
+
 ## [studio/v0.1.0-beta.1] - 2026-08-08
 
 ### 重构
