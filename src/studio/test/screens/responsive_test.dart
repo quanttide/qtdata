@@ -38,12 +38,12 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // 无侧栏；默认数据页
+    // 无侧栏；默认总览页
     expect(find.byType(Sidebar), findsNothing);
-    expect(find.text('完整数据蓝图'), findsOneWidget);
+    expect(find.text('75%'), findsOneWidget);
 
     // 5 个 Tab 都在（TabBar 可横滑）
-    for (final t in ['数据', '仪表盘', '项目', '商务', '资产']) {
+    for (final t in ['总览', '数据', '项目', '商务', '资产']) {
       expect(find.text(t), findsOneWidget);
     }
 

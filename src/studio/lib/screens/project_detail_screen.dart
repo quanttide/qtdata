@@ -74,8 +74,8 @@ class ProjectDetailScreen extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
                 tabs: const [
+                  Tab(text: '总览'),
                   Tab(text: '数据'),
-                  Tab(text: '仪表盘'),
                   Tab(text: '项目'),
                   Tab(text: '商务'),
                   Tab(text: '资产'),
@@ -90,8 +90,8 @@ class ProjectDetailScreen extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(hPadding, 0, hPadding, 0),
               child: TabBarView(
                 children: [
-                  DataTab(project: project),
                   OverviewTab(project: project),
+                  DataTab(project: project),
                   ProjectTab(
                     project: project,
                     onViewDoc: (item) => _showDocDialog(context, item),

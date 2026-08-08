@@ -23,7 +23,7 @@ Future<void> _pumpDetail(WidgetTester tester) async {
 }
 
 void main() {
-  testWidgets('渲染头部与 5 个 Tab，默认显示数据页', (tester) async {
+  testWidgets('渲染头部与 5 个 Tab，默认显示总览页', (tester) async {
     await _pumpDetail(tester);
 
     // 共享组件与头部
@@ -32,32 +32,32 @@ void main() {
     expect(find.text('进行中'), findsWidgets);
     expect(find.textContaining('客户：量潮科技（内部项目）'), findsOneWidget);
 
-    // 5 个 Tab（数据第一，资产最后）
-    expect(find.text('数据'), findsWidgets);
-    expect(find.text('仪表盘'), findsOneWidget);
+    // 5 个 Tab（总览第一，资产最后）
+    expect(find.text('总览'), findsOneWidget);
+    expect(find.text('数据'), findsOneWidget);
     expect(find.text('项目'), findsOneWidget);
     expect(find.text('商务'), findsOneWidget);
     expect(find.text('资产'), findsOneWidget);
 
-    // 默认数据页：完整数据蓝图
-    expect(find.text('完整数据蓝图'), findsOneWidget);
-    expect(find.text('异常处理预案'), findsOneWidget);
-    expect(find.text('75%'), findsNothing); // 仪表盘内容不在默认页
+    // 默认总览页：项目摘要 + 交付物明细
+    expect(find.text('75%'), findsOneWidget);
+    expect(find.text('交付物明细'), findsOneWidget);
+    expect(find.text('完整数据蓝图'), findsNothing); // 数据页内容不在默认页
   });
 
   testWidgets('切换 Tab 显示对应内容', (tester) async {
     await _pumpDetail(tester);
 
-    // 默认数据：仅蓝图（不含时间线）
+    // 默认总览：项目摘要 + 交付物明细
+    expect(find.text('75%'), findsOneWidget);
+    expect(find.text('交付物明细'), findsOneWidget);
+
+    // 数据：仅蓝图（不含时间线）
+    await tester.tap(find.text('数据'));
+    await tester.pumpAndSettle();
     expect(find.text('完整数据蓝图'), findsOneWidget);
     expect(find.text('异常处理预案'), findsOneWidget);
     expect(find.text('交付时间线'), findsNothing);
-
-    // 仪表盘：项目摘要 + 交付物明细
-    await tester.tap(find.text('仪表盘'));
-    await tester.pumpAndSettle();
-    expect(find.text('75%'), findsOneWidget);
-    expect(find.text('交付物明细'), findsOneWidget);
 
     // 项目：基本信息 + 交付时间线（项目管理信息）
     await tester.tap(find.text('项目'));
