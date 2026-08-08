@@ -1,9 +1,9 @@
 name: Deploy to OSS
 
 on:
-  release:
-    types: [published]
-  workflow_dispatch:
+  push:
+    tags:
+      - 'studio/*'
 
 jobs:
   build-and-deploy:
