@@ -13,6 +13,19 @@
 - `pubspec.yaml` 注册 `assets/data/`
 - 发布 `studio/v0.1.0-alpha.3`（tag + GitHub Release），CI 部署 data.quanttide.com
 
+## 详情页组件分解 + 永久组件测试
+
+- `project_detail_screen.dart`（1031 行）分解为 9 个共享组件到 `lib/widgets/`：sidebar / phase_tag / status_badge / section_header / toast / matrix_card / blueprint_card / timeline_card / doc_dialog，页面精简至 ~150 行
+- `dashboard_screen` / `project_card` 去重：侧边栏、状态徽章、阶段标签改用共享组件
+- `ItemStatus` 新增三态语义色扩展（color/badgeBg/badgeFg），矩阵与时间线的 todo/active 颜色归一（D1D5DB/E2E8F0 → 94A3B8，3B82F6 → 4F46E5）
+- 新增 16 个永久 widget 测试（`src/studio/test/widgets` + `test/screens` + `test/helpers/seed.dart`），全部通过
+- 清理 doc_dialog 旧原型 mock（TMA 商标场景文件映射、Assignor 跑数摘要）
+
+### 关键发现
+
+- widget 测试中 `tester.runAsync` + `rootBundle.loadString` 的 IO future 会悬挂导致 `pumpAndSettle` 卡死；测试内改用 `File` 同步读取 seed JSON（helpers/seed.dart）绕开
+- 详情页 ListView 懒加载：测试需调大视口（`tester.view.physicalSize`）才能断言视口外卡片
+
 ### 关键发现/决策
 
 - Flutter web 构建会把 pubspec 声明的资源放在 `build/web/assets/<path>` 下，即生产 URL 是 `/assets/assets/data/seed_projects.json`，`rootBundle` 加载的路径 `assets/data/...` 由引擎自动映射，无需改代码
