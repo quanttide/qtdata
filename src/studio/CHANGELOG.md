@@ -1,5 +1,15 @@
 # Changelog
 
+## [studio/v0.1.0-alpha.3] - 2026-08-08
+
+### 重构
+- mock 数据迁移为 JSON seed 数据（assets/data/seed_projects.json），删除 mock_data.dart
+- 数据模型新增 fromJson 解析，Project 增加 id 标识
+- 首页改为异步加载 seed 数据（加载中/失败提示）
+
+### 新增
+- 资产目录 assets/data/，注册于 pubspec.yaml
+
 ## [studio/v0.1.0-alpha.2] - 2026-08-08
 
 ### 重构
