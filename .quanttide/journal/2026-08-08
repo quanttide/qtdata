@@ -54,6 +54,12 @@
 - 时间线阶段名 Expanded 防窄屏溢出
 - 新增移动端视口测试（390x844：无侧栏、Tab 横滑切换），21/21 通过
 
+## 发布 studio/v0.1.0-beta.4（5 Tab 重构 + 移动端适配）
+
+- 详情页 5 Tab（总览/数据/项目/商务/资产）、商务模型（BusinessInfo/Payment）、移动端适配均随本次发布上线
+- 线上验证：version.json = 0.1.0-beta.4，seed 含 business 数据（2 条结款），无头 Chrome 启动正常
+- 发布前产物：docs/dev-guide/prototype.html（5 Tab 单页原型，?tab= 深链）；旧文档体系（brd/ixd/pmd/prd）清理
+
 ### 关键发现
 
 - widget 测试中 `tester.runAsync` + `rootBundle.loadString` 的 IO future 会悬挂导致 `pumpAndSettle` 卡死；测试内改用 `File` 同步读取 seed JSON（helpers/seed.dart）绕开
