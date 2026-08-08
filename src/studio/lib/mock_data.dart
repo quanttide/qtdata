@@ -1,80 +1,185 @@
 import 'models/project.dart';
 
 final mockProjects = <String, Project>{
-  '客户受让人标准化与上市公司匹配': const Project(
-    name: '客户受让人标准化与上市公司匹配',
-    client: '金融课题组 · 实证研究',
-    created: '2026-07-01',
-    contractMonths: 1,
-    status: '已完成',
-    currentPhase: ProjectPhase.review,
-    deliveryTarget: [
-      DeliveryTarget(
-        phase: '数据准备',
-        items: [
-          DeliveryItem(name: '客户原始数据下载', status: ItemStatus.done, dim: '数据'),
-          DeliveryItem(name: '公司名称标准化', status: ItemStatus.done, dim: '数据'),
-          DeliveryItem(name: '映射表构建(CRSP等)', status: ItemStatus.done, dim: '数据'),
-        ],
-      ),
-      DeliveryTarget(
-        phase: '匹配与审核',
-        items: [
-          DeliveryItem(name: '多候选模糊匹配', status: ItemStatus.done, dim: '数据'),
-          DeliveryItem(name: '规则分流与AI审核', status: ItemStatus.done, dim: '数据'),
-          DeliveryItem(name: '回填合并导出', status: ItemStatus.done, dim: '数据'),
-        ],
-      ),
-      DeliveryTarget(
-        phase: '交付',
-        items: [
-          DeliveryItem(name: '正式交付表(124.7MB)', status: ItemStatus.done, dim: '数据'),
-          DeliveryItem(name: '详细复核表(334.8MB)', status: ItemStatus.done, dim: '数据'),
-        ],
-      ),
+  '量潮科技数字化': const Project(
+    name: '量潮科技数字化',
+    client: '内部客户',
+    created: '2026-01-12',
+    updated: '2026-07-28',
+    status: '进行中',
+    currentPhase: ProjectPhase.implement,
+    contractAmount: 15,
+    deliverables: [
+      Deliverable(name: '交付结果表 A', status: ItemStatus.done),
+      Deliverable(name: '交付结果表 B', status: ItemStatus.active),
+      Deliverable(name: '交付结果表 C', status: ItemStatus.todo),
     ],
+    matrix: ProjectMatrix(
+      rows: [
+        MatrixRow(label: '📋 项目', key: 'project'),
+        MatrixRow(label: '📊 数据', key: 'data'),
+        MatrixRow(label: '💼 商务', key: 'business'),
+      ],
+      columns: [
+        MatrixColumn(label: '调研', key: 'research', status: ItemStatus.done),
+        MatrixColumn(label: '谈判', key: 'negotiate', status: ItemStatus.active),
+        MatrixColumn(label: '实施', key: 'implement', status: ItemStatus.todo),
+        MatrixColumn(label: '验收', key: 'accept', status: ItemStatus.todo),
+        MatrixColumn(label: '复盘', key: 'review', status: ItemStatus.todo),
+      ],
+      cells: {
+        'project_research': MatrixCell(
+          name: '项目背景确认书',
+          status: ItemStatus.done,
+        ),
+        'project_negotiate': MatrixCell(
+          name: '启动约定确认书',
+          status: ItemStatus.active,
+        ),
+        'project_implement': MatrixCell(
+          name: '进度同步记录',
+          status: ItemStatus.todo,
+        ),
+        'project_accept': MatrixCell(name: '验收确认书', status: ItemStatus.todo),
+        'project_review': MatrixCell(name: '复盘报告', status: ItemStatus.todo),
+        'data_research': MatrixCell(name: '数据需求确认书', status: ItemStatus.done),
+        'data_negotiate': MatrixCell(name: '数据规格书', status: ItemStatus.active),
+        'data_implement': MatrixCell(name: '数据清洗与匹配', status: ItemStatus.todo),
+        'data_accept': MatrixCell(name: '数据报告', status: ItemStatus.todo),
+        'data_review': MatrixCell(name: '异常沉淀', status: ItemStatus.todo),
+        'business_research': MatrixCell(name: '报价单', status: ItemStatus.done),
+        'business_negotiate': MatrixCell(name: '合同', status: ItemStatus.active),
+        'business_implement': MatrixCell(
+          name: '商务变更确认书',
+          status: ItemStatus.todo,
+        ),
+        'business_accept': MatrixCell(name: '交付与收款', status: ItemStatus.todo),
+        'business_review': MatrixCell(name: '结算与归档', status: ItemStatus.todo),
+      },
+    ),
     blueprint: Blueprint(
       steps: [
-        BlueprintStep('客户 Assignee 原始数据下载/准备：使用 客户 Trademark Assignment Dataset 中的 Assignee 数据。'),
-        BlueprintStep('公司名称标准化：清洗 eename 并生成 name_std，统一大小写、符号、常见后缀等。'),
-        BlueprintStep('上市公司映射表构建：整合 CRSP、COMPUSTAT、WRDS、CIQ 等来源，生成统一 map.dta。'),
-        BlueprintStep('多候选匹配：先精确匹配，再用 n-gram + 模糊匹配算法 做模糊匹配，保留多个候选 (candidate_1 至 candidate_5)。'),
-        BlueprintStep('规则分流：按匹配类型、核心词相似度、法律后缀、罗马数字等规则自动通过/拒绝/进入审核。'),
-        BlueprintStep('AI 审核：对待审核组进行批量 AI 判断，选择候选编号或判定无匹配。'),
-        BlueprintStep('回填与合并导出：将自动处理结果和 AI 审核结果回填明细，生成正式交付表和详细复核表。'),
+        BlueprintStep(
+          '加载原始数据 — 加载 TMC owner.dta、TMA assignee.dta、TMA assignor.dta',
+        ),
+        BlueprintStep('业务规则筛选 — 仅保留美国公司、剔除个人申请人、保留原始申请人和注册人'),
+        BlueprintStep('公司名称标准化 — 统一大小写、符号、常见后缀等（参考客户提供的标准化 do 文件）'),
+        BlueprintStep('上市公司数据库整合 — 加载 5 个数据源，按优先级排序，将 CIQ ID 映射为 GVKEY'),
+        BlueprintStep('多级匹配 — 精确匹配优先，模糊匹配使用 模糊匹配算法，计算调整后相似度分数（原始相似度 + 惩罚项）'),
+        BlueprintStep('阈值分流与 AI 审核 — ≥95% 自动通过，85%~95% 进入人工审核队列，<85% 自动拒绝'),
+        BlueprintStep(
+          '结果回填与输出 — 生成三个匹配结果表（TMC Owner / TMA Assignee / TMA Assignor）及未匹配记录',
+        ),
       ],
       exceptions: [
-        BlueprintException(label: '精确匹配优先', strategy: '自动通过，确保高置信度'),
+        BlueprintException(label: '精确匹配', strategy: '优先自动通过，确保高置信度匹配'),
         BlueprintException(label: '无候选', strategy: '自动判定为无匹配'),
-        BlueprintException(label: '罗马数字不一致', strategy: '自动拒绝，降低误配风险'),
+        BlueprintException(label: '罗马数字不一致', strategy: '自动拒绝，降低同名不同实体误配风险'),
         BlueprintException(label: '仅法律后缀差异', strategy: '核心名称一致则自动通过'),
-        BlueprintException(label: '核心名称包含/缩写等', strategy: '进入 AI / 人工审核，避免误判'),
+        BlueprintException(label: '核心名称包含/缩写等', strategy: '进入人工审核，避免误判'),
       ],
     ),
     phases: [
       ProjectPhaseDetail(
-        name: '数据准备与标准化',
+        name: '数据预处理与标准化',
         status: ItemStatus.done,
         items: [
-          PhaseItem(name: '客户原始受让人数据', desc: '从客户商标转让数据集获取Assignee原始数据', type: '原始数据'),
-          PhaseItem(name: '公司名称标准化', desc: '统一大小写、符号、常见后缀，生成name_std字段', type: '处理脚本'),
+          PhaseItem(
+            name: '客户 原始数据清洗',
+            desc: 'owner/assignee/assignor 三表清洗完成',
+            hasDoc: true,
+            type: '清洗脚本',
+          ),
+          PhaseItem(
+            name: '公司名称标准化',
+            desc: '统一大小写、符号、后缀，参考 do 文件',
+            hasDoc: true,
+            type: '标准化规则',
+          ),
+          PhaseItem(
+            name: '上市公司数据库整合',
+            desc: '5 个数据源整合为统一匹配字典',
+            hasDoc: true,
+            type: '映射表',
+          ),
         ],
       ),
       ProjectPhaseDetail(
-        name: '映射表构建与多候选匹配',
-        status: ItemStatus.done,
+        name: '匹配引擎开发',
+        status: ItemStatus.active,
         items: [
-          PhaseItem(name: '上市公司映射表整合', desc: '整合CRSP/COMPUSTAT/WRDS/CIQ生成统一map.dta', type: '映射表'),
-          PhaseItem(name: '多候选模糊匹配', desc: '精确匹配 + n-gram/模糊匹配算法，保留candidate_1至candidate_5', type: '匹配结果'),
+          PhaseItem(
+            name: '精确匹配 + 模糊匹配实现',
+            desc: '模糊匹配算法 算法，调整后分数 = 原始相似度 + 惩罚项',
+            hasDoc: true,
+            type: '匹配代码',
+          ),
+          PhaseItem(
+            name: '阈值分流方案',
+            desc: '≥95% 自动通过，85%~95% 人工审核，<85% 自动拒绝',
+            hasDoc: true,
+            type: '方案文档',
+          ),
+          PhaseItem(
+            name: 'AI 审核方案',
+            desc: '2026-04-07 客户已同意 AI 审核方案',
+            hasDoc: true,
+            type: '方案文档',
+          ),
         ],
       ),
       ProjectPhaseDetail(
-        name: '规则分流、AI审核与最终交付',
+        name: 'Assignor 交付',
         status: ItemStatus.done,
         items: [
-          PhaseItem(name: '规则分流与AI审核', desc: '自动通过/拒绝/进入审核，AI批量决策匹配候选编号', type: '审核记录'),
-          PhaseItem(name: '导出正式交付表', desc: '124.7MB，面向客户的最终匹配结果表', type: '交付文件'),
-          PhaseItem(name: '导出详细复核表', desc: '334.8MB，保留candidate_1至candidate_5，供客户自行筛选', type: '交付文件'),
+          PhaseItem(
+            name: 'Assignor 初步交付',
+            desc: '2026-02-11 向客户交付成果',
+            hasDoc: true,
+            type: '交付文件',
+          ),
+          PhaseItem(
+            name: 'Assignor AI 审核完成',
+            desc: '全部记录完成 AI 审核并自动通过',
+            hasDoc: true,
+            type: '审核报告',
+          ),
+          PhaseItem(
+            name: 'Assignor 结果同步客户',
+            desc: '2026-05-09 同步客户，待反馈',
+            hasDoc: true,
+            type: '沟通记录',
+          ),
+        ],
+      ),
+      ProjectPhaseDetail(
+        name: 'Assignee 推进中',
+        status: ItemStatus.active,
+        items: [
+          PhaseItem(
+            name: '代码压缩包',
+            desc: '由 PM 保管，原技术离职时未跑完',
+            hasDoc: true,
+            type: '代码包',
+          ),
+          PhaseItem(
+            name: '新技术接手',
+            desc: '团队成员甲 / 团队成员乙 接手推进中',
+            hasDoc: false,
+            type: '',
+          ),
+        ],
+      ),
+      ProjectPhaseDetail(
+        name: 'Owner 待启动',
+        status: ItemStatus.todo,
+        items: [
+          PhaseItem(
+            name: 'Owner 匹配',
+            desc: '费用待确认，等上一阶段结果确认后再推进',
+            hasDoc: false,
+            type: '',
+          ),
         ],
       ),
     ],

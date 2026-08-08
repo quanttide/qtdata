@@ -18,7 +18,10 @@ class ProgressBarWidget extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(6),
       child: TweenAnimationBuilder<double>(
-        tween: Tween(begin: 0, end: animated ? progress / 100.0 : progress / 100.0),
+        tween: Tween(
+          begin: 0,
+          end: animated ? progress / 100.0 : progress / 100.0,
+        ),
         duration: animated ? const Duration(milliseconds: 600) : Duration.zero,
         curve: Curves.easeOut,
         builder: (context, value, child) {
@@ -34,11 +37,7 @@ class ProgressBarWidget extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(6),
-                  gradient: LinearGradient(
-                    colors: progress >= 100
-                        ? [const Color(0xFF10B981), const Color(0xFF34D399)]
-                        : [const Color(0xFF4F46E5), const Color(0xFF3B82F6)],
-                  ),
+                  color: const Color(0xFF4F46E5),
                 ),
               ),
             ),

@@ -17,35 +17,69 @@ enum ProjectPhase {
 }
 
 enum ItemStatus {
-  done('done'),
-  active('active'),
-  waiting('waiting'),
-  todo('todo');
+  done('已完成'),
+  active('进行中'),
+  todo('待启动');
 
-  final String key;
-  const ItemStatus(this.key);
+  final String label;
+  const ItemStatus(this.label);
 
   bool get isDone => this == done;
   bool get isActive => this == active;
 }
 
-class DeliveryItem {
+/// 交付物（首页卡片上的交付物仪表）
+class Deliverable {
   final String name;
   final ItemStatus status;
-  final String dim;
 
-  const DeliveryItem({
-    required this.name,
+  const Deliverable({required this.name, required this.status});
+}
+
+/// 全流程进度总览（二维网格）的维度行
+class MatrixRow {
+  final String label;
+  final String key;
+
+  const MatrixRow({required this.label, required this.key});
+}
+
+/// 全流程进度总览（二维网格）的阶段列
+class MatrixColumn {
+  final String label;
+  final String key;
+  final ItemStatus status;
+
+  const MatrixColumn({
+    required this.label,
+    required this.key,
     required this.status,
-    required this.dim,
   });
 }
 
-class DeliveryTarget {
-  final String phase;
-  final List<DeliveryItem> items;
+/// 全流程进度总览（二维网格）的单元格
+class MatrixCell {
+  final String name;
+  final ItemStatus status;
 
-  const DeliveryTarget({required this.phase, required this.items});
+  const MatrixCell({required this.name, required this.status});
+}
+
+/// 全流程进度总览（二维网格）
+class ProjectMatrix {
+  final List<MatrixRow> rows;
+  final List<MatrixColumn> columns;
+  final Map<String, MatrixCell> cells;
+
+  const ProjectMatrix({
+    required this.rows,
+    required this.columns,
+    required this.cells,
+  });
+
+  /// 按 `行key_列key` 定位单元格
+  MatrixCell? cellAt(String rowKey, String colKey) =>
+      cells['${rowKey}_$colKey'];
 }
 
 class BlueprintStep {
@@ -71,11 +105,13 @@ class Blueprint {
 class PhaseItem {
   final String name;
   final String desc;
+  final bool hasDoc;
   final String type;
 
   const PhaseItem({
     required this.name,
     required this.desc,
+    required this.hasDoc,
     required this.type,
   });
 }
@@ -96,10 +132,18 @@ class Project {
   final String name;
   final String client;
   final String created;
-  final int contractMonths;
+
+  /// 卡片上的更新时间，如 2026-07-28
+  final String updated;
+
+  /// 状态文案：进行中 / 已完成 / 待启动
   final String status;
   final ProjectPhase currentPhase;
-  final List<DeliveryTarget> deliveryTarget;
+
+  /// 合同金额（万元）
+  final double contractAmount;
+  final List<Deliverable> deliverables;
+  final ProjectMatrix matrix;
   final Blueprint blueprint;
   final List<ProjectPhaseDetail> phases;
 
@@ -107,27 +151,28 @@ class Project {
     required this.name,
     required this.client,
     required this.created,
-    this.contractMonths = 1,
+    required this.updated,
     required this.status,
     required this.currentPhase,
-    required this.deliveryTarget,
+    required this.contractAmount,
+    required this.deliverables,
+    required this.matrix,
     required this.blueprint,
     required this.phases,
   });
 
-  int get totalItems =>
-      deliveryTarget.fold(0, (s, dt) => s + dt.items.length);
+  int get doneItems => deliverables.where((d) => d.status.isDone).length;
+  int get activeItems => deliverables.where((d) => d.status.isActive).length;
+  int get todoItems =>
+      deliverables.where((d) => !d.status.isDone && !d.status.isActive).length;
 
-  int get doneItems => deliveryTarget.fold(
-        0,
-        (s, dt) => s + dt.items.where((i) => i.status.isDone).length,
-      );
+  int get totalItems => deliverables.length;
 
+  /// 交付完成度（0-100，四舍五入）
   int get progressPercent =>
       totalItems > 0 ? ((doneItems / totalItems) * 100).round() : 0;
 
-  int get elapsedDays =>
-      ((progressPercent / 100) * contractMonths * 30).round();
-
-  int get totalDays => contractMonths * 30;
+  /// 已确认收入（万元）= 合同金额 × 完成度
+  double get confirmedIncome =>
+      totalItems > 0 ? contractAmount * (doneItems / totalItems) : 0;
 }
