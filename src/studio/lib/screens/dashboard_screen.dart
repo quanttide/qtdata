@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/project.dart';
 import '../widgets/cards/project_card.dart';
+import '../widgets/common/responsive.dart';
 import '../widgets/common/sidebar.dart';
 import 'project_detail_screen.dart';
 
@@ -78,57 +79,64 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF1F5F9),
       body: SafeArea(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Sidebar(),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(28, 28, 28, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 标题
-                    const Text(
-                      '我的项目',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF1E293B),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      '当前所有数据项目的进度总览',
-                      style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
-                    ),
-                    const SizedBox(height: 16),
-                    // 统计卡片
-                    _buildStatCards(),
-                    const SizedBox(height: 16),
-                    // 筛选按钮组 + 计数
-                    Row(
-                      children: [
-                        _buildFilterGroup(),
-                        const SizedBox(width: 12),
-                        Text(
-                          '${_filteredProjects.length} 个项目',
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: Color(0xFF94A3B8),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    // 项目列表
-                    Expanded(child: _buildProjectList()),
-                  ],
-                ),
-              ),
-            ),
-          ],
+        child: Responsive(
+          mobile: _buildBody(context, compact: true),
+          desktop: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Sidebar(),
+              Expanded(child: _buildBody(context, compact: false)),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context, {required bool compact}) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        compact ? 16 : 28,
+        compact ? 16 : 28,
+        compact ? 16 : 28,
+        0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 标题
+          const Text(
+            '我的项目',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF1E293B),
+            ),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            '当前所有数据项目的进度总览',
+            style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
+          ),
+          const SizedBox(height: 16),
+          // 统计卡片
+          _buildStatCards(),
+          const SizedBox(height: 16),
+          // 筛选按钮组 + 计数
+          Row(
+            children: [
+              _buildFilterGroup(),
+              const SizedBox(width: 12),
+              Text(
+                '${_filteredProjects.length} 个项目',
+                style: const TextStyle(fontSize: 11, color: Color(0xFF94A3B8)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // 项目列表
+          Expanded(child: _buildProjectList()),
+        ],
       ),
     );
   }

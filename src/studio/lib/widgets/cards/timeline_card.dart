@@ -82,12 +82,14 @@ class _TimelinePhase extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Text(
-                phase.name,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1E293B),
+              Expanded(
+                child: Text(
+                  phase.name,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1E293B),
+                  ),
                 ),
               ),
               const SizedBox(width: 8),
