@@ -34,7 +34,7 @@ jobs:
           from aliyunsdkcdn.request.v20180510.RefreshObjectCachesRequest import RefreshObjectCachesRequest
           import os
           cli = AcsClient(os.environ['ALIYUN_ACCESS_KEY_ID'], os.environ['ALIYUN_ACCESS_KEY_SECRET'], 'cn-hangzhou')
-          for domain in ['data.cloud.quanttide.com', 'data.quanttide.com']:
+          for domain in ['data.quanttide.com']:
               req = RefreshObjectCachesRequest()
               req.set_ObjectPath(f'https://{domain}/')
               req.set_ObjectType('Directory')
