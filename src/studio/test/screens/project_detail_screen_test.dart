@@ -23,7 +23,7 @@ Future<void> _pumpDetail(WidgetTester tester) async {
 }
 
 void main() {
-  testWidgets('渲染头部与 5 个 Tab，默认显示仪表盘', (tester) async {
+  testWidgets('渲染头部与 5 个 Tab，默认显示数据页', (tester) async {
     await _pumpDetail(tester);
 
     // 共享组件与头部
@@ -32,19 +32,32 @@ void main() {
     expect(find.text('进行中'), findsWidgets);
     expect(find.textContaining('客户：量潮科技（内部项目）'), findsOneWidget);
 
-    // 5 个 Tab
-    for (final t in ['仪表盘', '项目', '数据', '资产', '商务']) {
-      expect(find.text(t), findsOneWidget);
-    }
+    // 5 个 Tab（数据第一，资产最后）
+    expect(find.text('数据'), findsWidgets);
+    expect(find.text('仪表盘'), findsOneWidget);
+    expect(find.text('项目'), findsOneWidget);
+    expect(find.text('商务'), findsOneWidget);
+    expect(find.text('资产'), findsOneWidget);
 
-    // 默认仪表盘：项目摘要 + 交付物明细
-    expect(find.text('75%'), findsOneWidget);
-    expect(find.text('交付物明细'), findsOneWidget);
-    expect(find.text('议事决议数据 — 决议档案（第33周示例）'), findsOneWidget);
+    // 默认数据页：完整数据蓝图
+    expect(find.text('完整数据蓝图'), findsOneWidget);
+    expect(find.text('异常处理预案'), findsOneWidget);
+    expect(find.text('75%'), findsNothing); // 仪表盘内容不在默认页
   });
 
   testWidgets('切换 Tab 显示对应内容', (tester) async {
     await _pumpDetail(tester);
+
+    // 默认数据：仅蓝图（不含时间线）
+    expect(find.text('完整数据蓝图'), findsOneWidget);
+    expect(find.text('异常处理预案'), findsOneWidget);
+    expect(find.text('交付时间线'), findsNothing);
+
+    // 仪表盘：项目摘要 + 交付物明细
+    await tester.tap(find.text('仪表盘'));
+    await tester.pumpAndSettle();
+    expect(find.text('75%'), findsOneWidget);
+    expect(find.text('交付物明细'), findsOneWidget);
 
     // 项目：基本信息 + 交付时间线（项目管理信息）
     await tester.tap(find.text('项目'));
@@ -53,20 +66,6 @@ void main() {
     expect(find.text('交付时间线'), findsOneWidget);
     expect(find.text('数据采集'), findsOneWidget);
     expect(find.text('客户'), findsOneWidget); // 信息行标签
-
-    // 数据：仅蓝图（不含时间线）
-    await tester.tap(find.text('数据'));
-    await tester.pumpAndSettle();
-    expect(find.text('完整数据蓝图'), findsOneWidget);
-    expect(find.text('异常处理预案'), findsOneWidget);
-    expect(find.text('交付时间线'), findsNothing);
-
-    // 资产
-    await tester.tap(find.text('资产'));
-    await tester.pumpAndSettle();
-    expect(find.text('维度 \\ 阶段'), findsOneWidget);
-    expect(find.text('数据需求文档（DRD）'), findsOneWidget);
-    expect(find.text('点击资产条目查看资料'), findsOneWidget);
 
     // 商务：交易四段 + 商务管理阶段
     await tester.tap(find.text('商务'));
@@ -79,6 +78,13 @@ void main() {
     expect(find.text('首付款'), findsOneWidget);
     expect(find.text('尾款'), findsOneWidget);
     expect(find.textContaining('已收 0.4 / 0.8 万'), findsOneWidget);
+
+    // 资产（最后）：矩阵
+    await tester.tap(find.text('资产'));
+    await tester.pumpAndSettle();
+    expect(find.text('维度 \\ 阶段'), findsOneWidget);
+    expect(find.text('数据需求文档（DRD）'), findsOneWidget);
+    expect(find.text('点击资产条目查看资料'), findsOneWidget);
   });
 
   testWidgets('资产单元格点击打开资料弹窗', (tester) async {
