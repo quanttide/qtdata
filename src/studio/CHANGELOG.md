@@ -1,5 +1,10 @@
 # Changelog
 
+## [studio/v0.1.0-beta.3] - 2026-08-08
+
+### 修复
+- 部署 workflow：index.html / flutter_bootstrap.js 单独 no-cache，修复入口文件一年长缓存导致的老用户更新不生效
+
 ## [studio/v0.1.0-beta.2] - 2026-08-08
 
 ### 修复
