@@ -1,5 +1,17 @@
 # Changelog
 
+## [studio/v0.1.0-beta.1] - 2026-08-08
+
+### 重构
+- 详情页组件分解：project_detail_screen（1031 行）拆分至 lib/widgets，页面精简至 ~150 行
+- widgets 按粒度分组：common/（原子组件）、cards/（卡片）、dialogs/（弹窗）
+- 首页与项目卡片去重：侧边栏、状态徽章、阶段标签改用共享组件
+- ItemStatus 新增三态语义色扩展，统一矩阵/时间线配色（todo 浅灰、active 品牌靛蓝）
+- 资料弹窗清理旧原型 mock（TMA 商标场景文件映射、Assignor 跑数摘要）
+
+### 新增
+- 永久组件测试 16 个（test/widgets + test/screens + helpers/seed），覆盖全部组件与页面
+
 ## [studio/v0.1.0-alpha.3] - 2026-08-08
 
 ### 重构
