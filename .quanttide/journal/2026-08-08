@@ -38,6 +38,14 @@
 - deploy workflow：index.html / flutter_bootstrap.js 单独 no-cache（与 manifest.json 相同处理）
 - 线上验证：version.json = 0.1.0-beta.3；index.html / flutter_bootstrap.js / manifest.json 响应头均 no-cache；main.dart.js 保留一年长缓存（版本化资源）
 
+## 详情页 5 Tab 重构（仪表盘/项目/数据/资产/商务）
+
+- 认知负担诊断：两套阶段体系（商务流程 vs 数据流程）同屏、状态 6 种视觉重复编码、三卡平铺无主次
+- 用户确认架构：每个 Tab 一个 screen（lib/screens/tabs/），矩阵重新定位为「资产页」（交付资产目录）
+- 商务页四段：报价（成本法/市场法/内部价）、合同、交付、结款；模型新增 BusinessInfo/Payment，seed 补充商务数据
+- MatrixCard 增加 onCellTap 回调（资产单元格点开资料弹窗）
+- 19 个测试全部通过，analyze/build 无问题；未发布（等用户指示）
+
 ### 关键发现
 
 - widget 测试中 `tester.runAsync` + `rootBundle.loadString` 的 IO future 会悬挂导致 `pumpAndSettle` 卡死；测试内改用 `File` 同步读取 seed JSON（helpers/seed.dart）绕开
