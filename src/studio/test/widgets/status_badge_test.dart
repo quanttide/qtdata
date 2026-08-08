@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:qtdata_studio/widgets/status_badge.dart';
+import 'package:qtdata_studio/widgets/common/status_badge.dart';
 
 void main() {
   testWidgets('三态状态渲染对应配色', (tester) async {

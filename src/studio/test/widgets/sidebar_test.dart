@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:qtdata_studio/widgets/sidebar.dart';
+import 'package:qtdata_studio/widgets/common/sidebar.dart';
 
 void main() {
   testWidgets('渲染 logo 与导航图标', (tester) async {

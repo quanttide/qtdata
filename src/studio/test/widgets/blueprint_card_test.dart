@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:qtdata_studio/widgets/blueprint_card.dart';
+import 'package:qtdata_studio/widgets/cards/blueprint_card.dart';
 
 import '../helpers/seed.dart';
 

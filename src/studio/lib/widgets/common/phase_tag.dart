@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/project.dart';
+import '../../models/project.dart';
 
 /// 阶段标签（五阶段语义配色）
 class PhaseTag extends StatelessWidget {

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import '../models/project.dart';
-import '../widgets/blueprint_card.dart';
-import '../widgets/doc_dialog.dart';
-import '../widgets/matrix_card.dart';
-import '../widgets/phase_tag.dart';
-import '../widgets/sidebar.dart';
-import '../widgets/status_badge.dart';
-import '../widgets/timeline_card.dart';
-import '../widgets/toast.dart';
+import '../widgets/cards/blueprint_card.dart';
+import '../widgets/cards/matrix_card.dart';
+import '../widgets/cards/timeline_card.dart';
+import '../widgets/common/phase_tag.dart';
+import '../widgets/common/sidebar.dart';
+import '../widgets/common/status_badge.dart';
+import '../widgets/common/toast.dart';
+import '../widgets/dialogs/doc_dialog.dart';
 
 class ProjectDetailScreen extends StatelessWidget {
   final Project project;

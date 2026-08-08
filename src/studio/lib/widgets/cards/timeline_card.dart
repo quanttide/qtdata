@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/project.dart';
-import 'section_header.dart';
+import '../../models/project.dart';
+import '../common/section_header.dart';
 
 /// 交付时间线（每个阶段的交付物）
 class TimelineCard extends StatelessWidget {

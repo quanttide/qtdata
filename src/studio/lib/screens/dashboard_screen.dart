@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/project.dart';
-import '../widgets/project_card.dart';
-import '../widgets/sidebar.dart';
+import '../widgets/cards/project_card.dart';
+import '../widgets/common/sidebar.dart';
 import 'project_detail_screen.dart';
 
 class DashboardScreen extends StatefulWidget {

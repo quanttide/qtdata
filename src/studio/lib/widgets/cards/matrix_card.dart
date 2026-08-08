@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/project.dart';
-import 'section_header.dart';
+import '../../models/project.dart';
+import '../common/section_header.dart';
 
 /// 全流程进度总览（二维网格）
 class MatrixCard extends StatelessWidget {

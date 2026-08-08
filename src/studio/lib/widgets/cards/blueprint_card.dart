@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/project.dart';
-import 'section_header.dart';
+import '../../models/project.dart';
+import '../common/section_header.dart';
 
 /// 完整数据蓝图（处理流程 + 异常预案）
 class BlueprintCard extends StatelessWidget {

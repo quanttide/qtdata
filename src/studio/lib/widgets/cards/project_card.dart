@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../models/project.dart';
-import 'phase_tag.dart';
-import 'progress_bar_widget.dart';
-import 'status_badge.dart';
+import '../../models/project.dart';
+import '../common/phase_tag.dart';
+import '../common/progress_bar_widget.dart';
+import '../common/status_badge.dart';
 
 class ProjectCard extends StatelessWidget {
   final Project project;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:qtdata_studio/widgets/doc_dialog.dart';
+import 'package:qtdata_studio/widgets/dialogs/doc_dialog.dart';
 
 import '../helpers/seed.dart';
 
