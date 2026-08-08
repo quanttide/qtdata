@@ -1,6 +1,10 @@
 import 'models/project.dart';
 
 final mockProjects = <String, Project>{
+  // 内部定价估算（量潮科技数字化 · 议事决议数据需求点）：
+  // 成本法：5 阶段（采集0.5/建模1.0/导入1.5/治理1.0/报告1.0 人天） × 1000元/人天 ≈ 0.5 万元
+  // 市场法：外部类似内部运营数据处理服务行情 ≈ 1.2 万元
+  // 内部价 = 市场价 × 7折 ≈ 0.8 万元（成本 1.6 倍，事业部核算有空间）
   '量潮科技数字化': const Project(
     name: '量潮科技数字化',
     client: '量潮科技（内部项目）',
@@ -8,7 +12,7 @@ final mockProjects = <String, Project>{
     updated: '2026-08-06',
     status: '进行中',
     currentPhase: ProjectPhase.implement,
-    contractAmount: 0,
+    contractAmount: 0.8,
     deliverables: [
       Deliverable(name: '议事决议数据 — 决议档案', status: ItemStatus.done),
       Deliverable(name: '议事决议数据 — 治理视图', status: ItemStatus.active),
