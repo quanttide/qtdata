@@ -21,6 +21,11 @@
 - 新增 16 个永久 widget 测试（`src/studio/test/widgets` + `test/screens` + `test/helpers/seed.dart`），全部通过
 - 清理 doc_dialog 旧原型 mock（TMA 商标场景文件映射、Assignor 跑数摘要）
 
+## 发布 studio/v0.1.0-beta.1
+
+- 组件重构 + 永久测试后发布 beta.1（tag + GitHub Release），CI 部署成功
+- 线上验证：version.json = 0.1.0-beta.1，首页 200，seed 数据正常，无头 Chrome 启动无异常
+
 ### 关键发现
 
 - widget 测试中 `tester.runAsync` + `rootBundle.loadString` 的 IO future 会悬挂导致 `pumpAndSettle` 卡死；测试内改用 `File` 同步读取 seed JSON（helpers/seed.dart）绕开
