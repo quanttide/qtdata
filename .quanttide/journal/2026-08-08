@@ -33,6 +33,11 @@
 - 线上验证：version.json = 0.1.0-beta.2；manifest 响应头 no-cache 生效（TCP_MISS 回源）
 - 遗留提醒：index.html / flutter_bootstrap.js 同样被一年长缓存，入口更新依赖 CDN 目录刷新，建议后续一并 no-cache
 
+## 发布 studio/v0.1.0-beta.3（入口文件缓存修复）
+
+- deploy workflow：index.html / flutter_bootstrap.js 单独 no-cache（与 manifest.json 相同处理）
+- 线上验证：version.json = 0.1.0-beta.3；index.html / flutter_bootstrap.js / manifest.json 响应头均 no-cache；main.dart.js 保留一年长缓存（版本化资源）
+
 ### 关键发现
 
 - widget 测试中 `tester.runAsync` + `rootBundle.loadString` 的 IO future 会悬挂导致 `pumpAndSettle` 卡死；测试内改用 `File` 同步读取 seed JSON（helpers/seed.dart）绕开
