@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:qtdata_studio/models/project.dart';
 import 'package:qtdata_studio/widgets/cards/matrix_card.dart';
 
 import '../helpers/seed.dart';
@@ -33,5 +34,26 @@ void main() {
     // 图例
     expect(find.text('已完成'), findsWidgets);
     expect(find.text('待启动'), findsWidgets);
+  });
+
+  testWidgets('onCellTap 回调返回对应资产单元格', (tester) async {
+    final project = loadSeedProject();
+    MatrixCell? tapped;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: MatrixCard(
+              matrix: project.matrix,
+              onCellTap: (cell) => tapped = cell,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('数据需求文档（DRD）'));
+    expect(tapped, isNotNull);
+    expect(tapped!.name, '数据需求文档（DRD）');
   });
 }

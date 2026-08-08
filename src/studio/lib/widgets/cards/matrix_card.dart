@@ -6,7 +6,10 @@ import '../common/section_header.dart';
 class MatrixCard extends StatelessWidget {
   final ProjectMatrix matrix;
 
-  const MatrixCard({super.key, required this.matrix});
+  /// 点击资产单元格（资产页用于打开资料）
+  final ValueChanged<MatrixCell>? onCellTap;
+
+  const MatrixCard({super.key, required this.matrix, this.onCellTap});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +28,7 @@ class MatrixCard extends StatelessWidget {
             title: '全流程进度总览',
           ),
           const SizedBox(height: 16),
-          _MatrixTable(matrix: matrix),
+          _MatrixTable(matrix: matrix, onCellTap: onCellTap),
           const SizedBox(height: 12),
           const _MatrixLegend(),
         ],
@@ -36,8 +39,9 @@ class MatrixCard extends StatelessWidget {
 
 class _MatrixTable extends StatelessWidget {
   final ProjectMatrix matrix;
+  final ValueChanged<MatrixCell>? onCellTap;
 
-  const _MatrixTable({required this.matrix});
+  const _MatrixTable({required this.matrix, this.onCellTap});
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +99,11 @@ class _MatrixTable extends StatelessWidget {
                 if (cell == null) {
                   return const _MatrixCell.empty();
                 }
-                return _MatrixCell.data(cell.name, cell.status);
+                return _MatrixCell.data(
+                  cell.name,
+                  cell.status,
+                  onTap: onCellTap == null ? null : () => onCellTap!(cell),
+                );
               }),
             ],
           ),
@@ -180,14 +188,19 @@ class _MatrixCell extends StatelessWidget {
   final String name;
   final ItemStatus? status;
   final bool empty;
+  final VoidCallback? onTap;
 
-  const _MatrixCell.data(this.name, this.status) : empty = false;
-  const _MatrixCell.empty() : name = '—', status = null, empty = true;
+  const _MatrixCell.data(this.name, this.status, {this.onTap}) : empty = false;
+  const _MatrixCell.empty()
+    : name = '—',
+      status = null,
+      empty = true,
+      onTap = null;
 
   @override
   Widget build(BuildContext context) {
     final borderColor = status?.color ?? Colors.transparent;
-    return Container(
+    final cell = Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
       decoration: BoxDecoration(
         border: Border(left: BorderSide(color: borderColor, width: 3)),
@@ -236,6 +249,7 @@ class _MatrixCell extends StatelessWidget {
               ],
             ),
     );
+    return onTap == null ? cell : GestureDetector(onTap: onTap, child: cell);
   }
 }
 

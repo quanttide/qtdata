@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+
 import '../models/project.dart';
-import '../widgets/cards/blueprint_card.dart';
-import '../widgets/cards/matrix_card.dart';
-import '../widgets/cards/timeline_card.dart';
 import '../widgets/common/phase_tag.dart';
 import '../widgets/common/sidebar.dart';
 import '../widgets/common/status_badge.dart';
 import '../widgets/common/toast.dart';
 import '../widgets/dialogs/doc_dialog.dart';
+import 'tabs/assets_tab.dart';
+import 'tabs/business_tab.dart';
+import 'tabs/data_tab.dart';
+import 'tabs/overview_tab.dart';
+import 'tabs/project_tab.dart';
 
 class ProjectDetailScreen extends StatelessWidget {
   final Project project;
@@ -24,42 +27,75 @@ class ProjectDetailScreen extends StatelessWidget {
           children: [
             const Sidebar(),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 头部
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(28, 24, 28, 0),
-                    child: _buildHeader(context),
-                  ),
-                  const SizedBox(height: 16),
-                  // 内容区
-                  Expanded(
-                    child: ListView(
-                      padding: const EdgeInsets.fromLTRB(28, 0, 28, 24),
-                      children: [
-                        MatrixCard(matrix: project.matrix),
-                        const SizedBox(height: 16),
-                        BlueprintCard(blueprint: project.blueprint),
-                        const SizedBox(height: 16),
-                        TimelineCard(
-                          phases: project.phases,
-                          onViewDoc: (item) => _showDocDialog(context, item),
-                        ),
-                        const SizedBox(height: 20),
-                        const Center(
-                          child: Text(
-                            '点击「查看资料」获取交付物文件',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Color(0xFFCBD5E1),
-                            ),
-                          ),
-                        ),
-                      ],
+              child: DefaultTabController(
+                length: 5,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 头部
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(28, 24, 28, 0),
+                      child: _buildHeader(context),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 12),
+                    // Tab 栏
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 28),
+                      child: Container(
+                        padding: const EdgeInsets.all(3),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE8EDF4),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: TabBar(
+                          dividerColor: Colors.transparent,
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          indicator: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          labelColor: const Color(0xFF1E293B),
+                          unselectedLabelColor: const Color(0xFF64748B),
+                          labelStyle: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          tabs: const [
+                            Tab(text: '仪表盘'),
+                            Tab(text: '项目'),
+                            Tab(text: '数据'),
+                            Tab(text: '资产'),
+                            Tab(text: '商务'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Tab 内容
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(28, 0, 28, 0),
+                        child: TabBarView(
+                          children: [
+                            OverviewTab(project: project),
+                            ProjectTab(project: project),
+                            DataTab(
+                              project: project,
+                              onViewDoc: (item) =>
+                                  _showDocDialog(context, item),
+                            ),
+                            AssetsTab(
+                              project: project,
+                              onCellTap: (cell) =>
+                                  _showAssetDialog(context, cell),
+                            ),
+                            BusinessTab(project: project),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -148,4 +184,11 @@ class ProjectDetailScreen extends StatelessWidget {
 
   Future<void> _showDocDialog(BuildContext context, PhaseItem item) =>
       showDocDialog(context, projectName: project.name, item: item);
+
+  Future<void> _showAssetDialog(BuildContext context, MatrixCell cell) =>
+      showDocDialog(
+        context,
+        projectName: project.name,
+        item: PhaseItem(name: cell.name, desc: '', hasDoc: true, type: '资产'),
+      );
 }

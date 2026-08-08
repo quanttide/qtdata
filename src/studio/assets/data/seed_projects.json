@@ -10,6 +10,26 @@
       "status": "进行中",
       "currentPhase": "implement",
       "contractAmount": 0.8,
+      "business": {
+        "costBased": 0.5,
+        "marketBased": 1.2,
+        "pricingNote": "成本法：5 阶段（采集0.5/建模1.0/导入1.5/治理1.0/报告1.0 人天）× 1000 元/人天 ≈ 0.5 万元；市场法：外部类似服务行情 ≈ 1.2 万元；内部价 = 市场价 × 7 折 ≈ 0.8 万元（成本 1.6 倍，事业部核算有空间）",
+        "contractDate": "2026-07-20",
+        "payments": [
+          {
+            "name": "首付款",
+            "amount": 0.4,
+            "status": "已收",
+            "date": "2026-07-25"
+          },
+          {
+            "name": "尾款",
+            "amount": 0.4,
+            "status": "待收",
+            "date": ""
+          }
+        ]
+      },
       "deliverables": [
         {
           "name": "议事决议数据 — 决议档案（第33周示例）",
