@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>量潮数据 · Studio 原型</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        body { background: #F1F5F9; font-family: ui-sans-serif, system-ui, sans-serif; }
+        .sidebar-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #94A3B8; }
+        .sidebar-icon.active { background: #E0E7FF; color: #4F46E5; }
+        .stat-card { background: #fff; border-radius: 12px; border: 1px solid #F1F5F9; padding: 12px 0; text-align: center; cursor: pointer; }
+        .stat-card.active-filter { border-color: #4F46E5; box-shadow: 0 0 0 2px rgba(79,70,229,.1); }
+        .number { font-size: 24px; font-weight: 700; color: #4F46E5; }
+        .num-amber { color: #F59E0B; } .num-green { color: #10B981; } .num-gray { color: #94A3B8; }
+        .label { font-size: 11px; color: #94A3B8; margin-top: 2px; }
+        .filter-group { background: #F1F5F9; padding: 3px; border-radius: 8px; display: inline-flex; gap: 2px; }
+        .filter-group button { border-radius: 6px; padding: 6px 14px; font-size: 12px; color: #64748B; background: transparent; }
+        .filter-group button.active { background: #fff; color: #1E293B; font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+        .card { background: #fff; border-radius: 16px; border: 1px solid #F1F5F9; padding: 20px; }
+        .badge { font-size: 10px; font-weight: 500; padding: 2px 10px; border-radius: 20px; }
+        .tag { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 10px; }
+        .tab-btn { font-size: 13px; font-weight: 600; padding: 7px 18px; border-radius: 6px; color: #64748B; white-space: nowrap; }
+        .tab-btn.active { background: #fff; color: #1E293B; }
+        .matrix-cell { border: 1px solid #E2E8F0; padding: 8px 6px; text-align: center; font-size: 12px; cursor: pointer; }
+        .matrix-cell .dot { display: inline-block; width: 6px; height: 6px; border-radius: 99px; margin-right: 3px; }
+        .dot-done { background: #10B981; } .dot-active { background: #4F46E5; } .dot-todo { background: #94A3B8; }
+        .flow-step { width: 14px; height: 14px; border-radius: 99px; border: 2px solid; }
+        .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1E293B; color: #fff; font-size: 13px; padding: 10px 18px; border-radius: 12px; transition: .25s; z-index: 50; opacity: 0; }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .modal-mask { position: fixed; inset: 0; background: rgba(15,23,42,.35); display: none; align-items: center; justify-content: center; z-index: 40; }
+        .modal-mask.show { display: flex; }
+    </style>
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+    <div id="modal" class="modal-mask"></div>
+
+    <div id="app" class="flex min-h-screen">
+
+        <!-- 侧边栏（移动端隐藏） -->
+        <aside class="w-20 bg-white border-r border-gray-100 flex-col items-center py-4 gap-0.5 flex-shrink-0 h-screen sticky top-0 z-10 hidden md:flex">
+            <a class="text-xl font-bold text-indigo-600 mb-3">量</a>
+            <span class="sidebar-icon active" title="项目"><i class="fas fa-th-large text-lg"></i></span>
+            <span class="mt-auto sidebar-icon" title="帮助"><i class="fas fa-question-circle text-lg"></i></span>
+        </aside>
+
+        <main class="flex-1 overflow-y-auto h-screen p-4 md:p-7">
+
+            <!-- ====== 首页：我的项目 ====== -->
+            <div id="page-dashboard">
+                <h1 class="text-2xl font-bold text-gray-800">我的项目</h1>
+                <p class="text-sm text-gray-400 mt-0.5">当前所有数据项目的进度总览</p>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4 mb-3">
+                    <div class="stat-card active-filter" data-filter="all" onclick="setFilter(this)">
+                        <div class="number" id="countAll">1</div><div class="label">全部项目</div>
+                    </div>
+                    <div class="stat-card" data-filter="active" onclick="setFilter(this)">
+                        <div class="number num-amber" id="countActive">1</div><div class="label">进行中</div>
+                    </div>
+                    <div class="stat-card" data-filter="done" onclick="setFilter(this)">
+                        <div class="number num-green" id="countDone">0</div><div class="label">已完成</div>
+                    </div>
+                    <div class="stat-card" data-filter="pending" onclick="setFilter(this)">
+                        <div class="number num-gray" id="countPending">0</div><div class="label">待启动</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mb-3">
+                    <div class="filter-group">
+                        <button class="active" data-filter="all" onclick="setFilter(this)">全部</button>
+                        <button data-filter="active" onclick="setFilter(this)">进行中</button>
+                        <button data-filter="done" onclick="setFilter(this)">已完成</button>
+                        <button data-filter="pending" onclick="setFilter(this)">待启动</button>
+                    </div>
+                    <span class="text-xs text-gray-400" id="projectCount">1 个项目</span>
+                </div>
+
+                <div class="space-y-3" id="projectList"></div>
+                <div class="text-xs text-gray-300 mt-4 text-center">点击项目卡片进入详情</div>
+            </div>
+
+            <!-- ====== 详情页：5 Tab ====== -->
+            <div id="page-detail" class="hidden">
+                <!-- 头部 -->
+                <div class="flex items-start gap-2 mb-3">
+                    <button class="mt-0.5 p-1 rounded-lg hover:bg-gray-200" onclick="goBack()">
+                        <i class="fas fa-arrow-left text-gray-400"></i>
+                    </button>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <h1 class="text-lg font-bold text-gray-800" id="dName"></h1>
+                            <span class="badge" style="background:#DBEAFE;color:#1D4ED8" id="dStatus"></span>
+                            <span class="tag" style="background:#D1FAE5;color:#065F46" id="dPhase"></span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1" id="dMeta"></p>
+                    </div>
+                    <button class="flex items-center gap-1.5 text-white text-[13px] font-medium px-4 py-2 rounded-lg shrink-0" style="background:#4F46E5" onclick="toast('📄 报告已导出')">
+                        <i class="fas fa-file-pdf text-sm"></i><span class="hidden sm:inline">导出</span>
+                    </button>
+                </div>
+
+                <!-- Tab 栏 -->
+                <div class="bg-[#E8EDF4] p-[3px] rounded-lg flex gap-0.5 overflow-x-auto mb-4" id="tabBar">
+                    <button class="tab-btn active" data-tab="overview" onclick="switchTab(this)">总览</button>
+                    <button class="tab-btn" data-tab="data" onclick="switchTab(this)">数据</button>
+                    <button class="tab-btn" data-tab="project" onclick="switchTab(this)">项目</button>
+                    <button class="tab-btn" data-tab="business" onclick="switchTab(this)">商务</button>
+                    <button class="tab-btn" data-tab="assets" onclick="switchTab(this)">资产</button>
+                </div>
+
+                <!-- Tab 面板 -->
+                <div id="tab-overview" class="tab-panel space-y-4"></div>
+                <div id="tab-data" class="tab-panel hidden space-y-4"></div>
+                <div id="tab-project" class="tab-panel hidden space-y-4"></div>
+                <div id="tab-business" class="tab-panel hidden space-y-4"></div>
+                <div id="tab-assets" class="tab-panel hidden space-y-4"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // ===== 种子数据（与 studio seed 一致） =====
+        const STATUS = { done: { label: '已完成', dot: 'dot-done', badge: ['#D1FAE5', '#065F46'] }, active: { label: '进行中', dot: 'dot-active', badge: ['#DBEAFE', '#1D4ED8'] }, todo: { label: '待启动', dot: 'dot-todo', badge: ['#F1F5F9', '#94A3B8'] } };
+
+        const project = {
+            name: '量潮科技数字化',
+            client: '量潮科技（内部项目）',
+            created: '2026-08-01',
+            updated: '2026-08-08',
+            status: '进行中',
+            currentPhase: { label: '实施', badge: ['#D1FAE5', '#065F46'] },
+            contractAmount: 0.8,
+            deliverables: [
+                { name: '议事决议数据 — 决议档案（第33周示例）', status: 'done' },
+                { name: '议事决议数据 — 治理视图', status: 'done' },
+                { name: '议事决议数据 — 周会决议汇总', status: 'done' },
+                { name: '议事决议数据 — 历史周会批量整理', status: 'active' },
+            ],
+            matrix: {
+                rows: [['📋 项目', 'project'], ['📊 数据', 'data'], ['💼 商务', 'business']],
+                columns: [['调研', 'research'], ['谈判', 'negotiate'], ['实施', 'implement'], ['验收', 'accept'], ['复盘', 'review']],
+                colStatus: ['done', 'active', 'todo', 'todo', 'todo'],
+                cells: {
+                    project_research: ['数据需求文档（DRD）', 'done'], project_negotiate: ['数据规格评审', 'active'], project_implement: ['周会进度同步', 'todo'], project_accept: ['治理视图验收', 'done'], project_review: ['复盘报告', 'todo'],
+                    data_research: ['飞书议事数据盘点', 'done'], data_negotiate: ['数据规格书（数据契约）', 'done'], data_implement: ['决议提取与标准化', 'done'], data_accept: ['决议档案落库', 'done'], data_review: ['质量基线校验', 'done'],
+                    business_research: ['需求范围确认（内部）', 'done'], business_negotiate: ['数据源接入（飞书）', 'active'], business_implement: ['数据源接入配置', 'todo'], business_accept: ['数据交付（治理视图）', 'todo'], business_review: ['归档', 'todo'],
+                },
+            },
+            blueprint: {
+                steps: ['采集原始数据 — 飞书议事档案导出（lark-cli drive +export：提案/会议纪要/简报）', '解析文档结构 — 提取编号、提案人、poll 标记、议程结构', '决议标准化 — 对齐决议 schema（id/title/owner/due/status/溯源）', '纪要决议提取 — 从议程中提取决定类记录（决定/通过/落实/确定）', '档案落库 — 一决议一文件（YAML），索引聚合', '治理输出 — 逾期推导、责任人分布、治理视图 JSON', '周会报告 — 生成周会决议汇总与质量指标（编号错位/辩论记录/决议落档）'],
+                exceptions: [['无责任人', '标记"未指定"，治理视图提示补全——创建决议时 owner 必填'], ['无完成期限', '逾期推导跳过，不误报——期限缺失本身是治理信号'], ['编号双轨', '提案按发布周、会议按召开周编号，跨文档错位检测（错位率 100%）'], ['纪要无决议记录', '标记表决-决议断链，提示表决引擎/决议归档缺失']],
+            },
+            phases: [
+                { name: '数据采集', status: 'done', items: [['飞书议事档案盘点', '议事档案知识库：议题（12 类）、决议、执行管理节点', true, '盘点清单'], ['数据导出', 'lark-cli drive +export：提案 5 篇、会议纪要、部门简报', true, '导出脚本']] },
+                { name: '数据建模', status: 'done', items: [['决议 schema 定义', 'id/title/content/owner/due/status/vote/source/evidence/history', true, '数据契约'], ['领域模型', '议题（提案是一类议题）、决议（独立管理）、议程（纪要=议程记录形态）', true, '领域模型文档']] },
+                { name: '数据导入', status: 'done', items: [['提案解析', '5 篇提案 → 决议候选（编号/提案人/poll）', true, '导入脚本'], ['纪要决议提取', '从议程提取决定类记录，共导入 8 条决议', true, '导入脚本'], ['决议档案生成（第33周示例）', '一决议一文件（YAML），对齐 schema，示例已上线', true, '决议档案']] },
+                { name: '治理输出', status: 'done', items: [['索引与逾期推导', 'index.yaml 聚合统计，逾期 = due < today 且未完成', true, '治理脚本'], ['治理视图 JSON', 'stats/overdue/by_owner/resolutions——客户端可消费', true, '数据交付物']] },
+                { name: '周会报告', status: 'done', items: [['周会决议汇总', '决议清单 + 质量指标（编号错位/辩论记录/决议落档）', true, '报告'], ['质量基线', '8 项实验基线：编号错位 100%、辩论记录 20%、决议落档 0 条', true, '基线报告']] },
+                { name: '历史周会批量整理', status: 'active', items: [['历史周会导出', '第 30/31/32 周等历史纪要批量导出（lark-cli）', false, ''], ['流水线批量跑通', '复用导入/治理流水线批量处理 + 质检（编号/决议质量）', false, ''], ['结果核对与归档', '人工核对 + 飞书知识库回写', false, '']] },
+            ],
+            business: {
+                costBased: 0.5, marketBased: 1.2,
+                pricingNote: '成本法：5 阶段（采集0.5/建模1.0/导入1.5/治理1.0/报告1.0 人天）× 1000 元/人天 ≈ 0.5 万元；市场法：外部类似服务行情 ≈ 1.2 万元；内部价 = 市场价 × 7 折 ≈ 0.8 万元（成本 1.6 倍，事业部核算有空间）',
+                contractDate: '2026-07-20',
+                payments: [['首付款', 0.4, '已收', '2026-07-25'], ['尾款', 0.4, '待收', '']],
+            },
+        };
+
+        // ===== 工具 =====
+        const done = project.deliverables.filter(d => d.status === 'done').length;
+        const total = project.deliverables.length;
+        const percent = Math.round(done / total * 100);
+        const income = project.contractAmount * done / total;
+
+        function badge(status) { const s = STATUS[status]; return `<span class="badge" style="background:${s.badge[0]};color:${s.badge[1]}">${s.label}</span>`; }
+        function toast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg; t.classList.add('show');
+            clearTimeout(t._timer); t._timer = setTimeout(() => t.classList.remove('show'), 2500);
+        }
+        function showDoc(name) {
+            document.getElementById('modal').innerHTML = `
+                <div class="bg-white rounded-3xl p-8 w-[92%] max-w-md">
+                    <div class="flex items-start justify-between">
+                        <div><div class="text-lg font-bold text-gray-800">${name}</div>
+                        <div class="text-xs text-gray-400 mt-1">${project.name} · 资料</div></div>
+                        <button class="p-1 rounded-lg hover:bg-gray-100" onclick="closeModal()"><i class="fas fa-times text-gray-400"></i></button>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-4">以下资料可供下载：</p>
+                    <div class="mt-2 space-y-1.5">
+                        ${[`${name}.pdf`, `${name}_data.csv`].map(f => `
+                        <div class="flex items-center gap-2 bg-[#F8FAFC] rounded-md px-2 py-1.5 text-xs">
+                            <i class="fas fa-file-pdf text-indigo-600"></i>
+                            <span class="flex-1 text-gray-800">${f}</span>
+                            <span class="text-[11px] text-gray-400">1.2 MB</span>
+                            <button class="text-indigo-600 font-medium" onclick="closeModal(); toast('📥 下载 ${f}')">下载</button>
+                        </div>`).join('')}
+                    </div>
+                </div>`;
+            document.getElementById('modal').classList.add('show');
+        }
+        function closeModal() { document.getElementById('modal').classList.remove('show'); }
+
+        // ===== 首页 =====
+        let filter = 'all';
+        function setFilter(el) {
+            filter = el.dataset.filter;
+            document.querySelectorAll('.stat-card, .filter-group button').forEach(e => e.classList.remove('active-filter', 'active'));
+            document.querySelectorAll(`.stat-card[data-filter="${filter}"], .filter-group button[data-filter="${filter}"]`).forEach(e => e.classList.add('active-filter', 'active'));
+            renderProjects();
+        }
+        function projectCard(p) {
+            const done = p.deliverables.filter(d => d.status === 'done').length;
+            const active = p.deliverables.filter(d => d.status === 'active').length;
+            const todo = p.deliverables.filter(d => d.status === 'todo').length;
+            const percent = Math.round(done / p.deliverables.length * 100);
+            const income = p.contractAmount * done / p.deliverables.length;
+            return `
+            <div class="card cursor-pointer hover:shadow-md transition-shadow" onclick="openDetail()">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-2 min-w-0">
+                        <span class="text-[15px] font-semibold text-gray-800">${p.name}</span>
+                        ${badge(p.status === '进行中' ? 'active' : 'done')}
+                        <span class="tag" style="background:${p.currentPhase.badge[0]};color:${p.currentPhase.badge[1]}">${p.currentPhase.label}阶段</span>
+                    </div>
+                    <span class="text-[11px] text-gray-400 shrink-0">更新于 ${p.updated}</span>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 mt-3">
+                    ${[['已完成', done, 'border-[#A7F3D0] bg-[#F0FDF4] text-[#065F46]', 'text-[#10B981]'], ['进行中', active, 'border-[#93C5FD] bg-[#EFF6FF] text-[#1D4ED8]', 'text-[#3B82F6]'], ['待启动', todo, 'border-[#E2E8F0] bg-[#F8FAFC] text-[#64748B]', 'text-[#94A3B8]']].map(([l, n, c, nc]) => `
+                    <div class="flex items-center gap-1 border rounded-lg px-1.5 py-0.5 ${c}">
+                        <span class="text-sm font-bold ${nc}">${n}</span><span class="text-[11px] font-medium">${l}</span>
+                    </div>`).join('')}
+                    <span class="text-[11px] text-gray-400">共 ${p.deliverables.length} 项</span>
+                </div>
+                <div class="flex items-center gap-3 mt-3">
+                    <div class="flex-1">
+                        <div class="flex justify-between text-[11px]"><span class="text-gray-500">交付完成度</span><span class="font-semibold text-gray-800">${percent}%</span></div>
+                        <div class="h-1.5 bg-[#F1F5F9] rounded-full mt-1"><div class="h-1.5 bg-[#4F46E5] rounded-full" style="width:${percent}%"></div></div>
+                    </div>
+                    <div class="bg-[#F1F5F9] rounded-xl px-2 py-1 text-[11px]">
+                        💰 <span class="font-semibold text-gray-800">${income.toFixed(1)}</span> <span class="text-gray-400">/ ${p.contractAmount.toFixed(1)} 万元</span>
+                    </div>
+                </div>
+            </div>`;
+        }
+        function renderProjects() {
+            const list = document.getElementById('projectList');
+            list.innerHTML = projectCard(project);
+            document.getElementById('projectCount').textContent = '1 个项目';
+            document.getElementById('countAll').textContent = 1;
+            document.getElementById('countActive').textContent = 1;
+            document.getElementById('countDone').textContent = 0;
+            document.getElementById('countPending').textContent = 0;
+        }
+
+        // ===== 详情页 =====
+        function openDetail() {
+            document.getElementById('page-dashboard').classList.add('hidden');
+            document.getElementById('page-detail').classList.remove('hidden');
+            document.getElementById('dName').textContent = project.name;
+            document.getElementById('dStatus').textContent = project.status;
+            document.getElementById('dStatus').style = 'background:#DBEAFE;color:#1D4ED8';
+            document.getElementById('dPhase').textContent = project.currentPhase.label;
+            document.getElementById('dPhase').style = `background:${project.currentPhase.badge[0]};color:${project.currentPhase.badge[1]}`;
+            document.getElementById('dMeta').textContent = `客户：${project.client} ｜ 创建于 ${project.created}`;
+            renderTab('overview');
+            switchTab(document.querySelector('[data-tab="overview"]'));
+        }
+        function goBack() {
+            document.getElementById('page-detail').classList.add('hidden');
+            document.getElementById('page-dashboard').classList.remove('hidden');
+            renderProjects();
+        }
+        function switchTab(el) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+            document.getElementById('tab-' + el.dataset.tab).classList.remove('hidden');
+        }
+
+        function renderTab(name) {
+            const p = project;
+            const el = document.getElementById('tab-' + name);
+            if (name === 'overview') {
+                el.innerHTML = projectCard(p) + `
+                <div class="card">
+                    <div class="text-[15px] font-semibold text-gray-700">交付物明细</div>
+                    <div class="mt-3 space-y-2">
+                        ${p.deliverables.map(d => `<div class="flex items-center justify-between gap-2 text-[13px]"><span class="text-gray-800">${d.name}</span>${badge(d.status)}</div>`).join('')}
+                    </div>
+                </div>`;
+            }
+            if (name === 'data') {
+                el.innerHTML = `
+                <div class="card">
+                    <div class="flex items-center gap-2"><i class="fas fa-project-diagram text-indigo-500"></i><span class="text-[15px] font-semibold text-gray-700">完整数据蓝图</span><span class="text-[11px] text-gray-400">| 处理流程 + 异常预案</span></div>
+                    <div class="mt-4 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-4">
+                        <div class="text-[11px] font-semibold tracking-wide text-blue-500">处理流程</div>
+                        <div class="mt-2">
+                            ${p.blueprint.steps.map((s, i) => `
+                            <div class="flex gap-2.5 py-1.5 border-b border-[#F1F5F9] last:border-0">
+                                <span class="w-[22px] h-[22px] rounded-full text-white text-[11px] font-semibold flex items-center justify-center shrink-0" style="background:#4F46E5">${i + 1}</span>
+                                <span class="text-[13px] text-gray-700 leading-relaxed">${s}</span>
+                            </div>`).join('')}
+                        </div>
+                        <div class="text-[11px] font-semibold tracking-wide text-amber-500 mt-3">异常处理预案</div>
+                        <div class="mt-2">
+                            ${p.blueprint.exceptions.map(e => `
+                            <div class="flex gap-3 py-1.5 border-b border-[#F8FAFC]">
+                                <span class="w-[90px] shrink-0 text-xs font-medium text-gray-800">${e[0]}</span>
+                                <span class="text-xs text-gray-500">${e[1]}</span>
+                            </div>`).join('')}
+                        </div>
+                    </div>
+                </div>`;
+            }
+            if (name === 'project') {
+                const rows = [['客户', p.client], ['创建时间', p.created], ['最近更新', p.updated], ['当前阶段', p.currentPhase.label], ['状态', p.status], ['合同金额', `${p.contractAmount.toFixed(1)} 万元`]];
+                el.innerHTML = `
+                <div class="card">
+                    <div class="flex items-center gap-2"><i class="fas fa-info-circle text-indigo-500"></i><span class="text-[15px] font-semibold text-gray-700">项目信息</span></div>
+                    <div class="mt-3">
+                        ${rows.map(r => `<div class="flex py-1.5 text-xs"><span class="w-[90px] text-gray-400">${r[0]}</span><span class="font-medium text-gray-800">${r[1]}</span></div>`).join('')}
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="flex items-center gap-2"><i class="fas fa-clock text-indigo-500"></i><span class="text-[15px] font-semibold text-gray-700">交付时间线</span><span class="text-[11px] text-gray-400">| 每个阶段的交付物</span></div>
+                    <div class="mt-3 space-y-2.5">
+                        ${p.phases.map(ph => `
+                        <div class="border-l-[3px] pl-4" style="border-color:${STATUS[ph.status].dot === 'dot-done' ? '#10B981' : STATUS[ph.status].dot === 'dot-active' ? '#4F46E5' : '#D1D5DB'}">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="w-3 h-3 rounded-full ${STATUS[ph.status].dot}" style="border:1px solid ${ph.status === 'todo' ? '#D1D5DB' : ''}"></span>
+                                <span class="text-sm font-semibold text-gray-800">${ph.name}</span>
+                                <span class="tag" style="background:${STATUS[ph.status].badge[0]};color:${STATUS[ph.status].badge[1]}">${STATUS[ph.status].label}</span>
+                                <span class="text-[11px] text-gray-400">${ph.items.length} 项</span>
+                            </div>
+                            <div class="mt-1.5 ml-5 space-y-1.5">
+                                ${ph.items.map(it => `
+                                <div class="flex items-center gap-2 bg-[#F8FAFC] rounded-md px-2 py-1 text-xs">
+                                    <i class="fas fa-file-alt text-gray-400"></i>
+                                    <span class="flex-1 text-gray-800 min-w-0"><span class="font-semibold">${it[0]}</span> <span class="text-gray-400">—</span> ${it[1]}</span>
+                                    ${it[2] ? `<button class="text-indigo-600 font-medium shrink-0" onclick="showDoc('${it[0]}')">查看资料</button>` : ''}
+                                </div>`).join('')}
+                            </div>
+                        </div>`).join('')}
+                    </div>
+                </div>`;
+            }
+            if (name === 'business') {
+                const b = p.business;
+                const paid = b.payments.filter(x => x[2] === '已收').reduce((s, x) => s + x[1], 0);
+                el.innerHTML = `
+                <div class="card">
+                    <div class="flex items-center gap-2"><i class="fas fa-file-invoice-dollar text-indigo-500"></i><span class="text-[15px] font-semibold text-gray-700">报价</span><span class="text-[11px] text-gray-400">| 定价依据</span></div>
+                    <div class="flex gap-2 mt-4">
+                        ${[['成本法', b.costBased], ['市场法', b.marketBased], ['内部价', (b.costBased * 1.6)]].map(([l, v]) => `
+                        <div class="flex-1 bg-[#F8FAFC] rounded-lg py-2.5 text-center">
+                            <div class="text-[11px] text-gray-400">${l}</div>
+                            <div class="text-base font-bold text-gray-800 mt-1">${v.toFixed(1)} 万</div>
+                        </div>`).join('')}
+                    </div>
+                    <p class="text-[11px] text-gray-400 leading-relaxed mt-3">${b.pricingNote}</p>
+                </div>
+                <div class="card">
+                    <div class="flex items-center gap-2"><i class="fas fa-file-contract text-indigo-500"></i><span class="text-[15px] font-semibold text-gray-700">合同</span></div>
+                    <div class="mt-3">
+                        ${[['合同金额', `${p.contractAmount.toFixed(1)} 万元`], ['签订日期', b.contractDate]].map(r => `<div class="flex py-1.5 text-xs"><span class="w-[90px] text-gray-400">${r[0]}</span><span class="font-medium text-gray-800">${r[1]}</span></div>`).join('')}
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="flex items-center gap-2"><i class="fas fa-boxes text-indigo-500"></i><span class="text-[15px] font-semibold text-gray-700">交付</span><span class="text-[11px] text-gray-400">| ${done}/${total} 已完成</span></div>
+                    <div class="mt-3 space-y-2">
+                        ${p.deliverables.map(d => `<div class="flex items-center justify-between gap-2 text-[13px]"><span class="text-gray-800">${d.name}</span>${badge(d.status)}</div>`).join('')}
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="flex items-center gap-2"><i class="fas fa-wallet text-indigo-500"></i><span class="text-[15px] font-semibold text-gray-700">结款</span><span class="text-[11px] text-gray-400">| 已收 ${paid.toFixed(1)} / ${b.payments.reduce((s, x) => s + x[1], 0).toFixed(1)} 万</span></div>
+                    <div class="mt-3 space-y-2">
+                        ${b.payments.map(x => `
+                        <div class="flex items-center gap-2 text-[13px]">
+                            <span class="font-medium text-gray-800 flex-1">${x[0]}</span>
+                            <span class="text-gray-500">${x[1].toFixed(1)} 万</span>
+                            <span class="text-[11px] text-gray-400">${x[3] || '—'}</span>
+                            ${x[2] === '已收' ? '<span class="badge" style="background:#D1FAE5;color:#065F46">已收</span>' : '<span class="badge" style="background:#FEF3C7;color:#92400E">待收</span>'}
+                        </div>`).join('')}
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="flex items-center gap-2"><i class="fas fa-flag text-indigo-500"></i><span class="text-[15px] font-semibold text-gray-700">商务管理阶段</span><span class="text-[11px] text-gray-400">| 调研 → 复盘</span></div>
+                    <div class="flex items-center mt-5">
+                        ${p.matrix.columns.map((c, i) => `
+                        ${i > 0 ? `<div class="flex-1 h-0.5 ${p.matrix.colStatus[i - 1] === 'done' ? 'bg-[#10B981]' : 'bg-[#E2E8F0]'}" style="margin-bottom:22px"></div>` : ''}
+                        <div class="text-center">
+                            <span class="inline-block w-3.5 h-3.5 rounded-full border-2 ${STATUS[p.matrix.colStatus[i]].dot}" style="border-color:${STATUS[p.matrix.colStatus[i]].dot === 'dot-done' ? '#10B981' : STATUS[p.matrix.colStatus[i]].dot === 'dot-active' ? '#4F46E5' : '#94A3B8'}"></span>
+                            <div class="text-[11px] text-gray-500 mt-1.5 whitespace-nowrap">${c[0]}</div>
+                        </div>`).join('')}
+                    </div>
+                </div>`;
+            }
+            if (name === 'assets') {
+                el.innerHTML = `
+                <div class="card overflow-x-auto">
+                    <div class="flex items-center gap-2"><i class="fas fa-table text-indigo-500"></i><span class="text-[15px] font-semibold text-gray-700">交付资产地图</span><span class="text-[11px] text-gray-400">| 维度 × 阶段</span></div>
+                    <div class="mt-4 min-w-[560px]">
+                        <table class="w-full border-collapse" style="border:1px solid #E2E8F0">
+                            <thead><tr style="background:#F8FAFC">
+                                <th class="matrix-cell text-[#475569] font-semibold w-[72px]">维度 \\ 阶段</th>
+                                ${p.matrix.columns.map((c, i) => `<th class="matrix-cell text-[#475569] font-semibold">
+                                    <div>${c[0]}</div>
+                                    <span class="tag mt-1" style="background:${STATUS[p.matrix.colStatus[i]].badge[0]};color:${STATUS[p.matrix.colStatus[i]].badge[1]}">${STATUS[p.matrix.colStatus[i]].label}</span>
+                                </th>`).join('')}
+                            </tr></thead>
+                            <tbody>
+                                ${p.matrix.rows.map(r => `<tr>
+                                    <td class="matrix-cell text-xs font-medium text-gray-800 bg-[#FAFCFF] w-[72px]">${r[0]}</td>
+                                    ${p.matrix.columns.map(c => {
+                                        const cell = p.matrix.cells[`${r[1]}_${c[1]}`];
+                                        if (!cell) return '<td class="matrix-cell text-gray-300">—</td>';
+                                        return `<td class="matrix-cell" onclick="showDoc('${cell[0]}')">
+                                            <div class="text-xs font-semibold text-gray-800">${cell[0]}</div>
+                                            <div class="mt-1 text-[9px] text-gray-400"><span class="dot ${STATUS[cell[1]].dot}"></span>${STATUS[cell[1]].label}</div>
+                                        </td>`;
+                                    }).join('')}
+                                </tr>`).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="flex gap-3.5 mt-3 pt-3 border-t border-[#F1F5F9]">
+                        ${[['done', '已完成'], ['active', '进行中'], ['todo', '待启动']].map(s => `<span class="flex items-center gap-1 text-[10px] text-gray-400"><span class="w-1.5 h-1.5 rounded-full ${STATUS[s[0]].dot}"></span>${s[1]}</span>`).join('')}
+                    </div>
+                    <div class="text-[11px] text-gray-300 text-center mt-3">点击资产条目查看资料</div>
+                </div>`;
+            }
+        }
+
+        // ===== 初始化 =====
+        renderProjects();
+
+        // 支持 ?tab=xxx 直达详情页某 Tab（评审深链/自动化验证）
+        const params = new URLSearchParams(location.search);
+        const deepTab = params.get('tab');
+        if (deepTab) {
+            openDetail();
+            renderTab(deepTab);
+            switchTab(document.querySelector(`[data-tab="${deepTab}"]`));
+        }
+    </script>
+</body>
+</html>
