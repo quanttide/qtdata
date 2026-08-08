@@ -1,0 +1,26 @@
+# 2026-08-08
+
+## Studio mock 数据迁移 JSON seed + 发布 alpha.3
+
+### 做了什么
+
+- mock 数据从 `src/studio/lib/mock_data.dart`（Dart 字面量）迁移为 JSON seed：`src/studio/assets/data/seed_projects.json`
+  - 结构：`{"projects": [...]}` 数组 + `id` 字段（替代原来中文名作 map key）
+  - 枚举存键（`done`/`active`/`todo`、`implement` 等），解析时映射
+  - 原定价估算注释保留为 `_comment` 字段（JSON 不支持注释）
+- 模型：`Project` 增加 `id` 字段；12 个模型类新增 `fromJson`；枚举新增 `fromKey`
+- 仪表盘：`rootBundle.loadString` 异步加载，加载中 spinner / 失败提示
+- `pubspec.yaml` 注册 `assets/data/`
+- 发布 `studio/v0.1.0-alpha.3`（tag + GitHub Release），CI 部署 data.quanttide.com
+
+### 关键发现/决策
+
+- Flutter web 构建会把 pubspec 声明的资源放在 `build/web/assets/<path>` 下，即生产 URL 是 `/assets/assets/data/seed_projects.json`，`rootBundle` 加载的路径 `assets/data/...` 由引擎自动映射，无需改代码
+- `flutter pub get` 在 CN 镜像环境会改写 `pubspec.lock` 的源（pub.dev → pub.flutter-io.cn），是环境噪音，提交前需还原
+- alpha.2 的部署 workflow 曾失败（原因已由 e28e015 修复），alpha.3 部署成功
+
+### 验证
+
+- `flutter analyze` / `flutter build web` 通过
+- JSON→模型解析与原文对齐（完成度 75%、矩阵 15 格、蓝图 7 步/4 异常、6 阶段 14 项）
+- `https://data.quanttide.com/` 200，`/assets/assets/data/seed_projects.json` 内容正确
