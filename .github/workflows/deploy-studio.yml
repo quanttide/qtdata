@@ -18,7 +18,7 @@ jobs:
       - run: cd src/studio && flutter pub get
       - run: cd src/studio && flutter build web
 
-      - uses: manyuanrong/setup-ossutil@v3
+      - uses: manyuanrong/setup-ossutil@v3.0
         with:
           endpoint: oss-cn-hangzhou.aliyuncs.com
           access-key-id: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
