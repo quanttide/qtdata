@@ -26,6 +26,13 @@
 - 组件重构 + 永久测试后发布 beta.1（tag + GitHub Release），CI 部署成功
 - 线上验证：version.json = 0.1.0-beta.1，首页 200，seed 数据正常，无头 Chrome 启动无异常
 
+## 发布 studio/v0.1.0-beta.2（PWA manifest 品牌化 + CDN 缓存修复）
+
+- manifest.json：name/short_name 改为「量潮数据」，theme_color #4F46E5、background_color #F1F5F9
+- deploy workflow：manifest.json 单独上传 `Cache-Control:no-cache`（原策略全站 max-age=31536000 一年，PWA 元信息变更无法生效）
+- 线上验证：version.json = 0.1.0-beta.2；manifest 响应头 no-cache 生效（TCP_MISS 回源）
+- 遗留提醒：index.html / flutter_bootstrap.js 同样被一年长缓存，入口更新依赖 CDN 目录刷新，建议后续一并 no-cache
+
 ### 关键发现
 
 - widget 测试中 `tester.runAsync` + `rootBundle.loadString` 的 IO future 会悬挂导致 `pumpAndSettle` 卡死；测试内改用 `File` 同步读取 seed JSON（helpers/seed.dart）绕开
