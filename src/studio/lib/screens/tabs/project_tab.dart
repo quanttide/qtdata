@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../../models/project.dart';
+import '../../widgets/cards/timeline_card.dart';
 import '../../widgets/common/section_header.dart';
 
-/// 项目：基本信息 + 商务流程（调研 → 复盘）
+/// 项目：基本信息 + 交付时间线（项目管理信息）
 class ProjectTab extends StatelessWidget {
   final Project project;
 
-  const ProjectTab({super.key, required this.project});
+  /// 点击「查看资料」回调（由页面层打开弹窗）
+  final ValueChanged<PhaseItem>? onViewDoc;
+
+  const ProjectTab({super.key, required this.project, this.onViewDoc});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +20,7 @@ class ProjectTab extends StatelessWidget {
       children: [
         _InfoCard(project: project),
         const SizedBox(height: 16),
-        _BusinessFlowCard(matrix: project.matrix),
+        TimelineCard(phases: project.phases, onViewDoc: onViewDoc),
       ],
     );
   }
@@ -81,94 +85,6 @@ class _InfoCard extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-/// 商务流程步骤条：取矩阵 project 行的 5 阶段状态
-class _BusinessFlowCard extends StatelessWidget {
-  final ProjectMatrix matrix;
-
-  const _BusinessFlowCard({required this.matrix});
-
-  @override
-  Widget build(BuildContext context) {
-    final steps = matrix.columns
-        .map(
-          (col) => (label: col.label, cell: matrix.cellAt('project', col.key)),
-        )
-        .toList();
-
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF1F5F9)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SectionHeader(
-            icon: Icons.flag_outlined,
-            title: '商务流程',
-            subtitle: '| 调研 → 复盘',
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              for (var i = 0; i < steps.length; i++) ...[
-                if (i > 0)
-                  Expanded(
-                    child: Container(
-                      height: 2,
-                      margin: const EdgeInsets.only(bottom: 18),
-                      color: _isStepDone(steps[i - 1].cell)
-                          ? const Color(0xFF10B981)
-                          : const Color(0xFFE2E8F0),
-                    ),
-                  ),
-                _StepDot(status: steps[i].cell?.status, label: steps[i].label),
-              ],
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  bool _isStepDone(MatrixCell? cell) => cell?.status == ItemStatus.done;
-}
-
-class _StepDot extends StatelessWidget {
-  final ItemStatus? status;
-  final String label;
-
-  const _StepDot({required this.status, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    final color = status?.color ?? const Color(0xFFE2E8F0);
-    return Column(
-      children: [
-        Container(
-          width: 14,
-          height: 14,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: status == null ? const Color(0xFFE2E8F0) : color,
-              width: 2,
-            ),
-          ),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)),
-        ),
-      ],
     );
   }
 }

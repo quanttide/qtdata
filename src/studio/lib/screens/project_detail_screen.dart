@@ -78,12 +78,12 @@ class ProjectDetailScreen extends StatelessWidget {
                         child: TabBarView(
                           children: [
                             OverviewTab(project: project),
-                            ProjectTab(project: project),
-                            DataTab(
+                            ProjectTab(
                               project: project,
                               onViewDoc: (item) =>
                                   _showDocDialog(context, item),
                             ),
+                            DataTab(project: project),
                             AssetsTab(
                               project: project,
                               onCellTap: (cell) =>
