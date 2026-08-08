@@ -9,14 +9,15 @@ final mockProjects = <String, Project>{
     name: '量潮科技数字化',
     client: '量潮科技（内部项目）',
     created: '2026-08-01',
-    updated: '2026-08-06',
+    updated: '2026-08-08',
     status: '进行中',
     currentPhase: ProjectPhase.implement,
     contractAmount: 0.8,
     deliverables: [
-      Deliverable(name: '议事决议数据 — 决议档案', status: ItemStatus.done),
-      Deliverable(name: '议事决议数据 — 治理视图', status: ItemStatus.active),
-      Deliverable(name: '议事决议数据 — 周会决议汇总', status: ItemStatus.todo),
+      Deliverable(name: '议事决议数据 — 决议档案（第33周示例）', status: ItemStatus.done),
+      Deliverable(name: '议事决议数据 — 治理视图', status: ItemStatus.done),
+      Deliverable(name: '议事决议数据 — 周会决议汇总', status: ItemStatus.done),
+      Deliverable(name: '议事决议数据 — 历史周会批量整理', status: ItemStatus.active),
     ],
     matrix: ProjectMatrix(
       rows: [
@@ -44,19 +45,19 @@ final mockProjects = <String, Project>{
           name: '周会进度同步',
           status: ItemStatus.todo,
         ),
-        'project_accept': MatrixCell(name: '治理视图验收', status: ItemStatus.todo),
+        'project_accept': MatrixCell(name: '治理视图验收', status: ItemStatus.done),
         'project_review': MatrixCell(name: '复盘报告', status: ItemStatus.todo),
         'data_research': MatrixCell(name: '飞书议事数据盘点', status: ItemStatus.done),
         'data_negotiate': MatrixCell(
           name: '数据规格书（数据契约）',
-          status: ItemStatus.active,
+          status: ItemStatus.done,
         ),
         'data_implement': MatrixCell(
           name: '决议提取与标准化',
-          status: ItemStatus.todo,
+          status: ItemStatus.done,
         ),
-        'data_accept': MatrixCell(name: '决议档案落库', status: ItemStatus.todo),
-        'data_review': MatrixCell(name: '质量基线校验', status: ItemStatus.todo),
+        'data_accept': MatrixCell(name: '决议档案落库', status: ItemStatus.done),
+        'data_review': MatrixCell(name: '质量基线校验', status: ItemStatus.done),
         'business_research': MatrixCell(
           name: '需求范围确认（内部）',
           status: ItemStatus.done,
@@ -132,7 +133,7 @@ final mockProjects = <String, Project>{
       ),
       ProjectPhaseDetail(
         name: '数据导入',
-        status: ItemStatus.active,
+        status: ItemStatus.done,
         items: [
           PhaseItem(
             name: '提案解析',
@@ -147,8 +148,8 @@ final mockProjects = <String, Project>{
             type: '导入脚本',
           ),
           PhaseItem(
-            name: '决议档案生成',
-            desc: '一决议一文件（YAML），对齐 schema',
+            name: '决议档案生成（第33周示例）',
+            desc: '一决议一文件（YAML），对齐 schema，示例已上线',
             hasDoc: true,
             type: '决议档案',
           ),
@@ -156,7 +157,7 @@ final mockProjects = <String, Project>{
       ),
       ProjectPhaseDetail(
         name: '治理输出',
-        status: ItemStatus.todo,
+        status: ItemStatus.done,
         items: [
           PhaseItem(
             name: '索引与逾期推导',
@@ -174,7 +175,7 @@ final mockProjects = <String, Project>{
       ),
       ProjectPhaseDetail(
         name: '周会报告',
-        status: ItemStatus.todo,
+        status: ItemStatus.done,
         items: [
           PhaseItem(
             name: '周会决议汇总',
@@ -187,6 +188,30 @@ final mockProjects = <String, Project>{
             desc: '8 项实验基线：编号错位 100%、辩论记录 20%、决议落档 0 条',
             hasDoc: true,
             type: '基线报告',
+          ),
+        ],
+      ),
+      ProjectPhaseDetail(
+        name: '历史周会批量整理',
+        status: ItemStatus.active,
+        items: [
+          PhaseItem(
+            name: '历史周会导出',
+            desc: '第 30/31/32 周等历史纪要批量导出（lark-cli）',
+            hasDoc: false,
+            type: '',
+          ),
+          PhaseItem(
+            name: '流水线批量跑通',
+            desc: '复用导入/治理流水线批量处理 + 质检（编号/决议质量）',
+            hasDoc: false,
+            type: '',
+          ),
+          PhaseItem(
+            name: '结果核对与归档',
+            desc: '人工核对 + 飞书知识库回写',
+            hasDoc: false,
+            type: '',
           ),
         ],
       ),
