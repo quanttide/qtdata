@@ -14,6 +14,12 @@ enum ProjectPhase {
       orElse: () => ProjectPhase.research,
     );
   }
+
+  /// 按枚举名（JSON seed 中的 currentPhase 键）解析
+  static ProjectPhase fromKey(String key) => ProjectPhase.values.firstWhere(
+    (p) => p.name == key,
+    orElse: () => ProjectPhase.research,
+  );
 }
 
 enum ItemStatus {
@@ -26,6 +32,12 @@ enum ItemStatus {
 
   bool get isDone => this == done;
   bool get isActive => this == active;
+
+  /// 按枚举名（JSON seed 中的 status 键）解析
+  static ItemStatus fromKey(String key) => ItemStatus.values.firstWhere(
+    (s) => s.name == key,
+    orElse: () => ItemStatus.todo,
+  );
 }
 
 /// 交付物（首页卡片上的交付物仪表）
@@ -34,6 +46,11 @@ class Deliverable {
   final ItemStatus status;
 
   const Deliverable({required this.name, required this.status});
+
+  factory Deliverable.fromJson(Map<String, dynamic> json) => Deliverable(
+    name: json['name'] as String,
+    status: ItemStatus.fromKey(json['status'] as String),
+  );
 }
 
 /// 全流程进度总览（二维网格）的维度行
@@ -42,6 +59,9 @@ class MatrixRow {
   final String key;
 
   const MatrixRow({required this.label, required this.key});
+
+  factory MatrixRow.fromJson(Map<String, dynamic> json) =>
+      MatrixRow(label: json['label'] as String, key: json['key'] as String);
 }
 
 /// 全流程进度总览（二维网格）的阶段列
@@ -55,6 +75,12 @@ class MatrixColumn {
     required this.key,
     required this.status,
   });
+
+  factory MatrixColumn.fromJson(Map<String, dynamic> json) => MatrixColumn(
+    label: json['label'] as String,
+    key: json['key'] as String,
+    status: ItemStatus.fromKey(json['status'] as String),
+  );
 }
 
 /// 全流程进度总览（二维网格）的单元格
@@ -63,6 +89,11 @@ class MatrixCell {
   final ItemStatus status;
 
   const MatrixCell({required this.name, required this.status});
+
+  factory MatrixCell.fromJson(Map<String, dynamic> json) => MatrixCell(
+    name: json['name'] as String,
+    status: ItemStatus.fromKey(json['status'] as String),
+  );
 }
 
 /// 全流程进度总览（二维网格）
@@ -80,12 +111,28 @@ class ProjectMatrix {
   /// 按 `行key_列key` 定位单元格
   MatrixCell? cellAt(String rowKey, String colKey) =>
       cells['${rowKey}_$colKey'];
+
+  factory ProjectMatrix.fromJson(Map<String, dynamic> json) => ProjectMatrix(
+    rows: (json['rows'] as List<dynamic>)
+        .map((e) => MatrixRow.fromJson(e as Map<String, dynamic>))
+        .toList(),
+    columns: (json['columns'] as List<dynamic>)
+        .map((e) => MatrixColumn.fromJson(e as Map<String, dynamic>))
+        .toList(),
+    cells: (json['cells'] as Map<String, dynamic>).map(
+      (key, value) =>
+          MapEntry(key, MatrixCell.fromJson(value as Map<String, dynamic>)),
+    ),
+  );
 }
 
 class BlueprintStep {
   final String description;
 
   const BlueprintStep(this.description);
+
+  factory BlueprintStep.fromJson(String description) =>
+      BlueprintStep(description);
 }
 
 class BlueprintException {
@@ -93,6 +140,12 @@ class BlueprintException {
   final String strategy;
 
   const BlueprintException({required this.label, required this.strategy});
+
+  factory BlueprintException.fromJson(Map<String, dynamic> json) =>
+      BlueprintException(
+        label: json['label'] as String,
+        strategy: json['strategy'] as String,
+      );
 }
 
 class Blueprint {
@@ -100,6 +153,15 @@ class Blueprint {
   final List<BlueprintException> exceptions;
 
   const Blueprint({required this.steps, required this.exceptions});
+
+  factory Blueprint.fromJson(Map<String, dynamic> json) => Blueprint(
+    steps: (json['steps'] as List<dynamic>)
+        .map((e) => BlueprintStep.fromJson(e as String))
+        .toList(),
+    exceptions: (json['exceptions'] as List<dynamic>)
+        .map((e) => BlueprintException.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
 }
 
 class PhaseItem {
@@ -114,6 +176,13 @@ class PhaseItem {
     required this.hasDoc,
     required this.type,
   });
+
+  factory PhaseItem.fromJson(Map<String, dynamic> json) => PhaseItem(
+    name: json['name'] as String,
+    desc: json['desc'] as String,
+    hasDoc: json['hasDoc'] as bool,
+    type: json['type'] as String,
+  );
 }
 
 class ProjectPhaseDetail {
@@ -126,9 +195,20 @@ class ProjectPhaseDetail {
     required this.status,
     required this.items,
   });
+
+  factory ProjectPhaseDetail.fromJson(Map<String, dynamic> json) =>
+      ProjectPhaseDetail(
+        name: json['name'] as String,
+        status: ItemStatus.fromKey(json['status'] as String),
+        items: (json['items'] as List<dynamic>)
+            .map((e) => PhaseItem.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      );
 }
 
 class Project {
+  /// 种子数据标识（JSON seed 中的 id）
+  final String id;
   final String name;
   final String client;
   final String created;
@@ -148,6 +228,7 @@ class Project {
   final List<ProjectPhaseDetail> phases;
 
   const Project({
+    required this.id,
     required this.name,
     required this.client,
     required this.created,
@@ -160,6 +241,25 @@ class Project {
     required this.blueprint,
     required this.phases,
   });
+
+  factory Project.fromJson(Map<String, dynamic> json) => Project(
+    id: json['id'] as String,
+    name: json['name'] as String,
+    client: json['client'] as String,
+    created: json['created'] as String,
+    updated: json['updated'] as String,
+    status: json['status'] as String,
+    currentPhase: ProjectPhase.fromKey(json['currentPhase'] as String),
+    contractAmount: (json['contractAmount'] as num).toDouble(),
+    deliverables: (json['deliverables'] as List<dynamic>)
+        .map((e) => Deliverable.fromJson(e as Map<String, dynamic>))
+        .toList(),
+    matrix: ProjectMatrix.fromJson(json['matrix'] as Map<String, dynamic>),
+    blueprint: Blueprint.fromJson(json['blueprint'] as Map<String, dynamic>),
+    phases: (json['phases'] as List<dynamic>)
+        .map((e) => ProjectPhaseDetail.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
 
   int get doneItems => deliverables.where((d) => d.status.isDone).length;
   int get activeItems => deliverables.where((d) => d.status.isActive).length;

@@ -1,6 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../models/project.dart';
-import '../mock_data.dart';
 import '../components/project_card.dart';
 import 'project_detail_screen.dart';
 
@@ -12,10 +14,38 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  static const _seedAsset = 'assets/data/seed_projects.json';
+
   String _filter = 'all';
+  List<Project>? _projects;
+  bool _loadFailed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProjects();
+  }
+
+  Future<void> _loadProjects() async {
+    try {
+      final raw = await rootBundle.loadString(_seedAsset);
+      final decoded = jsonDecode(raw) as Map<String, dynamic>;
+      final projects = (decoded['projects'] as List<dynamic>)
+          .map((e) => Project.fromJson(e as Map<String, dynamic>))
+          .toList();
+      if (!mounted) return;
+      setState(() => _projects = projects);
+    } catch (e) {
+      debugPrint('种子数据加载失败: $e');
+      if (!mounted) return;
+      setState(() => _loadFailed = true);
+    }
+  }
+
+  List<Project> get _all => _projects ?? const [];
 
   List<Project> get _filteredProjects {
-    final all = mockProjects.values.toList();
+    final all = _all;
     if (_filter == 'all') return all;
     if (_filter == 'active') {
       return all.where((p) => p.status == '进行中').toList();
@@ -29,13 +59,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return all;
   }
 
-  int get _allCount => mockProjects.length;
-  int get _activeCount =>
-      mockProjects.values.where((p) => p.status == '进行中').length;
-  int get _doneCount =>
-      mockProjects.values.where((p) => p.status == '已完成').length;
-  int get _pendingCount =>
-      mockProjects.values.where((p) => p.status == '待启动').length;
+  int get _allCount => _all.length;
+  int get _activeCount => _all.where((p) => p.status == '进行中').length;
+  int get _doneCount => _all.where((p) => p.status == '已完成').length;
+  int get _pendingCount => _all.where((p) => p.status == '待启动').length;
 
   void _openDetail(Project project) {
     Navigator.of(context).push(
@@ -94,27 +121,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     const SizedBox(height: 12),
                     // 项目列表
-                    Expanded(
-                      child: _filteredProjects.isEmpty
-                          ? const Center(
-                              child: Text(
-                                '暂无匹配的项目',
-                                style: TextStyle(color: Color(0xFF94A3B8)),
-                              ),
-                            )
-                          : ListView.separated(
-                              itemCount: _filteredProjects.length,
-                              separatorBuilder: (_, _) =>
-                                  const SizedBox(height: 12),
-                              itemBuilder: (context, index) {
-                                final project = _filteredProjects[index];
-                                return ProjectCard(
-                                  project: project,
-                                  onTap: () => _openDetail(project),
-                                );
-                              },
-                            ),
-                    ),
+                    Expanded(child: _buildProjectList()),
                   ],
                 ),
               ),
@@ -122,6 +129,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  // ===== 项目列表 =====
+  Widget _buildProjectList() {
+    if (_loadFailed) {
+      return const Center(
+        child: Text('种子数据加载失败', style: TextStyle(color: Color(0xFF94A3B8))),
+      );
+    }
+    if (_projects == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (_filteredProjects.isEmpty) {
+      return const Center(
+        child: Text('暂无匹配的项目', style: TextStyle(color: Color(0xFF94A3B8))),
+      );
+    }
+    return ListView.separated(
+      itemCount: _filteredProjects.length,
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final project = _filteredProjects[index];
+        return ProjectCard(project: project, onTap: () => _openDetail(project));
+      },
     );
   }
 
