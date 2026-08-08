@@ -46,6 +46,14 @@
 - MatrixCard 增加 onCellTap 回调（资产单元格点开资料弹窗）
 - 19 个测试全部通过，analyze/build 无问题；未发布（等用户指示）
 
+## 移动端适配（响应式骨架）
+
+- 新增 `Responsive` 组件（断点 640px）+ `pageHPadding` 工具
+- 首页/详情页：移动端隐藏侧栏、padding 28→16
+- 详情页：移动端 TabBar 可横滑（isScrollable）、导出按钮收成图标
+- 时间线阶段名 Expanded 防窄屏溢出
+- 新增移动端视口测试（390x844：无侧栏、Tab 横滑切换），21/21 通过
+
 ### 关键发现
 
 - widget 测试中 `tester.runAsync` + `rootBundle.loadString` 的 IO future 会悬挂导致 `pumpAndSettle` 卡死；测试内改用 `File` 同步读取 seed JSON（helpers/seed.dart）绕开
