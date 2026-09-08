@@ -8,6 +8,7 @@ src/provider/              – Python FastAPI 服务端
 src/studio/                – Flutter 客户端
   packages/              – 本地 Dart 功能包
   lib/                   – 主程序
+src/site/                  – React + TypeScript 展示站
 tests/                     – 端到端测试
   screens/                 – 页面层（Page Object）
   usecases/                – 用例层（pytest 业务序列）
