@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:qtdata_studio/models/project.dart';
+import 'package:qtdata_studio/project/models/project.dart';
 
 /// 从仓库 seed JSON 同步构造测试用 Project。
 ///
