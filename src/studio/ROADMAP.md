@@ -60,6 +60,7 @@ cd src/provider && go run ./cmd/server
 - ~~`integration_test/` 是空目录~~ **已清**（2026-09-24）：首用例 `app_flow_test.dart` `-d linux` 真跑绿；两套测试边界写明（`tests/README.md` + `integration_test/README.md`）
 - `doc/` 是页面分解产物（两页的区块、交互、数据），保留——身份说明已补（`doc/index.md` 开头）
 - 没有 IaC 目录（段五）
+- **SPA 深链兑底现为对象复制**（2026-09-24）：CDN 侧查不到可用的路径改写函数（`FunctionName` 枚举未公开，33 个候选只认 `edge_function`/`https_force`），部署时把 `index.html` 按 seed 项目 id 复制为 `projects/<id>` 对象——确定、可版本化，但新增顶层客户端路由要同步 workflow；拿到 CDN 路径改写的正统函数名后可替换
 
 ## 待决（不进 TODO）
 

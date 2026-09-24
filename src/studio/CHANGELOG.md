@@ -1,5 +1,11 @@
 # Changelog
 
+## [studio/v0.1.0-rc.5] - 2026-09-24
+
+### 修复
+- **深链冷启动 404**：线上只有根路径改写，`/projects/:id?tab=` 直达、刷新、分享全返 OSS NoSuchKey（验收脚本实测抓出）——部署时按 seed 项目 id 把 `index.html` 复制为 `projects/<id>` 对象（no-cache + text/html），SPA 深链可用；CDN 路径改写函数名待查，方案与替换条件记在 ROADMAP 欠账
+- 验收脚本忽略浏览器默认探测的 `/favicon.ico`（应用引的是 favicon.png，非资源缺失）
+
 ## [studio/v0.1.0-rc.4] - 2026-09-24
 
 ### 新增

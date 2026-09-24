@@ -70,6 +70,8 @@ const { result } = await send('Runtime.evaluate', {
   returnByValue: true,
 });
 const state = JSON.parse(result.value);
+// 浏览器默认探测 /favicon.ico（index.html 实际引的是 favicon.png），不算应用资源
+const bad = state.bad.filter((r) => r.n !== 'favicon.ico');
 const shot = await send('Page.captureScreenshot', { format: 'png' });
 const fs = await import('node:fs');
 fs.writeFileSync(shotPath, Buffer.from(shot.data, 'base64'));
@@ -78,7 +80,7 @@ const shotSize = fs.statSync(shotPath).size;
 const uniqExternal = [...new Set(external)];
 const checks = [
   ['标题为量潮数据', state.title === '量潮数据', state.title],
-  ['无 4xx/5xx 资源', state.bad.length === 0, JSON.stringify(state.bad)],
+  ['无 4xx/5xx 资源', bad.length === 0, JSON.stringify(bad)],
   ['CanvasKit 走本地', state.canvaskitFrom.length === 1 && state.canvaskitFrom[0] === 'canvaskit', state.canvaskitFrom.join(',')],
   ['seed 已加载', state.seed.length > 0 && state.seed.every((s) => s === 200), JSON.stringify(state.seed)],
   ['自带字体已加载', state.fonts >= 4, String(state.fonts)],
