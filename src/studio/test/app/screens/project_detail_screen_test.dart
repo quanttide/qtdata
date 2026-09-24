@@ -28,9 +28,9 @@ void main() {
 
     // 共享组件与头部
     expect(find.byType(Sidebar), findsOneWidget);
-    expect(find.text('量潮科技数字化'), findsWidgets);
+    expect(find.text('全球法规情报中心'), findsWidgets);
     expect(find.text('进行中'), findsWidgets);
-    expect(find.textContaining('客户：量潮科技（内部项目）'), findsOneWidget);
+    expect(find.textContaining('客户：某医疗器械企业'), findsOneWidget);
 
     // 5 个 Tab（总览第一，资产最后）
     expect(find.text('总览'), findsOneWidget);
@@ -64,7 +64,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('项目信息'), findsOneWidget);
     expect(find.text('交付时间线'), findsOneWidget);
-    expect(find.text('数据采集'), findsOneWidget);
+    expect(find.text('来源盘点'), findsOneWidget);
     expect(find.text('客户'), findsOneWidget); // 信息行标签
 
     // 商务：交易四段 + 商务管理阶段
@@ -77,13 +77,13 @@ void main() {
     expect(find.text('调研'), findsOneWidget); // 商务阶段步骤
     expect(find.text('首付款'), findsOneWidget);
     expect(find.text('尾款'), findsOneWidget);
-    expect(find.textContaining('已收 0.4 / 0.8 万'), findsOneWidget);
+    expect(find.textContaining('已收 2.0 / 4.0 万'), findsOneWidget);
 
     // 资产（最后）：矩阵
     await tester.tap(find.text('资产'));
     await tester.pumpAndSettle();
     expect(find.text('维度 \\ 阶段'), findsOneWidget);
-    expect(find.text('数据需求文档（DRD）'), findsOneWidget);
+    expect(find.text('法规情报需求说明'), findsOneWidget);
     expect(find.text('点击资产条目查看资料'), findsOneWidget);
   });
 
@@ -93,7 +93,7 @@ void main() {
     await tester.tap(find.text('资产'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('数据需求文档（DRD）'));
+    await tester.tap(find.text('法规情报需求说明'));
     await tester.pumpAndSettle();
     expect(find.text('以下资料可供下载：'), findsOneWidget);
 

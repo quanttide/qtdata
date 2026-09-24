@@ -1,30 +1,30 @@
 {
   "projects": [
     {
-      "id": "liangchao-digital",
-      "_comment": "内部定价估算（量潮科技数字化 · 议事决议数据需求点）：成本法 5 阶段（采集0.5/建模1.0/导入1.5/治理1.0/报告1.0 人天）× 1000元/人天 ≈ 0.5 万元；市场法 ≈ 1.2 万元；内部价 = 市场价 × 7折 ≈ 0.8 万元（成本 1.6 倍，事业部核算有空间）",
-      "name": "量潮科技数字化",
-      "client": "量潮科技（内部项目）",
-      "created": "2026-08-01",
-      "updated": "2026-08-08",
+      "id": "global-regulatory-intelligence",
+      "_comment": "案例来源：采集案例原始需求——全球法规情报中心（Global Regulatory Intelligence）。覆盖 16 个市场、八类监控维度，法规结论以官方来源为准。商务数字（成本法/市场法/合同额/结款）为示例数据，非实际报价，待商务确认后替换。",
+      "name": "全球法规情报中心",
+      "client": "某医疗器械企业",
+      "created": "2026-09-01",
+      "updated": "2026-09-24",
       "status": "进行中",
       "currentPhase": "implement",
-      "contractAmount": 0.8,
+      "contractAmount": 4.0,
       "business": {
-        "costBased": 0.5,
-        "marketBased": 1.2,
-        "pricingNote": "成本法：5 阶段（采集0.5/建模1.0/导入1.5/治理1.0/报告1.0 人天）× 1000 元/人天 ≈ 0.5 万元；市场法：外部类似服务行情 ≈ 1.2 万元；内部价 = 市场价 × 7 折 ≈ 0.8 万元（成本 1.6 倍，事业部核算有空间）",
-        "contractDate": "2026-07-20",
+        "costBased": 2.5,
+        "marketBased": 4.5,
+        "pricingNote": "示例数据，非实际报价：成本法按来源盘点、采集实现、落库核验、情报输出四段估算；市场法参照同类法规情报订阅服务的公开价格区间。待商务确认后替换。",
+        "contractDate": "2026-09-05",
         "payments": [
           {
             "name": "首付款",
-            "amount": 0.4,
+            "amount": 2.0,
             "status": "已收",
-            "date": "2026-07-25"
+            "date": "2026-09-08"
           },
           {
             "name": "尾款",
-            "amount": 0.4,
+            "amount": 2.0,
             "status": "待收",
             "date": ""
           }
@@ -32,19 +32,19 @@
       },
       "deliverables": [
         {
-          "name": "议事决议数据 — 决议档案（第33周示例）",
+          "name": "官方来源清单（16 个市场）",
           "status": "done"
         },
         {
-          "name": "议事决议数据 — 治理视图",
+          "name": "八类监控维度落库",
           "status": "done"
         },
         {
-          "name": "议事决议数据 — 周会决议汇总",
+          "name": "来源优先级规则（官方优先）",
           "status": "done"
         },
         {
-          "name": "议事决议数据 — 历史周会批量整理",
+          "name": "东南亚市场扩展",
           "status": "active"
         }
       ],
@@ -72,12 +72,12 @@
           {
             "label": "谈判",
             "key": "negotiate",
-            "status": "active"
+            "status": "done"
           },
           {
             "label": "实施",
             "key": "implement",
-            "status": "todo"
+            "status": "active"
           },
           {
             "label": "验收",
@@ -92,60 +92,60 @@
         ],
         "cells": {
           "project_research": {
-            "name": "数据需求文档（DRD）",
+            "name": "法规情报需求说明",
             "status": "done"
           },
           "project_negotiate": {
-            "name": "数据规格评审",
-            "status": "active"
+            "name": "监控维度与来源评审",
+            "status": "done"
           },
           "project_implement": {
-            "name": "周会进度同步",
-            "status": "todo"
+            "name": "采集进度同步",
+            "status": "active"
           },
           "project_accept": {
-            "name": "治理视图验收",
-            "status": "done"
+            "name": "情报条目抽检",
+            "status": "todo"
           },
           "project_review": {
             "name": "复盘报告",
             "status": "todo"
           },
           "data_research": {
-            "name": "飞书议事数据盘点",
+            "name": "官方来源盘点（各国监管机构）",
             "status": "done"
           },
           "data_negotiate": {
-            "name": "数据规格书（数据契约）",
+            "name": "监控维度清单（八类）",
             "status": "done"
           },
           "data_implement": {
-            "name": "决议提取与标准化",
+            "name": "按市场采集流水线",
             "status": "done"
           },
           "data_accept": {
-            "name": "决议档案落库",
-            "status": "done"
+            "name": "法规条目落库",
+            "status": "active"
           },
           "data_review": {
-            "name": "质量基线校验",
-            "status": "done"
+            "name": "来源优先级校验（官方优先）",
+            "status": "todo"
           },
           "business_research": {
-            "name": "需求范围确认（内部）",
+            "name": "需求范围确认",
             "status": "done"
           },
           "business_negotiate": {
-            "name": "数据源接入（飞书）",
-            "status": "active"
+            "name": "报价与合同",
+            "status": "done"
           },
           "business_implement": {
             "name": "数据源接入配置",
-            "status": "todo"
+            "status": "done"
           },
           "business_accept": {
-            "name": "数据交付（治理视图）",
-            "status": "todo"
+            "name": "情报交付",
+            "status": "active"
           },
           "business_review": {
             "name": "归档",
@@ -155,149 +155,148 @@
       },
       "blueprint": {
         "steps": [
-          "采集原始数据 — 飞书议事档案导出（lark-cli drive +export：提案/会议纪要/简报）",
-          "解析文档结构 — 提取编号、提案人、poll 标记、议程结构",
-          "决议标准化 — 对齐决议 schema（id/title/owner/due/status/溯源）",
-          "纪要决议提取 — 从议程中提取决定类记录（决定/通过/落实/确定）",
-          "档案落库 — 一决议一文件（YAML），索引聚合",
-          "治理输出 — 逾期推导、责任人分布、治理视图 JSON",
-          "周会报告 — 生成周会决议汇总与质量指标（编号错位/辩论记录/决议落档）"
+          "维护官方来源清单 — 16 个市场逐国整理监管机构站点（FDA、Federal Register、European Commission、EUR-Lex、MDCG、NMPA、CMDE 及各国家监管机构）",
+          "增量采集 — 按市场与来源抓取新发布的法规、Guidance／Draft Guidance、MDCG 文件与监管通知",
+          "变更识别 — 比对上一版落地结果，识别法规修订、标准变化、产品分类变化、注册政策变化",
+          "结构化落库 — 按八类监控维度归档，每条带官方原文链接、文档 ID 与抓取时间",
+          "官方来源核验 — 结论必须能回到官方原文；二手解读只作线索，不作结论依据",
+          "情报输出 — 按市场与维度生成法规情报条目与变更摘要，供客户直接使用"
         ],
         "exceptions": [
           {
-            "label": "无责任人",
-            "strategy": "标记\"未指定\"，治理视图提示补全——创建决议时 owner 必填"
+            "label": "站点改版",
+            "strategy": "解析规则按站点单独配置，抓取连续失败即告警，人工校正后回填"
           },
           {
-            "label": "无完成期限",
-            "strategy": "逾期推导跳过，不误报——期限缺失本身是治理信号"
+            "label": "多语言与发布节奏不一",
+            "strategy": "逐市场配置语言与轮询频率，不假设统一节奏"
           },
           {
-            "label": "编号双轨",
-            "strategy": "提案按发布周、会议按召开周编号，跨文档错位检测（错位率 100%）"
+            "label": "只有二手报道",
+            "strategy": "标记为线索、不落库，待官方发布后补齐原文"
           },
           {
-            "label": "纪要无决议记录",
-            "strategy": "标记表决-决议断链，提示表决引擎/决议归档缺失"
+            "label": "同一文件多次修订",
+            "strategy": "按官方文档 ID + 版本号去重，保留修订历史"
           }
         ]
       },
       "phases": [
         {
-          "name": "数据采集",
+          "name": "来源盘点",
           "status": "done",
           "items": [
             {
-              "name": "飞书议事档案盘点",
-              "desc": "议事档案知识库：议题（12 类）、决议、执行管理节点",
+              "name": "官方来源清单",
+              "desc": "16 个市场的监管机构站点：FDA、Federal Register、European Commission、EUR-Lex、MDCG、NMPA、CMDE 等",
               "hasDoc": true,
               "type": "盘点清单"
             },
             {
-              "name": "数据导出",
-              "desc": "lark-cli drive +export：提案 5 篇、会议纪要、部门简报",
+              "name": "市场清单确认",
+              "desc": "FDA、EU MDR／IVDR、NMPA、MHRA、Health Canada、TGA、PMDA、MFDS、HSA、MDA 及泰国、越南、菲律宾、印度尼西亚、印度",
               "hasDoc": true,
-              "type": "导出脚本"
+              "type": "盘点清单"
             }
           ]
         },
         {
-          "name": "数据建模",
+          "name": "采集实现",
           "status": "done",
           "items": [
             {
-              "name": "决议 schema 定义",
-              "desc": "id/title/content/owner/due/status/vote/source/evidence/history",
+              "name": "按市场配置采集",
+              "desc": "逐市场逐来源配置解析规则与轮询频率，站点改版即告警",
+              "hasDoc": true,
+              "type": "采集脚本"
+            },
+            {
+              "name": "增量抓取",
+              "desc": "只取新增与变更，避免全量重抓；抓取时间与文档 ID 入库",
+              "hasDoc": true,
+              "type": "采集脚本"
+            },
+            {
+              "name": "变更识别",
+              "desc": "比对上一版落地结果，标记法规修订、标准变化、产品分类与注册政策变化",
+              "hasDoc": true,
+              "type": "处理脚本"
+            }
+          ]
+        },
+        {
+          "name": "结构化落库",
+          "status": "done",
+          "items": [
+            {
+              "name": "八类维度归档",
+              "desc": "新法规、Guidance／Draft Guidance、MDCG 文件、法规修订、标准变化、产品分类变化、注册政策变化、监管通知",
               "hasDoc": true,
               "type": "数据契约"
             },
             {
-              "name": "领域模型",
-              "desc": "议题（提案是一类议题）、决议（独立管理）、议程（纪要=议程记录形态）",
-              "hasDoc": true,
-              "type": "领域模型文档"
-            }
-          ]
-        },
-        {
-          "name": "数据导入",
-          "status": "done",
-          "items": [
-            {
-              "name": "提案解析",
-              "desc": "5 篇提案 → 决议候选（编号/提案人/poll）",
-              "hasDoc": true,
-              "type": "导入脚本"
-            },
-            {
-              "name": "纪要决议提取",
-              "desc": "从议程提取决定类记录，共导入 8 条决议",
-              "hasDoc": true,
-              "type": "导入脚本"
-            },
-            {
-              "name": "决议档案生成（第33周示例）",
-              "desc": "一决议一文件（YAML），对齐 schema，示例已上线",
-              "hasDoc": true,
-              "type": "决议档案"
-            }
-          ]
-        },
-        {
-          "name": "治理输出",
-          "status": "done",
-          "items": [
-            {
-              "name": "索引与逾期推导",
-              "desc": "index.yaml 聚合统计，逾期 = due < today 且未完成",
-              "hasDoc": true,
-              "type": "治理脚本"
-            },
-            {
-              "name": "治理视图 JSON",
-              "desc": "stats/overdue/by_owner/resolutions——客户端可消费",
+              "name": "条目带原文出处",
+              "desc": "每条法规结论带官方原文链接、文档 ID 与抓取时间，可回溯",
               "hasDoc": true,
               "type": "数据交付物"
             }
           ]
         },
         {
-          "name": "周会报告",
+          "name": "官方核验",
           "status": "done",
           "items": [
             {
-              "name": "周会决议汇总",
-              "desc": "决议清单 + 质量指标（编号错位/辩论记录/决议落档）",
+              "name": "原文回溯校验",
+              "desc": "抽检条目能否回到官方原文；来源优先级规则落地",
               "hasDoc": true,
-              "type": "报告"
+              "type": "质量校验脚本"
             },
             {
-              "name": "质量基线",
-              "desc": "8 项实验基线：编号错位 100%、辩论记录 20%、决议落档 0 条",
+              "name": "二手线索隔离",
+              "desc": "行业媒体与第三方数据库的解读只作线索，不进入结论库",
               "hasDoc": true,
-              "type": "基线报告"
+              "type": "质量校验脚本"
             }
           ]
         },
         {
-          "name": "历史周会批量整理",
+          "name": "情报输出",
+          "status": "done",
+          "items": [
+            {
+              "name": "情报条目生成",
+              "desc": "按市场与维度输出法规情报条目，客户可直接使用",
+              "hasDoc": true,
+              "type": "数据交付物"
+            },
+            {
+              "name": "变更摘要",
+              "desc": "按周期汇总本期新增与变更，标注影响范围",
+              "hasDoc": true,
+              "type": "报告"
+            }
+          ]
+        },
+        {
+          "name": "市场扩展",
           "status": "active",
           "items": [
             {
-              "name": "历史周会导出",
-              "desc": "第 30/31/32 周等历史纪要批量导出（lark-cli）",
+              "name": "东南亚来源补齐",
+              "desc": "泰国、越南、菲律宾、印度尼西亚、印度等市场的官方来源补入清单",
               "hasDoc": false,
               "type": ""
             },
             {
-              "name": "流水线批量跑通",
-              "desc": "复用导入/治理流水线批量处理 + 质检（编号/决议质量）",
+              "name": "多语言处理",
+              "desc": "非英文官方文档的提取与归一（本地语言原文 + 中文摘要）",
               "hasDoc": false,
               "type": ""
             },
             {
-              "name": "结果核对与归档",
-              "desc": "人工核对 + 飞书知识库回写",
+              "name": "轮询频率调优",
+              "desc": "按各国发布节奏调整抓取频率，降低无用请求",
               "hasDoc": false,
               "type": ""
             }

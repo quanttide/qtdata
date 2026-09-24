@@ -20,10 +20,10 @@ void main() {
     );
 
     expect(find.text('交付时间线'), findsOneWidget);
-    for (final name in ['数据采集', '数据建模', '数据导入', '治理输出', '周会报告', '历史周会批量整理']) {
+    for (final name in ['来源盘点', '采集实现', '结构化落库', '官方核验', '情报输出', '市场扩展']) {
       expect(find.text(name), findsOneWidget);
     }
-    // 2 项 × 4 阶段（采集/建模/治理/报告）+ 3 项 × 2 阶段（导入/批量整理）
+    // 2 项 × 4 阶段（来源盘点/结构化落库/官方核验/情报输出）+ 3 项 × 2 阶段（采集实现/市场扩展）
     expect(find.text('2 项'), findsNWidgets(4));
     expect(find.text('3 项'), findsNWidgets(2));
     // 未传 onViewDoc 时不展示「查看资料」
@@ -46,7 +46,7 @@ void main() {
       ),
     );
 
-    // hasDoc 的交付物展示「查看资料」（12 项中 11 项有文档，批量整理阶段 3 项无）
+    // hasDoc 的交付物展示「查看资料」（14 项中 11 项有文档，市场扩展阶段 3 项无）
     expect(find.text('查看资料'), findsNWidgets(11));
     await tester.tap(find.text('查看资料').first);
     expect(received, isNotNull);

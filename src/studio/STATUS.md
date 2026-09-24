@@ -57,6 +57,15 @@
 | 门禁：Dart = `dart format` + `flutter analyze`，本地从严与 CI 一致 | 三条进 CI（分支/PR 跑门禁、tag 才部署）；本地与 CI 同版 Flutter 3.44.9 | ✓ 2026-09-24 |
 | 可观测与安全（结构化审计日志 + SLS；密码 PBKDF2） | 无后端、无认证、无密码 | — 豁免 |
 
+## 界面数据
+
+| 项 | 现状 |
+|---|---|
+| 来源 | 仓库内手写 seed `assets/data/seed_projects.json`（尚未接通 Provider） |
+| 内容 | 2026-09-24 由内部项目换成**真实案例**：全球法规情报中心（采集案例原始需求）——16 个市场、八类监控维度、官方来源优先；矩阵 3 维 × 5 阶段 15 格、交付物 4 项、时间线 6 阶段 14 项 |
+| 商务数字 | **示例值**（成本法 2.5 万、市场法 4.5 万、合同额 4.0 万、已收 2.0 万），非实际报价，待商务确认后替换——见 [TODO](TODO.md) 七 |
+| 断言同步 | 11 个测试文件按内容耦合点同步（项目名／客户／状态／日期／交付物计数／阶段名／矩阵格名／蓝图关键词／结款文案），`flutter test` 21/21 绿 |
+
 ## 与工作流的对照
 
 `domains/quanttide-work/docs/gallery/workflows/code-implement-studio.yaml` 是 qtcloud-work 专用（把命令行行为用 Dart 再实现，拿 `parity.sh` 对表）——qtdata 没有命令行行为要对表，**不适用**。

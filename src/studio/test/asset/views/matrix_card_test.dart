@@ -30,7 +30,7 @@ void main() {
     expect(find.text('📊 数据'), findsOneWidget);
     expect(find.text('💼 商务'), findsOneWidget);
     // 单元格内容
-    expect(find.text('数据需求文档（DRD）'), findsOneWidget);
+    expect(find.text('法规情报需求说明'), findsOneWidget);
     // 图例
     expect(find.text('已完成'), findsWidgets);
     expect(find.text('待启动'), findsWidgets);
@@ -52,8 +52,8 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('数据需求文档（DRD）'));
+    await tester.tap(find.text('法规情报需求说明'));
     expect(tapped, isNotNull);
-    expect(tapped!.name, '数据需求文档（DRD）');
+    expect(tapped!.name, '法规情报需求说明');
   });
 }

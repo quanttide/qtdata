@@ -25,7 +25,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(Sidebar), findsNothing);
-    expect(find.text('量潮科技数字化'), findsWidgets);
+    expect(find.text('全球法规情报中心'), findsWidgets);
     expect(find.text('75%'), findsOneWidget);
     expect(find.text('我的项目'), findsOneWidget);
   });

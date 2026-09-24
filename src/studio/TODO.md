@@ -93,3 +93,13 @@ CI 首跑成功（run `35968122408`：Quality Gates 六步全绿，部署作业�
 **改什么**：划清两套测试的边界，别重复造——studio 的 `integration_test/` 管 **Flutter 进程内**（部件组合、页面流程）；仓库根 `tests/`（pytest + xdotool）管**跨进程端到端**（provider 启停 + 桌面窗口操作），跑的是 `run-studio-linux.sh` 那个 Linux 形态。
 **判据**：两处各有一句边界说明，且没有同一个用例两边都写。
 **影响**：`tests/README.md`、`integration_test/`（新增 README）。
+
+## 七、界面数据（2026-09-24 换内容后新增）
+
+**改什么**：seed 里的商务数字换成真实数字。现在 `assets/data/seed_projects.json` 的成本法 2.5 万、市场法 4.5 万、合同额 4.0 万、已收 2.0 万都是示例值（`pricingNote` 已注明非实际报价）。
+**判据**：`grep -n "示例数据，非实际报价" src/studio/assets/data/seed_projects.json` 无输出；`flutter test` 仍 21/21。
+**影响**：`assets/data/seed_projects.json`、`test/**`（依赖数字的断言：`project_card_test`、`project_detail_screen_test`）、`STATUS.md` 的界面数据表。
+
+**改什么**：案例内容随案例库同步——gallery 的案例页改了（新增市场、增删监控维度、补案例），seed 要跟上。
+**判据**：seed 的交付物／矩阵格／阶段名与 `docs/gallery/qtdata/` 的对应案例页逐条对得上。
+**影响**：`assets/data/seed_projects.json`、相关测试断言。

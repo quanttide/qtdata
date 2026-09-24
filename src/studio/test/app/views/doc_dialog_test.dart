@@ -8,7 +8,7 @@ import '../../helpers/seed.dart';
 void main() {
   testWidgets('弹窗展示占位文件并可下载', (tester) async {
     final project = loadSeedProject();
-    final item = project.phases.first.items.first; // 飞书议事档案盘点（hasDoc: true）
+    final item = project.phases.first.items.first; // 官方来源清单（hasDoc: true）
 
     await tester.pumpWidget(
       MaterialApp(

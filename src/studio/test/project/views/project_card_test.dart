@@ -16,19 +16,19 @@ void main() {
       ),
     );
 
-    expect(find.text('量潮科技数字化'), findsOneWidget);
+    expect(find.text('全球法规情报中心'), findsOneWidget);
     // 状态徽章 + 仪表标签均为「进行中」
     expect(find.text('进行中'), findsNWidgets(2));
     expect(find.text('实施阶段'), findsOneWidget);
-    expect(find.text('更新于 2026-08-08'), findsOneWidget);
+    expect(find.text('更新于 2026-09-24'), findsOneWidget);
     // 交付物仪表：3 完成 / 1 进行中 / 0 待启动，共 4 项
     expect(find.text('3'), findsOneWidget);
     expect(find.text('1'), findsOneWidget);
     expect(find.text('共 4 项'), findsOneWidget);
-    // 完成度与确认收入（0.8 万 × 75% = 0.6 万）
+    // 完成度与确认收入（4.0 万 × 75% = 3.0 万）
     expect(find.text('75%'), findsOneWidget);
-    expect(find.textContaining('0.6'), findsOneWidget);
-    expect(find.textContaining('0.8 万元'), findsOneWidget);
+    expect(find.textContaining('3.0'), findsOneWidget);
+    expect(find.textContaining('4.0 万元'), findsOneWidget);
   });
 
   testWidgets('点击触发 onTap', (tester) async {
@@ -42,7 +42,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('量潮科技数字化'));
+    await tester.tap(find.text('全球法规情报中心'));
     expect(tapped, isTrue);
   });
 }
