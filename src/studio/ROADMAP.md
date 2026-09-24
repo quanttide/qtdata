@@ -47,21 +47,23 @@ cd src/provider && go run ./cmd/server
 
 **同一天又把结构推进到分域**（2026-09-24）——`lib/` 重排成 `project/ data/ business/ asset/` 四域加跨域 `app/`，每域内部保持 `models/ views/ screens/`；`Deliverable` 从项目域归入资产域。复验：三条门禁绿（分域前后各一次）。
 
-**现在站在段三（选型）的起点**：路由改 `go_router`、状态管理落成显式声明。往后的接通（各域 `repositories/` + `states/` + 吃 Provider）、交付形态、多端三段都还没动——**界面仍跑在 seed JSON 上**。
+**段三（选型）已过**（2026-09-24）：`go_router` ^18 + `MaterialApp.router`，路由表 `/`（列表）+ `/projects/:id?tab=<slug>`（深链直达 Tab，点 Tab 同步 URL），深链/未知 id 用例 5 个（`test/app/router_test.dart`）；状态管理显式声明——**0.1.0 继续 `setState`**，偏离 Bloc 的理由成文（CONTRIBUTING 选型段）。同日连带：详情页头部拆件守住单文件 ≤250、`integration_test/` 首用例真跑 Linux 绿（启动→看板→详情→切 Tab）、支持矩阵写进 README（**0.1.0 只承诺 Web + Linux**）、字体字符门禁进 CI。
+
+**段四（接通）拍板**（2026-09-24，正式版口径）：0.1.0 以**展示件**形态发布——数据仍跑 seed JSON、商务数字为示例值（`pricingNote` 注明），不接 Provider；`repositories/` + `states/` + 模型归属（待决第二条）在段四做，做完发接通版。段五余 IaC 与域名去向，段六余四平台构建验证（0.1.0 不支持，见 README 支持矩阵）。
 
 ## 与结构无关的欠账
 
-- 入口已是 `studio.data.quanttide.com`（2026-09-24 接：CDN 域名 + DNS CNAME + 单域名证书 + 私有回源 + 根改写 + TLS1.3）；`data.quanttide.com` 仍指同一个桶、两个域名都刷缓存，是过渡态——按家族惯例这个位置该是 **site 的入口**
+- 入口已是 `studio.data.quanttide.com`（2026-09-24 接：CDN 域名 + DNS CNAME + 单域名证书 + 私有回源 + 根改写 + TLS1.3）；`data.quanttide.com` 仍指同一个桶、两个域名都刷缓存，是过渡态——**已定案（2026-09-24）：`src/site` 部署线建立前维持过渡态（两域名同桶、同刷新），site 上线时再改指 site 桶**
 - 平台契约正文只写了 `{产品}.cloud.quanttide.com`，**没写 studio 子域那条惯例**（家族已在用：`studio.class`、`studio.health`、`studio.agent.cloud`），待补
-- CI 无 `FLUTTER_WEB_CANVASKIT_URL`（CanvasKit 未自托管）
-- 四个平台目录（android 19 / ios 40 / macos 28 / windows 18 个文件）建仓起未构建验证过
-- `integration_test/` 是空目录，`pubspec.yaml` 的依赖已声明；仓库根 `tests/`（pytest + xdotool）另有一套跨进程 E2E，边界要划清
-- `doc/` 是页面分解产物（两页的区块、交互、数据），保留——待补一句身份说明
-- 没有 IaC 目录
+- ~~CI 无 `FLUTTER_WEB_CANVASKIT_URL`（CanvasKit 未自托管）~~ **已清**（2026-09-24，rc.2）：构建改 `--no-web-resources-cdn` 自托管仓内 `canvaskit/`，原环境变量方案作废；验收 `scripts/check-web-gstatic-blocked.mjs`
+- 四个平台目录（android 19 / ios 40 / macos 28 / windows 18 个文件）建仓起未构建验证过——**0.1.0 支持矩阵只含 Web + Linux**（已写进 README），四平台验证留六段
+- ~~`integration_test/` 是空目录~~ **已清**（2026-09-24）：首用例 `app_flow_test.dart` `-d linux` 真跑绿；两套测试边界写明（`tests/README.md` + `integration_test/README.md`）
+- `doc/` 是页面分解产物（两页的区块、交互、数据），保留——身份说明已补（`doc/index.md` 开头）
+- 没有 IaC 目录（段五）
 
 ## 待决（不进 TODO）
 
-- **列表页叫什么**：`lib/project/screens/dashboard_screen.dart` / `DashboardScreen` 对的是界面上的**「我的项目」页**（列表，标题就是「我的项目」）——注意别跟详情页的第一个 Tab「总览」混（那是 `lib/app/screens/overview_tab.dart`）。文件名与界面文案对不上，改法二选一，**命名归你**：跟界面走 → `projects_screen.dart` / `ProjectsScreen`；跟页面分解原型走 → `index_screen.dart` / `IndexScreen`（`doc/index.md` 用的就是这个名字）。
+- **列表页命名——已决（2026-09-24）**：0.1.0 保持 `dashboard_screen.dart` / `DashboardScreen` 不改名（改名无行为收益、测试引用面大）；是否跟界面文案改 `projects_screen` 并入段四接通时一并处理。
 - **模型从哪来**：五个域的 `models/` 各自自留一份（共 6 个文件，`project/` 与 `asset/` 各 2）。契约要求「不留第二份模型」，但要先有上游——抽一个 qtdata toolkit 包发布，还是直接吃 Provider 的 JSON 契约？这决定了四段的写法。
 - **包还是 Tab**：源码里的旧 ROADMAP 规划过 `qtdata-data` / `qtdata-asset` 两个独立 package，实现却把数据页、资产页做成了详情页的两个 Tab。事做了、形态变了——是认可 Tab 这个形态（删掉包的计划），还是仍要拆成包（Tab 退回壳）？
-- **IaC 归属**：`src/studio/manifests/terraform/` 还是 `apps/qtdata/manifests/terraform/`（Studio 与 Site 共用一个目录？）。
+- **IaC 归属——已决（2026-09-24）**：`src/studio/manifests/terraform/`（studio 先落；site 部署线建立后自建自己的，不共用目录）。
