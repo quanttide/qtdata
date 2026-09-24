@@ -1,63 +1,95 @@
 # qtdata 状态报告
 
-> 更新日期：2026-07-20
+> 更新日期：2026-09-24
 > 仓库：quanttide/qtdata
-> 最新 commit：70f0d38 (2026-07-11)
-> 最新版本：v0.0.2 (2026-06-23)
+> 最新 commit：7f2e811 (2026-09-10)
+> 版本记录：`src/cli/CHANGELOG.md`、`src/provider/CHANGELOG.md`、`src/studio/CHANGELOG.md`、`src/site/CHANGELOG.md`
 
-## 版本历史
+## 业务定位（2026-09-04 确认）
 
-| 版本 | 日期 | 内容 |
-|------|------|------|
-| v0.0.2 | 2026-06-23 | CLI: blueprint/scope/quotation/delivery 四命令 |
-| v0.0.1 | 2026-05-14 | Provider + Studio + E2E 测试框架 |
+qtdata 的业务模式是**组合积木**——可拼装、按需组合，而非整体平台。
 
-## 组件进度
+与 qtcloud 的分界：帮企业替代飞书/企微、自建平台的「平台型需求」归 qtcloud（自建平台 + 卖标准品，执行云为落点）；「积木型需求」归 qtdata。商务需求按此边界归类，不能混为一谈。来源：`data/journal/qtdata/2026-09-04.md`。
 
-| 组件 | 版本 | 状态 | 技术 |
-|------|------|------|------|
-| CLI (`src/cli`) | v0.0.2 | 四命令已实现 | Rust + DeepSeek API |
-| Provider (`src/provider`) | v0.0.1 | CRUD 骨架 | Python FastAPI |
-| Studio (`src/studio`) | v0.0.1 | 四列看板 | Flutter |
+## Scope 状态
+
+| Scope | 目录 | 最新版本 | 状态 |
+|-------|------|---------|------|
+| CLI | `src/cli` | 0.1.0（无 tag，CHANGELOG 记 `v0.0.1`） | 骨架，2026-06-23 后未再改动 |
+| Provider | `src/provider` | 0.1.0（tag `provider/v0.0.1`） | 脚手架，无持久化 |
+| Studio | `src/studio` | 0.1.0-beta.4（2026-08-08） | 最新活跃组件，已部署 |
+| Site | `src/site` | 0.1.0（2026-09-08，无 tag） | 首页已建，未部署 |
+
+### CLI
+
+Rust 命令行工具，四命令 blueprint / scope / quotation / delivery，均走同一条路径：读 Markdown 描述 → LLM（DeepSeek）→ 写结构化输出（CUE/JSON）。`src/main.rs` 46 行，四命令共用 `md_to_file()`，是骨架而非业务实现。最后一次功能改动 2026-06-23，此后仅 6-25 有一次仓库整理（`chore: 移除 target 目录跟踪，添加 STATUS.md`）。
+
+### Provider
+
+Python FastAPI 服务端，基于 `fastapi-quanttide-project` 提供 Project/Task CRUD 路由，代码为 `app/main.py` + `app/storage.py`（存储为内存 dict，重启即丢），带 `test/` 单元测试与 `docs/usage.md`。
+
+### Studio
+
+Flutter 客户端。详情页为 5 Tab（总览/数据/项目/商务/资产），页面在 `lib/screens/tabs/`，共享组件按 `widgets/{cards,common,dialogs}` 分三类；数据来自 `assets/data/seed_projects.json`；已做移动端适配（<640px 隐藏侧栏）。最后发布 `studio/v0.1.0-beta.4`（2026-08-08），CI 部署 `data.quanttide.com`。
+
+### Site
+
+React 19 + TypeScript + Vite 展示站，技术栈对齐 qtclass-site。首页含业务定位、服务对象、核心竞争力三段文案；部署链路（OSS + CDN）未做。
 
 ## 战略差距分析
 
-### 差距一览
+来源三方对照：日志（`data/journal/qtdata/` 4 篇）、意图（`data/intention/qtdata/` 5 篇：connect/customer/dataops/growth/product）、实现（`src/`）。
 
-| 维度 | journal 反映的真实业务 | intention 的战略目标 | CLI 实现 | 差距 |
-|------|----------------------|---------------------|----------|------|
-| **三方平台** | CEO思考把执行外包、内部留架构师，通过平台化实现三方（客户/执行方/平台方）各取所需 | 平台核心是信用和定价权，三方在统一体系运转 | 本地单用户 CLI，无网络、无多租户、无权限体系 | 100% |
-| **供给侧整合** | 讨论向外发小订单、市场竞价、建设供应链池；把云和课堂作为供给侧力量 | 标准外化、供应商侧映射、外部团队可自动校验交付 | 无供应商相关命令 | 100% |
-| **跨业务联动** | 数据×云×课堂×咨询联动：云作为供应链基础设施，课堂作为人才供给 | 多边平台网络建设，一盘大棋 | 无跨业务功能 | 100% |
-| **定价权/信用** | 品牌+制度+文化塑造高信用平台，定价权是利润根本来源 | 有定价权的平台才能在供需两方满意时自己赚钱 | `quotation` 只是本地报价单，无市场定价逻辑 | 100% |
-| **质量回溯** | 项目涉及大量数据处理，问题归因和回溯是真实痛点 | 数据血缘、问题可归因可回溯可改进 | 无血缘/日志/问题工单命令 | 100% |
-| **需求拆解** | 真实需求（美国贷款合同筛选、GitHub数据处理）需要从模糊到可执行 | 需求拆解模板化——把模糊业务变成可执行工程任务 | `blueprint` + `scope` 覆盖方向，但只有 LLM 转换骨架，无真实业务逻辑 | 70% |
-| **过程管控** | 三个并行项目，规模效应不够，需要系统化管控 | 每一步有标准，每个交付物有验收准则 | `delivery` 定义了验收流程骨架，未实现 | 80% |
-| **数据驱动决策** | 内部数据采集不到位但市场价参考更高——缺少数据反馈循环 | 内部标准外化需先有内部数据积累 | CLI 无数据采集/分析功能 | 100% |
+### 尺子已经换了
+
+2026-07 版报告按「平台化终局」量 qtdata，得出「三方平台、供给侧整合、定价权」等 100% 差距。**2026-09-04 边界确认后这些不再成立**：平台型需求归 qtcloud，qtdata 只做积木。旧报告里的那几项差距属于**边界外**，不是欠账。
+
+按新边界重新量：
+
+| 维度 | intention 要什么 | 实现层现在在哪 | 差距 |
+|------|-----------------|---------------|------|
+| **需求拆解** | 把模糊业务诉求变成可执行的工程任务 | CLI `blueprint`/`scope` 有命令，但只是 Markdown→结构化数据的 LLM 转换骨架 | 大：拆解方法论没有落地 |
+| **过程管控** | 每一步有标准，每个交付物有验收准则 | CLI `delivery` 只有字段声明；无流程实例、无状态流转 | 大 |
+| **质量兜底** | 出问题能回溯、归因、改进 | 无血缘、无记录、无工单 | 大 |
+| **观测视角** | 正确视角是观测整个系统（AI 做事、人观测）；Project 是基本容器 | Studio 已按 5 Tab + 矩阵资产地图做出观测面，但数据来自 seed JSON | 中：**界面跑在数据模型前面** |
+| **复现即成熟** | 不断复现过往事情，复现越多平台越成熟 | 无承载复现的工程件（无样本库、无处理流水线） | 大 |
+| **积木化交付** | 以可组合模块交付 | 四个组件各自独立，无对外可拼装的模块边界 | 大 |
+| **云转型漏斗** | 历史项目标准化上云，项目换成产品 | 实现层为零；按新边界，其中平台/云那一半归 qtcloud | 边界外（本仓不背） |
 
 ### 根因
 
-意图指向平台化终局（三方体系、供应链整合、跨业务联动），当前实现停留在本地工具。差距的核心不是少写了代码，而是**实现层还没有开始回答 intention 和 journal 中提出的战略问题**：
+实现层只覆盖了数据加工的最浅一段（Markdown→JSON 的 LLM 转换 + 看板展示），而意图描述的是**技术管理体系**——需求拆解、过程管控、质量兜底三件事都还停在意图层，没有落成代码或流程。缺口不是少写代码，是这三件事还没有可执行的定义。
 
-- CLI 把"输入 Markdown 输出 JSON"作为产品逻辑 → 实际上产品逻辑应该是**技术管理的执行系统**
-- 当前阶段（阶段一：CLI 框架）是对的方向，但要意识到阶段二以后的路还很长
+外部侧已经先行：`2026-08-31`/`2026-09-04` 日志记录的真实课题（流程状态数据解析链路，基于 E1–E18 邮件工作流，自检 5/5 通过、已进 P1 真实数据验证）**比本仓实现走得更远**——它正是「把散在邮件里的流程状态抽成结构化数据」这条路，与本仓 `blueprint`/`delivery` 想做的事同源。
 
 ## ROADMAP 进度
 
-| 组件 | ROADMAP 文件 | 阶段 |
-|------|-------------|------|
-| CLI | `src/cli/ROADMAP.md` | 四阶段（CLI框架→Scope→Quotation→Delivery），阶段一进行中 |
-| Provider | `src/provider/ROADMAP.md` | 数据处理API + 资产管理API，均未开始 |
-| Studio | `src/studio/ROADMAP.md` | qtdata-data + qtdata-asset 两个新 package，均未开始 |
+| 文件 | 规划 | 与实现的符合度 |
+|------|------|--------------|
+| `src/cli/ROADMAP.md` | 四阶段：CLI 框架 → Scope → Quotation → Delivery | 全部未勾选；四命令已有骨架——ROADMAP 记的是「要做成什么」，实现停在骨架 |
+| `src/studio/ROADMAP.md` | 新增 `qtdata-data`/`qtdata-asset` 包 + 页面路由 | 脱节：5 Tab 已上线，ROADMAP 仍写「增加数据页面、资产页面」 |
+| `src/provider/ROADMAP.md` | 数据处理 API + 资产 API + 持久化 | 均未开始；包名写 `qtdata-process`，与 studio 的 `qtdata-data` 不一致 |
+| `src/site/ROADMAP.md` | v0.1.0 首页 + 部署链路；v0.2.0 服务详情页 + 内容契约化 | 首页 ✅，其余未开始（唯一与实现对齐的 ROADMAP） |
+| `tests/ROADMAP.md` | P2 基础设施（conftest/screens/utils）、P3 场景层 | 均未勾选 |
+| `tests/screens/ROADMAP.md` | Project/Data/Asset 三个 Page Object 规格 | 规格已写，实现状态未标注 |
 
 ## 文档覆盖
 
-| 目录 | 状态 |
-|------|------|
-| docs/brd/ | 有（场景拆解：业务线/获客/采集/报价/交付） |
-| docs/prd/ | 有 |
-| docs/add/ | 有（资产模块） |
-| docs/dev/ | 有（测试策略、集成方案） |
-| docs/ixd/ | 有（页面流程、数据屏、Pipeline视图） |
-| docs/drd/ | 有（数据模型） |
-| docs/pmd/ | 有 |
+| 目录/文件 | 状态 |
+|----------|------|
+| `docs/dev-guide/stories/` | 有 7 篇：asset、business_line、customer_acquisition、data_collection、delivery、quotation、index |
+| `docs/dev-guide/prototype.html` | 有（Studio 当前实现原型，5 Tab 单页） |
+| `docs/index.md` | 有 |
+| `docs/{brd,prd,add,dev,ixd,drd,pmd}` | **已移除**（2026-08-08），由 `docs/dev-guide/` 承接 |
+| `examples/` | dataset-api（Go 参考实现，自 qtadmin provider 迁移）、default、prototype |
+| `tests/` | README + ROADMAP + conftest.py + screens/ + usecases/ + utils/ |
+| `README.md` | 有（2026-09-24 按实际结构重写） |
+| `CHANGELOG.md`（根） | 停在 0.0.1（2026-05-14），8 月以来变更只在各组件 CHANGELOG |
+
+## 已知不一致（待处理）
+
+1. CLI 与 Studio 的 ROADMAP 落后于实现；Provider 与 Studio 的包名互不一致（`qtdata-process` vs `qtdata-data`）
+2. CLI 自 2026-06-25 后无改动——它却是「需求拆解」唯一实现落点
+3. Provider 无持久化 + Studio 用 seed JSON → 端到端跑不了真实数据链路
+4. tag 与工程文件版本号不一致（CLI：无 tag / CHANGELOG 记 v0.0.1 / Cargo.toml 已是 0.1.0）
+5. 仓库级 CHANGELOG 停在 0.0.1，未随 studio/site 发布更新
