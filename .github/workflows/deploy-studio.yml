@@ -96,7 +96,9 @@ jobs:
           from aliyunsdkcdn.request.v20180510.RefreshObjectCachesRequest import RefreshObjectCachesRequest
           import os
           cli = AcsClient(os.environ['ALIYUN_ACCESS_KEY_ID'], os.environ['ALIYUN_ACCESS_KEY_SECRET'], 'cn-hangzhou')
-          for domain in ['data.quanttide.com']:
+          # studio.data.quanttide.com 是正式入口；data.quanttide.com 仍指向同一个桶，
+          # 一并刷新，免得它一直吐旧版（等它改指 site 桶或下线时再摘掉）
+          for domain in ['studio.data.quanttide.com', 'data.quanttide.com']:
               req = RefreshObjectCachesRequest()
               req.set_ObjectPath(f'https://{domain}/')
               req.set_ObjectType('Directory')

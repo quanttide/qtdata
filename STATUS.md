@@ -17,7 +17,7 @@ qtdata 的业务模式是**组合积木**——可拼装、按需组合，而非
 |-------|------|---------|------|
 | CLI | `src/cli` | 0.1.0（无 tag，CHANGELOG 记 `v0.0.1`） | 骨架，2026-06-23 后未再改动 |
 | Provider | `src/provider` | 0.1.0（tag `provider/v0.0.1`） | 脚手架，无持久化 |
-| Studio | `src/studio` | 0.1.0-beta.4（2026-08-08） | 最新活跃组件，已部署 |
+| Studio | `src/studio` | 0.1.0-beta.4（2026-08-08） | 最新活跃组件，入口 `studio.data.quanttide.com` |
 | Site | `src/site` | 0.1.0（2026-09-08，无 tag） | 首页已建，未部署 |
 
 ### CLI
@@ -30,7 +30,7 @@ Python FastAPI 服务端，基于 `fastapi-quanttide-project` 提供 Project/Tas
 
 ### Studio
 
-Flutter 客户端。详情页为 5 Tab（总览/数据/项目/商务/资产），页面在 `lib/screens/tabs/`，共享组件按 `widgets/{cards,common,dialogs}` 分三类；数据来自 `assets/data/seed_projects.json`；已做移动端适配（<640px 隐藏侧栏）。最后发布 `studio/v0.1.0-beta.4`（2026-08-08），CI 部署 `data.quanttide.com`。
+Flutter 客户端。详情页为 5 Tab（总览/数据/项目/商务/资产），页面外壳在 `lib/screens/`，界面部件在 `lib/views/`（2026-09-24 按 Bloc 家法正名，原 `widgets/`）；数据来自 `assets/data/seed_projects.json`；已做移动端适配（<640px 隐藏侧栏）。最后发布 `studio/v0.1.0-beta.4`（2026-08-08）；入口 `studio.data.quanttide.com`（2026-09-24 起），CI 在 `studio/*` tag 上构建部署、分支与 PR 上跑门禁（format + analyze + test）。
 
 ### Site
 
@@ -88,7 +88,7 @@ React 19 + TypeScript + Vite 展示站，技术栈对齐 qtclass-site。首页�
 
 ## 已知不一致（待处理）
 
-1. CLI 与 Studio 的 ROADMAP 落后于实现；Provider 与 Studio 的包名互不一致（`qtdata-process` vs `qtdata-data`）
+1. CLI 的 ROADMAP 落后于实现（Studio 那份 2026-09-24 已按契约重写并补齐三件套）；Provider 与 Studio 的包名互不一致（`qtdata-process` vs `qtdata-data`）
 2. CLI 自 2026-06-25 后无改动——它却是「需求拆解」唯一实现落点
 3. Provider 无持久化 + Studio 用 seed JSON → 端到端跑不了真实数据链路
 4. tag 与工程文件版本号不一致（CLI：无 tag / CHANGELOG 记 v0.0.1 / Cargo.toml 已是 0.1.0）
