@@ -36,7 +36,7 @@ flutter build web                      # 四段起（接通后要能构建）
 四段起还要能起 Provider 联调：
 
 ```bash
-cd src/provider && uvicorn app.main:app --reload
+cd src/provider && go run ./cmd/server
 ```
 
 ## 现在在哪

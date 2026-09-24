@@ -1,5 +1,4 @@
 import subprocess
-import sys
 import time
 from pathlib import Path
 
@@ -16,11 +15,19 @@ def provider_url():
 
 @pytest.fixture(scope="session")
 def provider_process(provider_url):
+    build = subprocess.run(
+        ["go", "build", "-o", "tmp/provider", "./cmd/server"],
+        cwd=PROJECT_ROOT / "src/provider",
+        capture_output=True,
+        text=True,
+    )
+    if build.returncode != 0:
+        raise RuntimeError(f"Provider build failed:\n{build.stderr}")
     proc = subprocess.Popen(
-        [sys.executable, "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"],
+        [str(PROJECT_ROOT / "src/provider" / "tmp" / "provider")],
         cwd=PROJECT_ROOT / "src/provider",
     )
-    for _ in range(30):
+    for _ in range(60):
         try:
             resp = httpx.get(f"{provider_url}/health", timeout=1)
             if resp.status_code == 200:
@@ -30,7 +37,7 @@ def provider_process(provider_url):
         time.sleep(0.5)
     else:
         proc.terminate()
-        raise RuntimeError("Provider failed to start within 15s")
+        raise RuntimeError("Provider failed to start within 30s")
     resp = httpx.get(f"{provider_url}/health")
     body = resp.json()
     assert body == {"status": "ok"}, f"Unexpected health response: {body}"

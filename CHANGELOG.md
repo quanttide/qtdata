@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### 变更
+- **Provider**: Python FastAPI → Go 全量重写（模块 `qtdata-provider`）：数据集/项目/任务 CRUD 统一挂 `/api/v1/qtdata/*`，filestore 本地 JSON 持久化，`cmd/server` 服务装配（config / slog / 优雅关闭）；`examples/dataset-api` 整合进 provider，`examples/` 目录移除
+
 ## [0.0.1] - 2026-05-14
 
 ### 新增

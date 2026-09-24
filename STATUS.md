@@ -16,7 +16,7 @@ qtdata 的业务模式是**组合积木**——可拼装、按需组合，而非
 | Scope | 目录 | 最新版本 | 状态 |
 |-------|------|---------|------|
 | CLI | `src/cli` | 0.1.0（无 tag，CHANGELOG 记 `v0.0.1`） | 骨架，2026-06-23 后未再改动 |
-| Provider | `src/provider` | 0.1.0（tag `provider/v0.0.1`） | 脚手架，无持久化 |
+| Provider | `src/provider` | 0.1.0（Go 重写；tag `provider/v0.0.1` 为 Python 版） | Go 服务端，三资源 CRUD + filestore 持久化 |
 | Studio | `src/studio` | 0.1.0-beta.4（2026-08-08） | 最新活跃组件，入口 `studio.data.quanttide.com` |
 | Site | `src/site` | 0.1.0（2026-09-08，无 tag） | 首页已建，未部署 |
 
@@ -26,7 +26,7 @@ Rust 命令行工具，四命令 blueprint / scope / quotation / delivery，均�
 
 ### Provider
 
-Python FastAPI 服务端，基于 `fastapi-quanttide-project` 提供 Project/Task CRUD 路由，代码为 `app/main.py` + `app/storage.py`（存储为内存 dict，重启即丢），带 `test/` 单元测试与 `docs/usage.md`。
+Go 服务端（stdlib net/http，模块 `qtdata-provider`）：`cmd/server` 装配 config / store / slog 日志 / 优雅关闭；领域路由挂 `/api/v1/qtdata/{datasets,projects,tasks}`，filestore 本地 JSON 持久化（重启不丢）；数据集域自 `examples/dataset-api` 整合（原自 qtadmin provider 拆出）。带 Go 单元测试与 `docs/usage.md`。
 
 ### Studio
 
@@ -68,7 +68,7 @@ React 19 + TypeScript + Vite 展示站，技术栈对齐 qtclass-site。首页�
 |------|------|--------------|
 | `src/cli/ROADMAP.md` | 四阶段：CLI 框架 → Scope → Quotation → Delivery | 全部未勾选；四命令已有骨架——ROADMAP 记的是「要做成什么」，实现停在骨架 |
 | `src/studio/ROADMAP.md` | 新增 `qtdata-data`/`qtdata-asset` 包 + 页面路由 | 脱节：5 Tab 已上线，ROADMAP 仍写「增加数据页面、资产页面」 |
-| `src/provider/ROADMAP.md` | 数据处理 API + 资产 API + 持久化 | 均未开始；包名写 `qtdata-process`，与 studio 的 `qtdata-data` 不一致 |
+| `src/provider/ROADMAP.md` | 数据处理 API + 资产 API + 持久化 | 持久化已完成（filestore，2026-09-24 Go 重写）；数据处理与资产 API 未开始；包名写 `qtdata-process`，与 studio 的 `qtdata-data` 不一致 |
 | `src/site/ROADMAP.md` | v0.1.0 首页 + 部署链路；v0.2.0 服务详情页 + 内容契约化 | 首页 ✅，其余未开始（唯一与实现对齐的 ROADMAP） |
 | `tests/ROADMAP.md` | P2 基础设施（conftest/screens/utils）、P3 场景层 | 均未勾选 |
 | `tests/screens/ROADMAP.md` | Project/Data/Asset 三个 Page Object 规格 | 规格已写，实现状态未标注 |
@@ -77,11 +77,11 @@ React 19 + TypeScript + Vite 展示站，技术栈对齐 qtclass-site。首页�
 
 | 目录/文件 | 状态 |
 |----------|------|
-| `docs/dev-guide/stories/` | 有 7 篇：asset、business_line、customer_acquisition、data_collection、delivery、quotation、index |
-| `docs/dev-guide/prototype.html` | 有（Studio 当前实现原型，5 Tab 单页） |
+| `docs/dev-guide/index.md` | 用户故事地图 + 4 篇场景（场景一/二/三/五）合并为单文件（2026-09-24；asset 移入 `src/studio/doc/`，business_line 移入主仓库 roadmap/qtadmin，stories/ 目录已移除） |
+| `docs/dev-guide/prototype.html` | **已删除**（2026-09-24），原型由 `src/studio/doc/` 承接 |
 | `docs/index.md` | 有 |
 | `docs/{brd,prd,add,dev,ixd,drd,pmd}` | **已移除**（2026-08-08），由 `docs/dev-guide/` 承接 |
-| `examples/` | dataset-api（Go 参考实现，自 qtadmin provider 迁移）、default、prototype |
+| `examples/` | **已移除**（2026-09-24：dataset-api 整合进 `src/provider`，prototype 与 default 已删除） |
 | `tests/` | README + ROADMAP + conftest.py + screens/ + usecases/ + utils/ |
 | `README.md` | 有（2026-09-24 按实际结构重写） |
 | `CHANGELOG.md`（根） | 停在 0.0.1（2026-05-14），8 月以来变更只在各组件 CHANGELOG |

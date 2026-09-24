@@ -4,9 +4,7 @@ version = "0.1.0"
 description = "QTData end-to-end tests"
 requires-python = ">=3.12"
 
-dependencies = [
-    "qtdata-provider",
-]
+dependencies = []
 
 [tool.uv]
 dev-dependencies = [
@@ -21,6 +19,3 @@ dev-dependencies = [
 [[tool.uv.index]]
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 default = true
-
-[tool.uv.sources]
-qtdata-provider = { path = "src/provider" }

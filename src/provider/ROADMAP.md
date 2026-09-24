@@ -18,5 +18,6 @@
 
 ## 基础
 
-- [ ] 接入持久化数据库（替代当前内存 dict）
-- [ ] API 文档补充（新路由的 OpenAPI 描述）
+- [x] 持久化：filestore 本地 JSON，重启不丢（2026-09-24 Go 重写，替代内存 dict）
+- [ ] S3 存储驱动（`store.Config` 已预留 driver 字段）
+- [ ] API 文档（OpenAPI 描述）
