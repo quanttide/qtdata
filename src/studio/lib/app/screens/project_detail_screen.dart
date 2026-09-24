@@ -1,24 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../project/models/project.dart';
 import '../../asset/models/project_matrix.dart';
 import '../../project/models/project_phase.dart';
-import '../views/phase_tag.dart';
 import '../views/responsive.dart';
 import '../views/sidebar.dart';
-import '../views/status_badge.dart';
-import '../views/toast.dart';
 import '../views/doc_dialog.dart';
+import '../views/detail_header.dart';
 import '../../asset/screens/assets_tab.dart';
 import '../../business/screens/business_tab.dart';
 import '../../data/screens/data_tab.dart';
 import './overview_tab.dart';
 import '../../project/screens/project_tab.dart';
 
+/// 详情页 5 个 Tab 的深链 slug（与页面分解原型 `?tab=` 口径一致）
+const List<String> detailTabSlugs = [
+  'overview',
+  'data',
+  'project',
+  'business',
+  'assets',
+];
+
+/// `?tab=` → Tab 下标；未知值回退总览
+int detailTabIndex(String? slug) {
+  final i = slug == null ? -1 : detailTabSlugs.indexOf(slug);
+  return i < 0 ? 0 : i;
+}
+
 class ProjectDetailScreen extends StatelessWidget {
   final Project project;
 
-  const ProjectDetailScreen({super.key, required this.project});
+  /// 深链进入时的初始 Tab（默认总览）
+  final int initialTab;
+
+  const ProjectDetailScreen({
+    super.key,
+    required this.project,
+    this.initialTab = 0,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -42,14 +63,20 @@ class ProjectDetailScreen extends StatelessWidget {
   Widget _buildDetail(BuildContext context, {required bool compact}) {
     final hPadding = compact ? 16.0 : 28.0;
     return DefaultTabController(
+      key: ValueKey(initialTab),
       length: 5,
+      initialIndex: initialTab,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 头部
           Padding(
             padding: EdgeInsets.fromLTRB(hPadding, 24, hPadding, 0),
-            child: _buildHeader(context, compact: compact),
+            child: DetailHeader(
+              project: project,
+              compact: compact,
+              onBack: () => _back(context),
+            ),
           ),
           const SizedBox(height: 12),
           // Tab 栏
@@ -63,6 +90,13 @@ class ProjectDetailScreen extends StatelessWidget {
               ),
               child: TabBar(
                 isScrollable: compact,
+                onTap: (index) {
+                  // 站内点 Tab 同步 URL（深链可分享）；无路由环境保持默认切换
+                  GoRouter.maybeOf(context)?.go(
+                    '/projects/${project.id}?tab=${detailTabSlugs[index]}',
+                    extra: project,
+                  );
+                },
                 dividerColor: Colors.transparent,
                 indicatorSize: TabBarIndicatorSize.tab,
                 indicator: BoxDecoration(
@@ -113,89 +147,16 @@ class ProjectDetailScreen extends StatelessWidget {
   }
 
   // ===== 头部 =====
-  Widget _buildHeader(BuildContext context, {required bool compact}) {
-    return Row(
-      children: [
-        InkWell(
-          onTap: () => Navigator.of(context).pop(),
-          borderRadius: BorderRadius.circular(8),
-          child: const Padding(
-            padding: EdgeInsets.all(4),
-            child: Icon(Icons.arrow_back, size: 20, color: Color(0xFF94A3B8)),
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  Text(
-                    project.name,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF1E293B),
-                    ),
-                  ),
-                  StatusBadge(status: project.status),
-                  PhaseTag(phase: project.currentPhase),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '客户：${project.client} ｜ 创建于 ${project.created}',
-                style: const TextStyle(fontSize: 12, color: Color(0xFF94A3B8)),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 12),
-        // 导出按钮（移动端仅图标）
-        InkWell(
-          onTap: () => showAppToast(context, '📄 报告已导出'),
-          borderRadius: BorderRadius.circular(8),
-          child: Container(
-            padding: compact
-                ? const EdgeInsets.all(8)
-                : const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF4F46E5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: compact
-                ? const Icon(
-                    Icons.picture_as_pdf_outlined,
-                    size: 14,
-                    color: Colors.white,
-                  )
-                : const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.picture_as_pdf_outlined,
-                        size: 14,
-                        color: Colors.white,
-                      ),
-                      SizedBox(width: 6),
-                      Text(
-                        '导出',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-          ),
-        ),
-      ],
-    );
+  void _back(BuildContext context) {
+    final router = GoRouter.maybeOf(context);
+    if (router == null) {
+      Navigator.of(context).pop();
+    } else if (router.canPop()) {
+      router.pop();
+    } else {
+      // 深链冷启动没有上一页，退回列表
+      router.go('/');
+    }
   }
 
   Future<void> _showDocDialog(BuildContext context, PhaseItem item) =>

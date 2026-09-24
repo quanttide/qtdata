@@ -1,8 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+
 import '../models/project.dart';
+import '../models/seed_loader.dart';
 import '../views/project_filters.dart';
 import '../views/project_list.dart';
 import '../../app/views/responsive.dart';
@@ -17,8 +17,6 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  static const _seedAsset = 'assets/data/seed_projects.json';
-
   String _filter = 'all';
   List<Project>? _projects;
   bool _loadFailed = false;
@@ -26,16 +24,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    _loadProjects();
+    // 已加载过就同步取，避免悬挂的异步订阅（测试环境坑，见 seed_loader 注释）
+    final ready = seedProjectsIfLoaded();
+    if (ready != null) {
+      _projects = ready;
+    } else {
+      _loadProjects();
+    }
   }
 
   Future<void> _loadProjects() async {
     try {
-      final raw = await rootBundle.loadString(_seedAsset);
-      final decoded = jsonDecode(raw) as Map<String, dynamic>;
-      final projects = (decoded['projects'] as List<dynamic>)
-          .map((e) => Project.fromJson(e as Map<String, dynamic>))
-          .toList();
+      final projects = await loadSeedProjects();
       if (!mounted) return;
       setState(() => _projects = projects);
     } catch (e) {
@@ -68,6 +68,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int get _pendingCount => _all.where((p) => p.status == '待启动').length;
 
   void _openDetail(Project project) {
+    final router = GoRouter.maybeOf(context);
+    if (router != null) {
+      // 站内跳转带 extra：详情页免二次异步加载，URL 同步可分享/深链
+      router.go('/projects/${project.id}', extra: project);
+      return;
+    }
+    // 无路由环境（部件单测直挂 MaterialApp）保留原有 push 行为
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => ProjectDetailScreen(project: project),

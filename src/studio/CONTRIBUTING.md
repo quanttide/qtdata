@@ -35,9 +35,11 @@
 | 项 | 选型 | 现状 |
 |---|---|---|
 | UI | Material 3 | ✓ 在用 |
-| 路由 | `go_router`（平台契约要求 studio 统一用） | ✗ 未引入——现在是 `MaterialApp(home:)` 直挂 |
-| 状态管理 | 平台契约把状态管理列为**项目内选型**，本仓尚未声明 | 现用 `StatefulWidget` + `setState`；改 Bloc 还是写明偏离理由，见 TODO 三段 |
+| 路由 | `go_router`（平台契约要求 studio 统一用） | ✓ 在用——`lib/app/router.dart` 的 `buildRouter()`：`/` 列表 + `/projects/:id?tab=<slug>` 深链，`main.dart` 用 `MaterialApp.router` |
+| 状态管理 | **0.1.0 显式选型：继续 `StatefulWidget` + `setState`**（偏离 Bloc 默认选型，理由如下） | ✓ 在用；接通 Provider（四段）时重议 |
 | 网络／存储 | 无 | 数据来自 `assets/data/seed_projects.json` |
+
+**状态管理选型理由**：0.1.0 是观测面——读多写极少，状态全是本地视图状态（筛选、Tab、弹窗开关），Bloc 的分层样板大于收益；且数据还跑在 seed 上，没有跨页共享的异步状态可管。接通 Provider（ROADMAP 四段）引入网络与共享状态时重议，迁移前不引入第三套状态原语。
 
 ## 门禁（提交前跑，与 CI 同三条）
 
@@ -49,6 +51,7 @@ flutter test
 
 - 本地从严、与 CI 一致：CI 钉 Flutter **3.44.9**，本机也用同一版（`$HOME/flutter/bin`）
 - 静态检查是加严档（`analysis_options.yaml`：`strict-casts` / `strict-inference` / `strict-raw-types` + 三条规则）——**命中告警就改代码，不关规则**
+- 字体字符门禁：`python3 tool/check_font_chars.py`（CI quality-gates 同跑）——新文案字符必须在自带字体子集内，否则国外 CDN 不通的机器上显示为空（见「自带字体」）
 
 ## 依赖
 
@@ -56,6 +59,16 @@ flutter test
 - 抽出去的东西必须发布、按版本号引，**不允许 path 依赖**
 - 接外部系统先看有没有官方 SDK
 - 已许可依赖清单待补（见 TODO 四段）
+
+已许可依赖（与 `pubspec.yaml` 逐条对得上）：
+
+| 包 | 许可 | 用途 |
+|---|---|---|
+| `flutter`（SDK） | BSD-3-Clause | 框架 |
+| `cupertino_icons` | MIT | iOS 风格图标字形 |
+| `go_router` | BSD-3-Clause | 路由（平台契约指定） |
+| `flutter_lints` | BSD-3-Clause | 静态检查规则（dev） |
+| `flutter_test` / `integration_test` | BSD-3-Clause（SDK 自带） | 测试（dev） |
 
 ## 自带字体
 

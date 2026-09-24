@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './project/screens/dashboard_screen.dart';
+import './app/router.dart';
 
 void main() {
   runApp(const _App());
@@ -10,9 +10,10 @@ class _App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: '量潮数据',
       debugShowCheckedModeBanner: false,
+      routerConfig: buildRouter(),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF4F46E5),
@@ -23,7 +24,6 @@ class _App extends StatelessWidget {
         useMaterial3: true,
         fontFamily: 'NotoSansSC',
       ),
-      home: const DashboardScreen(),
     );
   }
 }

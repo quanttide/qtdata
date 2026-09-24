@@ -38,7 +38,9 @@ CI 首跑成功（run `35968122408`：Quality Gates 六步全绿，部署作业�
 
 **这段的一处自定**（偏离族里家法，写进约定文件）：界面部件那一层叫 `views/`——Bloc 官方示例用的是 `view/` + `widgets/` 两档，我们合成一层。
 
-## 三、选型（默认选型成文）
+## 三、选型（默认选型成文）——已落地 2026-09-24
+
+**结果**：`go_router` ^18 引入，`main.dart` 改 `MaterialApp.router`；路由表 `/`（列表）+ `/projects/:id?tab=<slug>`（详情深链，slug 见 `detailTabSlugs`），点 Tab 同步 URL，深链/未知 id 用例 5 个（`test/app/router_test.dart`）全绿。状态管理按本段判据显式声明：0.1.0 继续 `setState`，理由写进 `CONTRIBUTING.md` 选型段（`grep 状态管理 src/studio/CONTRIBUTING.md` 可验）。以下为原待办：
 
 **改什么**：状态管理落成显式声明——要么改用 Bloc（默认选型），要么在约定文件里写明继续用 `setState` 的理由。
 **判据**：`grep -rn "bloc\|状态管理" src/studio/pubspec.yaml <约定文件>` 至少有一处说明；若改 Bloc，则 `pubspec.yaml` 出现 `flutter_bloc` 且 `lib/states/` 存在。
@@ -50,11 +52,11 @@ CI 首跑成功（run `35968122408`：Quality Gates 六步全绿，部署作业�
 
 ## 四、构建与发布
 
-**改什么**：CanvasKit 自托管——CI 构建加 `FLUTTER_WEB_CANVASKIT_URL`，发布前在无代理网络验证一次。
-**判据**：workflow 里出现该环境变量；无代理网络下打开线上页面不白屏。
+**改什么**：CanvasKit 自托管。**已落地（2026-09-24，rc.2）**——构建改 `flutter build web --no-web-resources-cdn`（`useLocalCanvasKit: true`，加载仓内 `canvaskit/`），没走 `FLUTTER_WEB_CANVASKIT_URL` 这条路。
+**判据**：workflow 含该构建参数 ✓；屏蔽全部 gstatic 的验收（`scripts/check-web-gstatic-blocked.mjs`）线上不白屏 ✓；文字对 gstatic 的依赖由 rc.3 自带字体解决。
 **影响**：`.github/workflows/deploy-studio.yml`。
 
-**改什么**：依赖许可清单成文（`cupertino_icons`、`flutter_lints`，以及后续新增的每一个）。
+**改什么**：依赖许可清单成文（`cupertino_icons`、`flutter_lints`，以及后续新增的每一个）。**已落地 2026-09-24**：表在 `CONTRIBUTING.md` 依赖段（含新增的 `go_router`）。
 **判据**：约定文件或 README 里有一张「已许可依赖」表，与 `pubspec.yaml` 逐条对得上。
 **影响**：`src/studio/README.md`（或约定文件）。
 
@@ -97,6 +99,7 @@ CI 首跑成功（run `35968122408`：Quality Gates 六步全绿，部署作业�
 ## 七、界面数据（2026-09-24 换内容后新增）
 
 **改什么**：seed 里的商务数字换成真实数字。现在 `assets/data/seed_projects.json` 的成本法 2.5 万、市场法 4.5 万、合同额 4.0 万、已收 2.0 万都是示例值（`pricingNote` 已注明非实际报价）。
+**正式版口径（2026-09-24）**：0.1.0 以示例数据发布，`pricingNote` 标注保留；真实数字到位后按下列判据单独发版。
 **判据**：`grep -n "示例数据，非实际报价" src/studio/assets/data/seed_projects.json` 无输出；`flutter test` 仍 21/21。
 **影响**：`assets/data/seed_projects.json`、`test/**`（依赖数字的断言：`project_card_test`、`project_detail_screen_test`）、`STATUS.md` 的界面数据表。
 
