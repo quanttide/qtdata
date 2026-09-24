@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:qtdata_studio/screens/dashboard_screen.dart';
 import 'package:qtdata_studio/screens/project_detail_screen.dart';
-import 'package:qtdata_studio/widgets/common/sidebar.dart';
+import 'package:qtdata_studio/views/sidebar.dart';
 
 import '../helpers/seed.dart';
 

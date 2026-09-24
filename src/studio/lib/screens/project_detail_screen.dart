@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../models/project.dart';
-import '../widgets/common/phase_tag.dart';
-import '../widgets/common/responsive.dart';
-import '../widgets/common/sidebar.dart';
-import '../widgets/common/status_badge.dart';
-import '../widgets/common/toast.dart';
-import '../widgets/dialogs/doc_dialog.dart';
+import '../models/project_matrix.dart';
+import '../models/project_phase.dart';
+import '../views/phase_tag.dart';
+import '../views/responsive.dart';
+import '../views/sidebar.dart';
+import '../views/status_badge.dart';
+import '../views/toast.dart';
+import '../views/doc_dialog.dart';
 import 'tabs/assets_tab.dart';
 import 'tabs/business_tab.dart';
 import 'tabs/data_tab.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:qtdata_studio/models/project.dart';
-import 'package:qtdata_studio/widgets/cards/matrix_card.dart';
+import 'package:qtdata_studio/models/project_matrix.dart';
+import 'package:qtdata_studio/views/matrix_card.dart';
 
 import '../helpers/seed.dart';
 

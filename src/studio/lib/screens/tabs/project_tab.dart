@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../models/project.dart';
-import '../../widgets/cards/timeline_card.dart';
-import '../../widgets/common/section_header.dart';
+import '../../models/project_phase.dart';
+import '../../views/timeline_card.dart';
+import '../../views/section_header.dart';
 
 /// 项目：基本信息 + 交付时间线（项目管理信息）
 class ProjectTab extends StatelessWidget {

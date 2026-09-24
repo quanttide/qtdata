@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/project.dart';
-import '../../widgets/cards/blueprint_card.dart';
+import '../../views/blueprint_card.dart';
 
 /// 数据：完整数据蓝图（处理流程 + 异常预案）
 class DataTab extends StatelessWidget {

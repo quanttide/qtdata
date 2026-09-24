@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:qtdata_studio/models/project.dart';
-import 'package:qtdata_studio/widgets/common/phase_tag.dart';
+import 'package:qtdata_studio/models/project_status.dart';
+import 'package:qtdata_studio/views/phase_tag.dart';
 
 void main() {
   testWidgets('五个阶段渲染对应文案与配色', (tester) async {

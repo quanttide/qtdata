@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:qtdata_studio/models/project.dart';
-import 'package:qtdata_studio/widgets/cards/timeline_card.dart';
+import 'package:qtdata_studio/models/project_phase.dart';
+import 'package:qtdata_studio/views/timeline_card.dart';
 
 import '../helpers/seed.dart';
 

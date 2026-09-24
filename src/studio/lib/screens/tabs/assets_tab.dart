@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../models/project.dart';
-import '../../widgets/cards/matrix_card.dart';
+import '../../models/project_matrix.dart';
+import '../../views/matrix_card.dart';
 
 /// 资产：交付资产地图（维度 × 阶段），单元格即资产条目
 class AssetsTab extends StatelessWidget {

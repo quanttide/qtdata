@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/project.dart';
-import '../widgets/cards/project_card.dart';
-import '../widgets/common/responsive.dart';
-import '../widgets/common/sidebar.dart';
+import '../views/project_filters.dart';
+import '../views/project_list.dart';
+import '../views/responsive.dart';
+import '../views/sidebar.dart';
 import 'project_detail_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -127,7 +128,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           // 筛选按钮组 + 计数
           Row(
             children: [
-              _buildFilterGroup(),
+              ProjectFilterGroup(filter: _filter, onSelect: _setFilter),
               const SizedBox(width: 12),
               Text(
                 '${_filteredProjects.length} 个项目',
@@ -137,201 +138,49 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           const SizedBox(height: 12),
           // 项目列表
-          Expanded(child: _buildProjectList()),
+          Expanded(
+            child: ProjectList(
+              projects: _filteredProjects,
+              loading: _projects == null,
+              loadFailed: _loadFailed,
+              onOpen: _openDetail,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  // ===== 项目列表 =====
-  Widget _buildProjectList() {
-    if (_loadFailed) {
-      return const Center(
-        child: Text('种子数据加载失败', style: TextStyle(color: Color(0xFF94A3B8))),
-      );
-    }
-    if (_projects == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    if (_filteredProjects.isEmpty) {
-      return const Center(
-        child: Text('暂无匹配的项目', style: TextStyle(color: Color(0xFF94A3B8))),
-      );
-    }
-    return ListView.separated(
-      itemCount: _filteredProjects.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 12),
-      itemBuilder: (context, index) {
-        final project = _filteredProjects[index];
-        return ProjectCard(project: project, onTap: () => _openDetail(project));
-      },
-    );
-  }
-
-  // ===== 统计卡片 =====
   Widget _buildStatCards() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final columns = constraints.maxWidth >= 640 ? 4 : 2;
-        final cards = [
-          _StatCardData(
-            label: '全部项目',
-            count: _allCount,
-            numberColor: const Color(0xFF4F46E5),
-            filter: 'all',
-          ),
-          _StatCardData(
-            label: '进行中',
-            count: _activeCount,
-            numberColor: const Color(0xFFF59E0B),
-            filter: 'active',
-          ),
-          _StatCardData(
-            label: '已完成',
-            count: _doneCount,
-            numberColor: const Color(0xFF10B981),
-            filter: 'done',
-          ),
-          _StatCardData(
-            label: '待启动',
-            count: _pendingCount,
-            numberColor: const Color(0xFF94A3B8),
-            filter: 'pending',
-          ),
-        ];
-        return GridView.count(
-          crossAxisCount: columns,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          childAspectRatio: 2.4,
-          children: cards
-              .map(
-                (c) => _statCard(
-                  c,
-                  active: _filter == c.filter,
-                  onTap: () => _setFilter(c.filter),
-                ),
-              )
-              .toList(),
-        );
-      },
-    );
-  }
-
-  Widget _statCard(
-    _StatCardData data, {
-    required bool active,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: active ? const Color(0xFF4F46E5) : const Color(0xFFF1F5F9),
-          ),
-          boxShadow: active
-              ? const [
-                  BoxShadow(
-                    color: Color(0x1A4F46E5),
-                    blurRadius: 0,
-                    spreadRadius: 2,
-                  ),
-                ]
-              : null,
+    return StatCards(
+      cards: [
+        StatCardData(
+          label: '全部项目',
+          count: _allCount,
+          numberColor: const Color(0xFF4F46E5),
+          filter: 'all',
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              '${data.count}',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                color: data.numberColor,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              data.label,
-              style: const TextStyle(fontSize: 11, color: Color(0xFF94A3B8)),
-            ),
-          ],
+        StatCardData(
+          label: '进行中',
+          count: _activeCount,
+          numberColor: const Color(0xFFF59E0B),
+          filter: 'active',
         ),
-      ),
+        StatCardData(
+          label: '已完成',
+          count: _doneCount,
+          numberColor: const Color(0xFF10B981),
+          filter: 'done',
+        ),
+        StatCardData(
+          label: '待启动',
+          count: _pendingCount,
+          numberColor: const Color(0xFF94A3B8),
+          filter: 'pending',
+        ),
+      ],
+      activeFilter: _filter,
+      onSelect: _setFilter,
     );
   }
-
-  // ===== 筛选按钮组 =====
-  Widget _buildFilterGroup() {
-    const filters = [
-      ('全部', 'all'),
-      ('进行中', 'active'),
-      ('已完成', 'done'),
-      ('待启动', 'pending'),
-    ];
-    return Container(
-      padding: const EdgeInsets.all(3),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1F5F9),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: filters.map((f) {
-          final (label, value) = f;
-          final isActive = _filter == value;
-          return InkWell(
-            onTap: () => _setFilter(value),
-            borderRadius: BorderRadius.circular(6),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              decoration: BoxDecoration(
-                color: isActive ? Colors.white : Colors.transparent,
-                borderRadius: BorderRadius.circular(6),
-                boxShadow: isActive
-                    ? const [
-                        BoxShadow(
-                          color: Color(0x14000000),
-                          blurRadius: 3,
-                          offset: Offset(0, 1),
-                        ),
-                      ]
-                    : null,
-              ),
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: isActive
-                      ? const Color(0xFF1E293B)
-                      : const Color(0xFF64748B),
-                ),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-}
-
-class _StatCardData {
-  final String label;
-  final int count;
-  final Color numberColor;
-  final String filter;
-
-  const _StatCardData({
-    required this.label,
-    required this.count,
-    required this.numberColor,
-    required this.filter,
-  });
 }
