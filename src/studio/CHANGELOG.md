@@ -1,5 +1,10 @@
 # Changelog
 
+## [studio/v0.1.0-rc.6] - 2026-09-24
+
+### 修复
+- **深链冷启动落在列表页**（rc.5 验收截图抓出）：Web 构建里平台默认路由退化成 `/`，go_router 采用了 `initialLocation('/')` 而忽略浏览器真实地址——启动改用 `Uri.base` 显式取浏览器地址并 `overridePlatformDefaultLocation`，深链直达 Tab 确定性生效
+
 ## [studio/v0.1.0-rc.5] - 2026-09-24
 
 ### 修复

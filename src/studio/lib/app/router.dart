@@ -12,10 +12,14 @@ import './screens/project_detail_screen.dart';
 /// - `/projects/:id?tab=<slug>`   项目详情，`tab` 深链直达对应 Tab（slug 见
 ///   [detailTabSlugs]），冷启动与站内跳转共用一条路径
 ///
-/// [initialLocation] 供测试注入入口地址。
-GoRouter buildRouter({String initialLocation = '/'}) {
+/// [initialLocation] 非空时用 `overridePlatformDefaultLocation` 强制生效：
+/// Web 构建里平台默认路由会退化成 `/`（深链冷启动曾落到列表页），生产入口
+/// （`main.dart` 的 `_webInitialLocation`）从 `Uri.base` 取浏览器地址传进来；
+/// 测试也通过本参数注入入口地址。
+GoRouter buildRouter({String? initialLocation}) {
   return GoRouter(
     initialLocation: initialLocation,
+    overridePlatformDefaultLocation: initialLocation != null,
     routes: <RouteBase>[
       GoRoute(path: '/', builder: (context, state) => const DashboardScreen()),
       GoRoute(
