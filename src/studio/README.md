@@ -8,7 +8,7 @@ qtdata 的观测面——项目的进度、数据流程、交付资产在这里�
 |---|---|
 | Web | 产品形态。CI 在 `studio/*` tag 上构建并发到 OSS 桶 `qtdata-studio`，入口 `studio.data.quanttide.com` |
 | Linux 桌面 | 本地开发形态，`../scripts/run-studio-linux.sh` 构建并启动 |
-| Android / iOS / macOS / Windows | 脚手架已在仓里，**尚未构建验证过**，需要完善 |
+| Android / iOS / macOS / Windows | 脚手架在仓，**0.1.0 不支持**——建仓起从未构建验证；支持矩阵只含 Web + Linux（见 ROADMAP 六段） |
 
 ## 跑起来
 
@@ -18,15 +18,18 @@ flutter run -d chrome     # 浏览器调试（Web 形态）
 ../scripts/run-studio-linux.sh   # 一次性构建 release bundle 并启动
 ```
 
+Web 深链（go_router）：`/projects/<id>?tab=business` 直达详情页对应 Tab，点 Tab 时 URL 同步更新。
+
 ## 门禁
 
 ```bash
 dart format --set-exit-if-changed .
 flutter analyze
 flutter test
+python3 tool/check_font_chars.py   # 字体字符门禁
 ```
 
-三条现在都要手工跑——CI 还没接（见 [TODO.md](./TODO.md) 一段）。
+CI 已接（`deploy-studio.yml` 的 `quality-gates`：format + analyze + test + 字体字符检查，分支/PR 触发，`studio/*` tag 过门禁才部署；见 [TODO.md](./TODO.md) 一段）。发布前另跑屏蔽 gstatic 验收：`node ../scripts/check-web-gstatic-blocked.mjs`。
 
 ## 结构
 
@@ -36,11 +39,11 @@ lib/project/                     项目域：models/ views/ screens/
 lib/data/                        数据域：models/ views/ screens/
 lib/business/                    商务域：models/ views/ screens/
 lib/asset/                       资产域：交付物与交付矩阵（三域 × 五阶段）
-lib/app/                         跨域共用：全局侧栏/断点、区块标题、详情页外壳、总览 Tab
+lib/app/                         跨域共用：路由表（router.dart）、全局侧栏/断点、区块标题、详情页外壳、总览 Tab
 assets/data/                     界面数据（现在是 seed JSON，将来换成 Provider）
 fonts/                           自带字体：Noto Sans SC 子集（400/500/600/700 四档，含 6 个 emoji 字形），文字渲染不依赖 fonts.gstatic.com
 doc/                             页面分解原型（index/project 两页，Flutter 实现之前的设计）
-test/{app,data,project,business,asset}/{models,views,screens}/   跟着 lib/ 同名同构（12 文件 21 用例）
+test/{app,data,project,business,asset}/{views,screens}/   跟着 lib/ 同名同构（13 文件 26 用例）+ test/app/router_test.dart 深链
 ```
 
 ## 文档索引

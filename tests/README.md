@@ -38,3 +38,11 @@ E2E 测试按职责分三层：
 产物作为版本化资产随仓库管理，可供文档、演示等场景直接引用复用。
 
 > 图片和视频使用 Git LFS 管理，参见 `.gitattributes`。
+
+## 测试边界（三套各管一段，同一用例只写一处）
+
+| 位置 | 边界 | 跑法 |
+|------|------|------|
+| 本目录 `tests/` | **跨进程端到端**：provider 启停 + xdotool 驱动桌面窗口（`run-studio-linux.sh` 形态） | `pytest` |
+| `src/studio/test/` | **Flutter 进程内**：部件组合、页面状态 | `flutter test` |
+| `src/studio/integration_test/` | **Flutter 进程内端到端**：启动 → 列表 → 详情 → 切 Tab 的最短业务流 | `flutter test integration_test -d linux` |

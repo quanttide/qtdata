@@ -60,6 +60,9 @@ jobs:
       - name: Test
         run: flutter test
 
+      - name: Font Chars
+        run: python3 tool/check_font_chars.py
+
   build-and-deploy:
     name: Build Flutter Web & Deploy to OSS
     needs: quality-gates
@@ -91,6 +94,9 @@ jobs:
 
       # 字体子集随文案增字会变，单独 no-cache（文件小，304 重验成本可忽略）
       - run: ossutil cp src/studio/build/web/assets/fonts/ oss://qtdata-studio/assets/fonts/ -r -f --meta=Cache-Control:no-cache
+
+      # main.dart.js 同理：内容随版本变，一年长缓存会让老用户继续跑旧代码（beta.3 修过 index 的同类问题）
+      - run: ossutil cp src/studio/build/web/main.dart.js oss://qtdata-studio/main.dart.js -f --meta=Cache-Control:no-cache
 
       - name: Refresh CDN
         run: |
