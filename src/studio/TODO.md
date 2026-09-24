@@ -24,26 +24,29 @@ CI 首跑成功（run `35968122408`：Quality Gates 六步全绿，部署作业�
 
 ## 二、结构（借 Bloc 家法）——已落地 2026-09-24
 
-四件都做完了（pi 执行，Hermes 复验）：
+五件都做完了（前三件 pi 执行，后一件 Hermes 执行；均经 Hermes 复验）：
 
 - **正名**：`lib/widgets/` → `lib/views/`，撤掉 `cards/`／`common/`／`dialogs/` 三个按形状切的自造分组，12 个文件平铺进 `views/`；`test/widgets/` → `test/views/`（测试跟着分层）
 - **拆模型**：`lib/models/project.dart` 377 行 → 6 个文件（`project` / `project_status` / `project_matrix` / `blueprint` / `project_phase` / `business_info`），只按现有类聚集拆，未改字段与 JSON 结构
 - **拆越界件**：`business_tab.dart` 381 行 → 7 个文件（外壳 + 6 张卡）；`dashboard_screen.dart` 337 行 → 3 个；`matrix_card.dart` 303 行 → 2 个
 - **横切集中一处**：新建 `CONTRIBUTING.md`，收口分层名义、选型现状、门禁三连、依赖规矩
+- **分域（2026-09-24 追加）**：`lib/` 重排成四域 + 跨域——`project/`（9 文件）、`data/`（3）、`business/`（8）、`asset/`（5，收交付物与交付矩阵）、跨域 `app/`（10）；每个域内部保持 `models/ views/ screens/` 三层，`main.dart` 留根。`Deliverable` 从 `project/models/project.dart` 拆出归入 `asset/models/deliverable.dart`
 
-**复验证据**：`flutter analyze` 零告警、`dart format` 无差异、`flutter test` 21/21 绿（Hermes 自己重跑）；最长文件由 381 降到 **235**（全部 <250）；测试断言数 105 → 105 未削弱；全 `lib/` 中文字面量 71 种一一对应、无增无减（行为不变的可比信号）。
+**复验证据**：`flutter analyze` 零告警、`dart format` 无差异、`flutter test` 21/21 绿（Hermes 自己重跑，分域前后各一次）；最长文件由 381 降到 **235**（全部 <250）；测试断言数 105 → 105 未削弱；全 `lib/` 中文字面量 71 种一一对应、无增无减（行为不变的可比信号）。
 
 **这段的两处命名动作**（超出「只改路径」，已认下）：跨文件搬出的私有类转公开（`_QuotationCard` → `QuotationCard` 等），以及 `_MatrixCell` → `MatrixDataCell`（与模型类 `MatrixCell` 撞名）。
+
+**这段的一处自定**（偏离族里家法，写进约定文件）：界面部件那一层叫 `views/`——Bloc 官方示例用的是 `view/` + `widgets/` 两档，我们合成一层。
 
 ## 三、选型（默认选型成文）
 
 **改什么**：状态管理落成显式声明——要么改用 Bloc（默认选型），要么在约定文件里写明继续用 `setState` 的理由。
 **判据**：`grep -rn "bloc\|状态管理" src/studio/pubspec.yaml <约定文件>` 至少有一处说明；若改 Bloc，则 `pubspec.yaml` 出现 `flutter_bloc` 且 `lib/states/` 存在。
-**影响**：`pubspec.yaml`、`lib/states/**`（新增）、`lib/screens/**`（改建 Bloc 的话）。
+**影响**：`pubspec.yaml`、`lib/{域}/states/**`（新增）、各域的 `screens/**` 与 `views/**`（改建 Bloc 的话）。
 
 **改什么**：路由改为 `go_router`（平台契约硬要求：Studio 路由统一使用 go_router），建路由表，保留现有 `?tab=` 深链行为。
 **判据**：`pubspec.yaml` 含 `go_router`；`main.dart` 用 `MaterialApp.router`；`flutter test` 里深链用例通过。
-**影响**：`pubspec.yaml`、`lib/main.dart`、`lib/screens/dashboard_screen.dart`、`lib/screens/project_detail_screen.dart`。
+**影响**：`pubspec.yaml`、`lib/main.dart`、`lib/project/screens/dashboard_screen.dart`、`lib/app/screens/project_detail_screen.dart`。
 
 ## 四、构建与发布
 

@@ -9,11 +9,11 @@
 
 | 项 | 数 |
 |---|---|
-| `lib/` Dart 文件 | 35 |
-| `lib/` 总行数 | 2961 |
-| 分层 | `views/` 21 文件 1914 行、`screens/` 7 文件 636 行（其中 `tabs/` 5 文件 240 行）、`models/` 6 文件 382 行 |
-| 最长的五件 | `views/project_card.dart` 235、`screens/project_detail_screen.dart` 210、`views/timeline_card.dart` 192、`screens/dashboard_screen.dart` 186、`views/project_filters.dart` 178——**全部 <250** |
-| `test/` | 12 个文件 21 个用例，与 `lib/` 同构：`views/` 8、`screens/` 3、`helpers/` 1 |
+| `lib/` Dart 文件 | 36（含 `main.dart`） |
+| `lib/` 总行数 | 2963 |
+| 分域 | `project/` 9 文件 1103 行、`app/`（跨域）10 文件 698 行、`business/` 8 文件 479 行、`asset/` 5 文件 432 行、`data/` 3 文件 222 行、`main.dart` 29 行 |
+| 最长的五件 | `project/views/project_card.dart` 235、`app/screens/project_detail_screen.dart` 210、`project/views/timeline_card.dart` 192、`project/screens/dashboard_screen.dart` 186、`project/views/project_filters.dart` 178——**全部 <250** |
+| `test/` | 12 个文件 21 个用例，与 `lib/` 同名同构：`test/{app,data,project,business,asset}/{views,screens}` + `test/helpers/`（跨域测试基础设施） |
 | 门禁实况（2026-09-24） | 三条**已进 CI**（`deploy-studio.yml` 的 `quality-gates`：format + analyze + test，分支与 PR 触发、tag 才部署；首跑 run `35968122408` success）；本地同版（Flutter 3.44.9）三条全绿 |
 | 运行时依赖 | 2 个：`flutter`、`cupertino_icons` |
 | `doc/` | 页面分解产物（index/project 两页 + 4 个 js + 样式表），Flutter 实现之前的设计版 |
@@ -24,12 +24,13 @@
 
 | 条款 | 现状 | 判定 |
 |---|---|---|
-| 借家法要连命名一起借（界面那一层叫 `views/`） | `lib/views/` 21 个文件平铺，无形状子目录（原 `widgets/{cards,common,dialogs}` 已撤） | ✓ 2026-09-24 正名 |
-| 按 Bloc 家法分层（`repositories/` `states/` `screens/` `views/`） | 有 `screens/`、`views/`；**无 `repositories/`、无 `states/`**，状态用 `StatefulWidget` + `setState` | ✗ 缺两层（四段） |
-| 不留第二份模型（界面直接用领域对象） | `lib/models/` 6 个文件 382 行，界面自留一份 | ✗ 来源待定（ROADMAP 待决） |
+| 界面层命名（契约案例要求 `views/`） | 四个域各有 `views/`；**这是本项目约定**——Bloc 官方材料用的是 `view/` + `widgets/` 两档，全仓示例里 0 处 `views/`，故契约那条案例的「按 Bloc 惯例该叫 views/」站不住 | ⚠ 约定在用，契约案例待修 |
+| 文件归属（域） | `lib/` 分四域 `project/ data/ business/ asset/` + 跨域 `app/`，每文件只属一域（2026-09-24 落） | ✓ |
+| 按 Bloc 家法分层（`repositories/` `states/` `screens/` `views/`） | 域内有 `models/`、`views/`、`screens/`；**无 `repositories/`、无 `states/`**，状态用 `StatefulWidget` + `setState` | ✗ 缺两层（四段） |
+| 不留第二份模型（界面直接用领域对象） | 各域 `models/` 自留一份（app 1、data 1、project 2、business 1、asset 2）；`Deliverable` 已从项目域归入资产域 | ✗ 来源待定（ROADMAP 待决） |
 | 单文件行数越界即触发转聚合（同层单文件 >250 行） | 最长 235 行，无越界 | ✓ 2026-09-24 拆完 |
 | 同一目录不得混用层名与聚合名（硬禁） | `lib/` 下全是层名，无聚合名——停在第一阶段，**未触犯** | ✓ |
-| 测试跟着分层 | `test/{views,screens,helpers}` 与 `lib/` 同名同构 | ✓ |
+| 测试跟着分层 | `test/{app,data,project,business,asset}/{views,screens}` 与 `lib/` 同名同构，跨域测试基础设施在 `test/helpers/` | ✓ |
 | 组装与实现分离 | `main.dart` 29 行只装配 `MaterialApp` | ✓ |
 | 横切约束集中一处 | `CONTRIBUTING.md` 收口分层名义、选型、门禁、依赖规矩（2026-09-24 建） | ✓ |
 
@@ -64,4 +65,4 @@
 
 ## 一句话
 
-二段之后，结构与门禁都立住了：`views/` 正名、越界文件拆完（最长 235 行）、约定集中在一处、三条门禁进 CI。剩下的差距是**接通**——没有 `repositories/`、没有 `states/`、没有路由表、模型自留一份，界面仍跑在 seed JSON 上。
+二段之后，结构又往前走一步（2026-09-24）：`lib/` 按**域**重排成 `project/ data/ business/ asset/` 四域加跨域 `app/`，每域内部保持 `models/ views/ screens/` 三层，`Deliverable` 从项目域归入资产域；约定集中在一处（`CONTRIBUTING.md`）、三条门禁进 CI。剩下的差距是**接通**——域内没有 `repositories/`／`states/`、没有路由表、模型自留一份，界面仍跑在 seed JSON 上。

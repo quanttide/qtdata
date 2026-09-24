@@ -30,7 +30,7 @@ Python FastAPI 服务端，基于 `fastapi-quanttide-project` 提供 Project/Tas
 
 ### Studio
 
-Flutter 客户端。详情页为 5 Tab（总览/数据/项目/商务/资产），页面外壳在 `lib/screens/`，界面部件在 `lib/views/`（2026-09-24 按 Bloc 家法正名，原 `widgets/`）；数据来自 `assets/data/seed_projects.json`；已做移动端适配（<640px 隐藏侧栏）。最后发布 `studio/v0.1.0-beta.4`（2026-08-08）；入口 `studio.data.quanttide.com`（2026-09-24 起），CI 在 `studio/*` tag 上构建部署、分支与 PR 上跑门禁（format + analyze + test）。
+Flutter 客户端。详情页为 5 Tab（总览/数据/项目/商务/资产）；`lib/` 按域分：**project / data / business / asset 四域 + 跨域 `app/`**（2026-09-24 落，每个域内 `models/ views/ screens/`）；数据来自 `assets/data/seed_projects.json`；已做移动端适配（<640px 隐藏侧栏）。最后发布 `studio/v0.1.0-beta.4`（2026-08-08）；入口 `studio.data.quanttide.com`（2026-09-24 起），CI 在 `studio/*` tag 上构建部署、分支与 PR 上跑门禁（format + analyze + test）。
 
 ### Site
 

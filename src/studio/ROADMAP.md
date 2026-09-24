@@ -17,10 +17,10 @@ Studio 是 qtdata 的**观测面**：意图里写得很清楚——「平台的�
 | 段 | 一句话 | 怎么算完 |
 |---|---|---|
 | **一段 · 门禁** | 先把判据立起来——CI 跑 format + analyze + test，与本地同三条 | CI 能拦下一处格式错误；三条命令本地绿 |
-| **二段 · 正名** | 借家法要连命名一起借：`widgets/` → `views/`，撤掉按形状切的自造分组；越界的 4 个文件拆开 | `lib/` 里没有 `widgets/`；最大文件 < 250 行 |
+| **二段 · 正名与分域** | 借家法要连命名一起借：`widgets/` → `views/`，撤掉按形状切的自造分组；越界的 4 个文件拆开；`lib/` 再按域分成 `project/ data/ business/ asset/` 四域加跨域 `app/` | `lib/` 里没有 `widgets/`；最大文件 < 250 行；`lib/` 下每个文件都落在某个域或 `app/` 里 |
 | **三段 · 选型** | 路由改 `go_router`（平台契约硬要求），状态管理落成显式声明 | `main.dart` 用 `MaterialApp.router`；深链用例通过 |
 | **四段 · 接通** | 结构补上 `repositories/` 与 `states/`，数据从 Provider 取，模型不再自留一份 | 界面数据全部来自 Provider；seed JSON 退出运行时 |
-| **五段 · 交付形态** | 正式域名与 IaC 收口 | `data.cloud.quanttide.com` 与兼容入口同版本；`manifests/terraform/` 可 plan |
+| **五段 · 交付形态** | 域名与 IaC 收口（入口 `studio.data.quanttide.com` 已接，旧域名 `data.quanttide.com` 去向待定） | `manifests/terraform/` 可 plan；旧域名要么改指 site 桶、要么下线 |
 | **六段 · 多端** | 四个平台目录补齐构建验证；`integration_test/` 从空到有第一个用例 | 每平台 `flutter build` 通过；`flutter test integration_test -d linux` 有绿用例 |
 
 ## 每段跑什么
@@ -45,7 +45,9 @@ cd src/provider && uvicorn app.main:app --reload
 
 **段二（正名与拆分）已过**（2026-09-24）——`widgets/` → `views/`、按形状切的自造分组撤掉、4 个越界文件拆完（最长 381 → **235** 行）、约束集中进 `CONTRIBUTING.md`。复验：三条门禁绿、测试断言 105 条未削弱、`lib/` 中文字面量 71 种一一对应（行为不变）。
 
-**现在站在段三（选型）的起点**：路由改 `go_router`、状态管理落成显式声明。往后的接通（`repositories/` + `states/` + 吃 Provider）、交付形态、多端三段都还没动——**界面仍跑在 seed JSON 上**。
+**同一天又把结构推进到分域**（2026-09-24）——`lib/` 重排成 `project/ data/ business/ asset/` 四域加跨域 `app/`，每域内部保持 `models/ views/ screens/`；`Deliverable` 从项目域归入资产域。复验：三条门禁绿（分域前后各一次）。
+
+**现在站在段三（选型）的起点**：路由改 `go_router`、状态管理落成显式声明。往后的接通（各域 `repositories/` + `states/` + 吃 Provider）、交付形态、多端三段都还没动——**界面仍跑在 seed JSON 上**。
 
 ## 与结构无关的欠账
 
@@ -59,7 +61,7 @@ cd src/provider && uvicorn app.main:app --reload
 
 ## 待决（不进 TODO）
 
-- **列表页叫什么**：`lib/screens/dashboard_screen.dart` / `DashboardScreen` 对的是界面上的**「我的项目」页**（列表，标题就是「我的项目」）——注意别跟详情页的第一个 Tab「总览」混（那是 `tabs/overview_tab.dart`）。文件名与界面文案对不上，改法二选一，**命名归你**：跟界面走 → `projects_screen.dart` / `ProjectsScreen`；跟页面分解原型走 → `index_screen.dart` / `IndexScreen`（`doc/index.md` 用的就是这个名字）。
-- **模型从哪来**：现在 `lib/models/project.dart` 自留一份（377 行 12 个类）。契约要求「不留第二份模型」，但要先有上游——抽一个 qtdata toolkit 包发布，还是直接吃 Provider 的 JSON 契约？这决定了四段的写法。
+- **列表页叫什么**：`lib/project/screens/dashboard_screen.dart` / `DashboardScreen` 对的是界面上的**「我的项目」页**（列表，标题就是「我的项目」）——注意别跟详情页的第一个 Tab「总览」混（那是 `lib/app/screens/overview_tab.dart`）。文件名与界面文案对不上，改法二选一，**命名归你**：跟界面走 → `projects_screen.dart` / `ProjectsScreen`；跟页面分解原型走 → `index_screen.dart` / `IndexScreen`（`doc/index.md` 用的就是这个名字）。
+- **模型从哪来**：五个域的 `models/` 各自自留一份（共 6 个文件，`project/` 与 `asset/` 各 2）。契约要求「不留第二份模型」，但要先有上游——抽一个 qtdata toolkit 包发布，还是直接吃 Provider 的 JSON 契约？这决定了四段的写法。
 - **包还是 Tab**：源码里的旧 ROADMAP 规划过 `qtdata-data` / `qtdata-asset` 两个独立 package，实现却把数据页、资产页做成了详情页的两个 Tab。事做了、形态变了——是认可 Tab 这个形态（删掉包的计划），还是仍要拆成包（Tab 退回壳）？
 - **IaC 归属**：`src/studio/manifests/terraform/` 还是 `apps/qtdata/manifests/terraform/`（Studio 与 Site 共用一个目录？）。

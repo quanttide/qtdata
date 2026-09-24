@@ -31,14 +31,15 @@ flutter test
 ## 结构
 
 ```
-lib/main.dart              装配 MaterialApp
-lib/screens/               页面外壳（我的项目列表页 + 项目详情页）
-lib/screens/tabs/          详情页 5 Tab：总览/数据/项目/商务/资产
-lib/views/                 界面部件（21 个文件，按 Bloc 家法的一层）
-lib/models/                数据模型（6 个文件；来源待定，见 ROADMAP 待决）
-assets/data/               界面数据（现在是 seed JSON，将来换成 Provider）
-doc/                       页面分解原型（index/project 两页，Flutter 实现之前的设计）
-test/                      部件与页面测试（views / screens / helpers，21 个用例）
+lib/main.dart                    装配 MaterialApp
+lib/project/                     项目域：models/ views/ screens/
+lib/data/                        数据域：models/ views/ screens/
+lib/business/                    商务域：models/ views/ screens/
+lib/asset/                       资产域：交付物与交付矩阵（三域 × 五阶段）
+lib/app/                         跨域共用：全局侧栏/断点、区块标题、详情页外壳、总览 Tab
+assets/data/                     界面数据（现在是 seed JSON，将来换成 Provider）
+doc/                             页面分解原型（index/project 两页，Flutter 实现之前的设计）
+test/{app,data,project,business,asset}/{models,views,screens}/   跟着 lib/ 同名同构（12 文件 21 用例）
 ```
 
 ## 文档索引
