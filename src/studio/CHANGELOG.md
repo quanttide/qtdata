@@ -1,5 +1,24 @@
 # Changelog
 
+## [studio/v0.1.0-rc.1] - 2026-09-24
+
+### 新增
+- 门禁进 CI：分支/PR 跑 format + analyze + test，`studio/*` tag 门禁通过后才构建部署（deploy-studio.yml 两作业形态）
+- 界面数据换成真实案例——全球法规情报中心：16 个市场、八类监控维度、来源优先级与四条异常预案，矩阵 3 维 × 5 阶段 15 格、交付物 4 项、时间线 6 阶段 14 项（商务数字为示例值，pricingNote 注明）
+
+### 重构
+- lib 按域重排为 project / data / business / asset 四域 + 跨域 app，文件只属一域；widgets 正名为 views，撤掉按形状切的自造分组，test/ 与 lib/ 同名同构
+- 越界文件拆分，最长文件降到 250 行以内
+- README / ROADMAP / STATUS / TODO 按新域结构重写，新增开发约定 CONTRIBUTING
+
+### 修复
+- 「总览」Tab 命名跟着实际走，清掉仪表盘残留
+- 补两处显式类型参数，消掉新静态检查规则命中的推断告警
+
+### 变更
+- 部署入口换到 studio.data.quanttide.com（CDN 新域名，HTTPS 实访 200）
+- 静态检查加严：strict 三条语言开关 + 三条规则；Flutter 升到 3.44.9 与 CI 对齐
+
 ## [studio/v0.1.0-beta.4] - 2026-08-08
 
 ### 重构
