@@ -9,7 +9,7 @@ Future<void> showDocDialog(
   required PhaseItem item,
 }) async {
   final files = _docFiles(item.name);
-  await showDialog(
+  await showDialog<void>(
     context: context,
     builder: (context) => Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),

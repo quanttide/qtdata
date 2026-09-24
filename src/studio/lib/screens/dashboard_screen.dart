@@ -68,7 +68,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   void _openDetail(Project project) {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => ProjectDetailScreen(project: project)),
+      MaterialPageRoute<void>(
+        builder: (_) => ProjectDetailScreen(project: project),
+      ),
     );
   }
 
