@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// 全局侧边栏：量 logo + 导航图标 + help，首页/详情页共用
 class Sidebar extends StatelessWidget {
-  /// 是否高亮仪表盘图标（当前两页均处于仪表盘上下文）
+  /// 是否高亮总览图标（当前两页均处于总览上下文）
   final bool active;
 
   const Sidebar({super.key, this.active = true});

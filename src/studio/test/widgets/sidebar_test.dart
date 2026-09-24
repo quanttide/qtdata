@@ -12,7 +12,7 @@ void main() {
     expect(find.byIcon(Icons.help_outline), findsOneWidget);
   });
 
-  testWidgets('active 高亮仪表盘图标，help 保持灰态', (tester) async {
+  testWidgets('active 高亮总览图标，help 保持灰态', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: Scaffold(body: Sidebar())));
 
     final dashboard = tester.widget<Icon>(

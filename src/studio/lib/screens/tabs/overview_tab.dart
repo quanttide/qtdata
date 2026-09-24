@@ -4,7 +4,7 @@ import '../../models/project.dart';
 import '../../widgets/cards/project_card.dart';
 import '../../widgets/common/status_badge.dart';
 
-/// 仪表盘：项目摘要 + 交付物明细
+/// 总览：项目摘要 + 交付物明细
 class OverviewTab extends StatelessWidget {
   final Project project;
 
