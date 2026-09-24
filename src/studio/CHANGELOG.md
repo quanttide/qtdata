@@ -1,5 +1,13 @@
 # Changelog
 
+## [studio/v0.1.0-rc.3] - 2026-09-24
+
+### 修复
+- 正文全部文字不可见（白屏的第二段）：主题 `fontFamily: 'Inter'` 从未打包，中英文实际靠 fonts.gstatic.com 的 Roboto/NotoSansSC 顶着，gstatic 不通时布局渲染但一字不见——改为自带 Noto Sans SC 子集（400/500/600/700 四档 + 界面 6 个 emoji 字形，共 612KB），文字渲染零外部依赖；屏蔽 gstatic 复验：标题/卡片/徽章/数字/日期/💰 全部渲染
+
+### 变更
+- 部署 workflow：`assets/fonts/` 单独 no-cache，子集增字后不被一年长缓存挡住
+
 ## [studio/v0.1.0-rc.2] - 2026-09-24
 
 ### 修复
