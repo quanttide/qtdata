@@ -89,6 +89,9 @@ jobs:
       - run: ossutil cp src/studio/build/web/index.html oss://qtdata-studio/index.html -f --meta=Cache-Control:no-cache
       - run: ossutil cp src/studio/build/web/flutter_bootstrap.js oss://qtdata-studio/flutter_bootstrap.js -f --meta=Cache-Control:no-cache
 
+      # 字体子集随文案增字会变，单独 no-cache（文件小，304 重验成本可忽略）
+      - run: ossutil cp src/studio/build/web/assets/fonts/ oss://qtdata-studio/assets/fonts/ -r -f --meta=Cache-Control:no-cache
+
       - name: Refresh CDN
         run: |
           pip install aliyun-python-sdk-cdn

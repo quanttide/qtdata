@@ -21,7 +21,7 @@ class _App extends StatelessWidget {
         ),
         scaffoldBackgroundColor: const Color(0xFFF1F5F9),
         useMaterial3: true,
-        fontFamily: 'Inter',
+        fontFamily: 'NotoSansSC',
       ),
       home: const DashboardScreen(),
     );

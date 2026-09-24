@@ -56,3 +56,9 @@ flutter test
 - 抽出去的东西必须发布、按版本号引，**不允许 path 依赖**
 - 接外部系统先看有没有官方 SDK
 - 已许可依赖清单待补（见 TODO 四段）
+
+## 自带字体
+
+- `fonts/` 放 Noto Sans SC **子集**四档字重（400/500/600/700，约 150KB/档），并把界面用到的 emoji 字形（💰💼📄📊📋📥）合并进同一 family；主题 `fontFamily: 'NotoSansSC'`
+- 目的：文字渲染**不依赖 fonts.gstatic.com**——gstatic 打不通的机器上，布局与文字必须全部可见（屏蔽 gstatic 的 CDP 截图是验收手段）
+- 维护：新增文案出现子集外的字符时，用 fontTools 重新子集化并同步四档，否则国外 CDN 不通的机器上该字符显示为空（源：google/fonts 的 `NotoSansSC[wght].ttf` + `NotoEmoji[wght].ttf`，实例化 → 按字符表子集 → 合并）
