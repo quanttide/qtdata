@@ -1,5 +1,21 @@
 # Changelog
 
+## [studio/v0.1.0] - 2026-09-24
+
+### 正式版口径
+- **形态**：观测面展示件——数据为仓内 seed（真实案例：全球法规情报中心），商务数字为示例值（`pricingNote` 注明）；接通 Provider 属 ROADMAP 段四，完成后另发接通版
+- **支持矩阵**：Web（产品形态）+ Linux 桌面（本地开发）；android / ios / macos / windows 脚手架在仓、不承诺支持
+- **交付底座**：IaC v1（`manifests/terraform/`，OSS 三件套 import 后 `terraform plan` 零 diff）；CDN / DNS / 证书按家族惯例控制台配置、事实记录在其 README
+
+### 变更（自 rc.6）
+- SPA 深链兜底由临时对象复制换成 CDN 正统改写：`back_to_origin_url_rewrite`（`^/projects/.*` → `/index.html`，两个域名已配生效，参数记录在 manifests README）；workflow 删除对象复制步骤
+- 三件套（STATUS / ROADMAP / TODO）按段三/四/五结果收口：段三选型、段四口径拍板、段五 IaC 与域名定案
+
+### 发布工程（rc 期累计，明细见 rc.2–rc.6）
+- 自带 CanvasKit 与 Noto Sans SC 字体子集，文字与引擎零国外 CDN 依赖；屏蔽 gstatic 验收脚本七项全绿
+- 门禁四条进 CI（format / analyze / test / 字体字符），`main.dart.js`、字体、入口文件全部 no-cache
+- `integration_test` 首例真跑 Linux 绿；测试三层边界成文
+
 ## [studio/v0.1.0-rc.6] - 2026-09-24
 
 ### 修复
