@@ -21,10 +21,6 @@ flutter test
 **判据**：`flutter analyze` 零告警 ✓、`dart format --set-exit-if-changed` 无差异 ✓、`flutter test` 21 个用例全绿 ✓（三条 2026-09-24 实测）。
 **影响**：`src/studio/analysis_options.yaml`、`lib/screens/dashboard_screen.dart`、`lib/widgets/dialogs/doc_dialog.dart`。
 
-**改什么**：CI 钉的 Flutter 是 `3.44.8`，本地装的是 `3.44.9`——「本地从严、与 CI 一致」这条要求版本也对齐。
-**判据**：workflow 里的 `flutter-version` 与 `flutter --version` 输出同一版。
-**影响**：`.github/workflows/deploy-studio.yml`。
-
 ## 二、结构（借 Bloc 家法）
 
 **改什么**：界面那一层正名 `widgets/` → `views/`，并撤掉按形状切的自造分组（`cards/` `common/` `dialogs/`）——形状不是层也不是聚合，家法里没有这三个名词。
