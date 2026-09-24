@@ -73,7 +73,8 @@ jobs:
           flutter-version: '3.44.9'
 
       - run: cd src/studio && flutter pub get
-      - run: cd src/studio && flutter build web
+      # --no-web-resources-cdn：CanvasKit 用仓内本地 canvaskit/，不从 www.gstatic.com 拉（国外 CDN 打不开的机器开屏白屏）
+      - run: cd src/studio && flutter build web --no-web-resources-cdn
 
       - uses: manyuanrong/setup-ossutil@v3.0
         with:

@@ -1,5 +1,11 @@
 # Changelog
 
+## [studio/v0.1.0-rc.2] - 2026-09-24
+
+### 修复
+- 开屏白屏：`flutter build web` 默认 `--web-resources-cdn`，CanvasKit 从 `www.gstatic.com` 加载，国外 CDN 不通的机器一直白屏——CI 构建改用 `--no-web-resources-cdn`，改用仓内本地 `canvaskit/`（`useLocalCanvasKit: true`）
+- web 加载期标题：`index.html` 静态 title 与 `apple-mobile-web-app-title` 由 `qtdata_studio` 改为「量潮数据」，不再等 Flutter 启动后才换名
+
 ## [studio/v0.1.0-rc.1] - 2026-09-24
 
 ### 新增
