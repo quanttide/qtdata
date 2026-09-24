@@ -64,7 +64,7 @@ CI 首跑成功（run `35968122408`：Quality Gates 六步全绿，部署作业�
 **判据**：定下它的去向：a) 改指 site 桶（那时把它的刷新从 studio workflow 摘掉，交给 site 的部署线）；b) 直接下线（DNS 与 CDN 侧删掉）。
 **影响**：`.github/workflows/deploy-studio.yml`、DNS/CDN 侧（另需 `src/site` 的部署线）。
 
-**改什么**：IaC 落地——建 `manifests/terraform/`，把 OSS 桶与 CDN 的现状写成代码。
+**改什么**：IaC 落地——建 `manifests/terraform/`，把 OSS 桶与 CDN 的现状写成代码。**已落地（2026-09-24，家族范围）**：`src/studio/manifests/terraform/` 三件套（bucket+website / public_access_block / acl）import 后 `terraform plan` 零 diff；判据里的 CDN/DNS 部分按家族惯例（qtcloud/qtclass「无组织级 IaC 先例」）改为**记录在该目录 README**（含已配的 SPA 改写函数与参数、DNS RecordId、证书事实），不入码——私钥不入库是家族策略。
 **判据**：`src/studio/manifests/terraform/`（或 `apps/qtdata/manifests/terraform/`，归属待定）存在且 `terraform plan` 能跑出与线上一致的差异。
 **影响**：新增 IaC 目录。
 

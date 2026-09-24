@@ -42,6 +42,7 @@ lib/asset/                       资产域：交付物与交付矩阵（三域 �
 lib/app/                         跨域共用：路由表（router.dart）、全局侧栏/断点、区块标题、详情页外壳、总览 Tab
 assets/data/                     界面数据（现在是 seed JSON，将来换成 Provider）
 fonts/                           自带字体：Noto Sans SC 子集（400/500/600/700 四档，含 6 个 emoji 字形），文字渲染不依赖 fonts.gstatic.com
+manifests/terraform/             IaC v1：OSS 三件套（plan 零 diff）；CDN/DNS/证书事实与 SPA 改写配置见其 README
 doc/                             页面分解原型（index/project 两页，Flutter 实现之前的设计）
 test/{app,data,project,business,asset}/{views,screens}/   跟着 lib/ 同名同构（13 文件 26 用例）+ test/app/router_test.dart 深链
 ```

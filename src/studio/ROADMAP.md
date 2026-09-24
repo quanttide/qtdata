@@ -49,7 +49,9 @@ cd src/provider && go run ./cmd/server
 
 **段三（选型）已过**（2026-09-24）：`go_router` ^18 + `MaterialApp.router`，路由表 `/`（列表）+ `/projects/:id?tab=<slug>`（深链直达 Tab，点 Tab 同步 URL），深链/未知 id 用例 5 个（`test/app/router_test.dart`）；状态管理显式声明——**0.1.0 继续 `setState`**，偏离 Bloc 的理由成文（CONTRIBUTING 选型段）。同日连带：详情页头部拆件守住单文件 ≤250、`integration_test/` 首用例真跑 Linux 绿（启动→看板→详情→切 Tab）、支持矩阵写进 README（**0.1.0 只承诺 Web + Linux**）、字体字符门禁进 CI。
 
-**段四（接通）拍板**（2026-09-24，正式版口径）：0.1.0 以**展示件**形态发布——数据仍跑 seed JSON、商务数字为示例值（`pricingNote` 注明），不接 Provider；`repositories/` + `states/` + 模型归属（待决第二条）在段四做，做完发接通版。段五余 IaC 与域名去向，段六余四平台构建验证（0.1.0 不支持，见 README 支持矩阵）。
+**段四（接通）拍板**（2026-09-24，正式版口径）：0.1.0 以**展示件**形态发布——数据仍跑 seed JSON、商务数字为示例值（`pricingNote` 注明），不接 Provider；`repositories/` + `states/` + 模型归属（待决「模型从哪来」）在段四做，做完发接通版。
+
+**段五（交付形态）已过**（2026-09-24）：`manifests/terraform/` 建立、import、**plan 零 diff**（家族范围：OSS 入码，CDN/DNS/证书记录制）；SPA 深链改写 `back_to_origin_url_rewrite` 配到两个域名（临时对象复制步骤已从 workflow 删除）；旧域名判据以「维持过渡态至 site 上线」定案收口，执行挂在 site 部署线。段六判据的 integration 首例与支持矩阵同日落地（见上段），四平台构建验证是 0.1.0 之后的唯一余项。
 
 ## 与结构无关的欠账
 
@@ -59,8 +61,8 @@ cd src/provider && go run ./cmd/server
 - 四个平台目录（android 19 / ios 40 / macos 28 / windows 18 个文件）建仓起未构建验证过——**0.1.0 支持矩阵只含 Web + Linux**（已写进 README），四平台验证留六段
 - ~~`integration_test/` 是空目录~~ **已清**（2026-09-24）：首用例 `app_flow_test.dart` `-d linux` 真跑绿；两套测试边界写明（`tests/README.md` + `integration_test/README.md`）
 - `doc/` 是页面分解产物（两页的区块、交互、数据），保留——身份说明已补（`doc/index.md` 开头）
-- 没有 IaC 目录（段五）
-- **SPA 深链兑底现为对象复制**（2026-09-24）：CDN 侧查不到可用的路径改写函数（`FunctionName` 枚举未公开，33 个候选只认 `edge_function`/`https_force`），部署时把 `index.html` 按 seed 项目 id 复制为 `projects/<id>` 对象——确定、可版本化，但新增顶层客户端路由要同步 workflow；拿到 CDN 路径改写的正统函数名后可替换
+- ~~没有 IaC 目录（段五）~~ **已清**（2026-09-24）：`manifests/terraform/` v1 落地，OSS 三件套 import 后 plan 零 diff；CDN/DNS/证书按家族惯例记录于其 README（含 SPA 改写配置）
+- **SPA 深链兑底已换正统机制**（2026-09-24）：CDN 函数 `back_to_origin_url_rewrite`（家族 static-site 模块同款）已配到两个域名——`^/projects/.*` → `/index.html`（flag=break），探测路径实测 200 返回应用壳；临时的对象复制步骤已从 workflow 删除。根路径 `^/$` 的兑底机制仍未知（不在 CDN 函数配置里，疑在边缘函数平台）——不动它，归属待查
 
 ## 待决（不进 TODO）
 

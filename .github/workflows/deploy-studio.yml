@@ -98,25 +98,6 @@ jobs:
       # main.dart.js 同理：内容随版本变，一年长缓存会让老用户继续跑旧代码（beta.3 修过 index 的同类问题）
       - run: ossutil cp src/studio/build/web/main.dart.js oss://qtdata-studio/main.dart.js -f --meta=Cache-Control:no-cache
 
-      # SPA 深链兑底：CDN 侧无可用的路径改写函数（FunctionName 枚举未公开，逐个探测
-      # 仅 edge_function/https_force 合法），改用对象复制——按 seed 项目 id 把 index.html
-      # 复制为 projects/<id> 对象（no-cache + text/html），/projects/:id?tab= 冷启动/刷新/
-      # 分享返回应用壳；新增顶层客户端路由时同步这里
-      - name: Seed SPA deep-link entries
-        run: |
-          python3 - <<'PY'
-          import json, subprocess
-          ids = [p['id'] for p in json.load(open('src/studio/assets/data/seed_projects.json'))['projects']]
-          for pid in ids:
-              subprocess.run([
-                  'ossutil', 'cp', 'src/studio/build/web/index.html',
-                  f'oss://qtdata-studio/projects/{pid}', '-f',
-                  '--meta', 'Content-Type:text/html',
-                  '--meta', 'Cache-Control:no-cache',
-              ], check=True)
-          print('deep-link entries seeded:', ids)
-          PY
-
       - name: Refresh CDN
         run: |
           pip install aliyun-python-sdk-cdn

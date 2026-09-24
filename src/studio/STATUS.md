@@ -54,7 +54,7 @@
 | 路由统一使用 go_router | `lib/app/router.dart` 的 `buildRouter()`：`/` 列表 + `/projects/:id?tab=<slug>` 深链，`main.dart` 用 `MaterialApp.router`，深链/未知 id 用例 5 个 | ✓ 2026-09-24 |
 | 桶命名 `{产品线}-{用途}` | `qtdata-studio` | ✓ |
 | 域名 | **入口 `studio.data.quanttide.com`**（2026-09-24 起：CDN 域名 + DNS CNAME + 单域名证书 + 私有回源 + 根改写 + TLS1.3）；`data.quanttide.com` 仍指同一个桶，两个域名都刷缓存 | ✓ 与家族惯例一致（qtclass 用 `studio.class.quanttide.com`）——但**契约正文只写了 `{产品}.cloud.quanttide.com`，没写 studio 子域这条惯例，待补** |
-| IaC 目录 `manifests/terraform/` | qtdata 下无 `manifests/` | ✗ 缺 |
+| IaC 目录 `manifests/terraform/` | `src/studio/manifests/terraform/` 存在：OSS 三件套（website + public_access_block + acl）全部 import 后 **`terraform plan` 零 diff**；CDN/DNS/证书按家族惯例（qtcloud/qtclass）控制台配置、事实记录在其 README；SPA 深链改写 `back_to_origin_url_rewrite` 已配两域名 | ✓ 2026-09-24（家族范围） |
 | 门禁：Dart = `dart format` + `flutter analyze`，本地从严与 CI 一致 | format + analyze + test + 字体字符四条进 CI（分支/PR 跑门禁、tag 才部署）；本地与 CI 同版 Flutter 3.44.9 | ✓ 2026-09-24 |
 | 可观测与安全（结构化审计日志 + SLS；密码 PBKDF2） | 无后端、无认证、无密码 | — 豁免 |
 
