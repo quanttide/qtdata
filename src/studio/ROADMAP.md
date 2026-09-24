@@ -43,11 +43,14 @@ cd src/provider && uvicorn app.main:app --reload
 
 **段一（门禁）已过**——`quality-gates` 进了 CI 并首跑成功（分支与 PR 触发、`studio/*` tag 才部署），本地同版三条全绿；`analysis_options.yaml` 也加严跑绿。页面部分同样到位（5 Tab / 移动端适配 / 12 个测试文件 21 个用例）。
 
-**现在站在段二（正名）的起点**：`widgets/` → `views/`、撤掉自造的形状分组、4 个越界文件拆开。往后的选型（`go_router`）、接通（`repositories/` + `states/` + 吃 Provider）、交付形态、多端四段都还没动——功能上领先，工程上落后：**界面跑在数据模型前面**。
+**段二（正名与拆分）已过**（2026-09-24）——`widgets/` → `views/`、按形状切的自造分组撤掉、4 个越界文件拆完（最长 381 → **235** 行）、约束集中进 `CONTRIBUTING.md`。复验：三条门禁绿、测试断言 105 条未削弱、`lib/` 中文字面量 71 种一一对应（行为不变）。
+
+**现在站在段三（选型）的起点**：路由改 `go_router`、状态管理落成显式声明。往后的接通（`repositories/` + `states/` + 吃 Provider）、交付形态、多端三段都还没动——**界面仍跑在 seed JSON 上**。
 
 ## 与结构无关的欠账
 
-- 部署只刷 `data.quanttide.com`（迁移期兼容入口），正式域名 `data.cloud.quanttide.com` 未接
+- 入口已是 `studio.data.quanttide.com`（2026-09-24 接：CDN 域名 + DNS CNAME + 单域名证书 + 私有回源 + 根改写 + TLS1.3）；`data.quanttide.com` 仍指同一个桶、两个域名都刷缓存，是过渡态——按家族惯例这个位置该是 **site 的入口**
+- 平台契约正文只写了 `{产品}.cloud.quanttide.com`，**没写 studio 子域那条惯例**（家族已在用：`studio.class`、`studio.health`、`studio.agent.cloud`），待补
 - CI 无 `FLUTTER_WEB_CANVASKIT_URL`（CanvasKit 未自托管）
 - 四个平台目录（android 19 / ios 40 / macos 28 / windows 18 个文件）建仓起未构建验证过
 - `integration_test/` 是空目录，`pubspec.yaml` 的依赖已声明；仓库根 `tests/`（pytest + xdotool）另有一套跨进程 E2E，边界要划清

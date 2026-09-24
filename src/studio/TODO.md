@@ -22,23 +22,18 @@ CI 首跑成功（run `35968122408`：Quality Gates 六步全绿，部署作业�
 
 **这一段没有欠账了**，往下见二～六段。
 
-## 二、结构（借 Bloc 家法）
+## 二、结构（借 Bloc 家法）——已落地 2026-09-24
 
-**改什么**：界面那一层正名 `widgets/` → `views/`，并撤掉按形状切的自造分组（`cards/` `common/` `dialogs/`）——形状不是层也不是聚合，家法里没有这三个名词。
-**判据**：`ls src/studio/lib` 里没有 `widgets`；全仓 `grep -rn "widgets/" src/studio/lib src/studio/test` 无命中。
-**影响**：`lib/widgets/**` 全部 12 个文件、`test/widgets/**` 8 个文件、`lib/screens/**` 的 import。
+四件都做完了（pi 执行，Hermes 复验）：
 
-**改什么**：`lib/models/project.dart` 377 行装 12 个类，按聚合拆开（先按现状拆成多个文件，边界待模型来源定了再写实）。
-**判据**：`find src/studio/lib -name "*.dart" -exec wc -l {} + | sort -rn | head -1` 的最大值 < 250。
-**影响**：`lib/models/project.dart`（拆）、`lib/screens/**` 与 `test/**` 的 import。
+- **正名**：`lib/widgets/` → `lib/views/`，撤掉 `cards/`／`common/`／`dialogs/` 三个按形状切的自造分组，12 个文件平铺进 `views/`；`test/widgets/` → `test/views/`（测试跟着分层）
+- **拆模型**：`lib/models/project.dart` 377 行 → 6 个文件（`project` / `project_status` / `project_matrix` / `blueprint` / `project_phase` / `business_info`），只按现有类聚集拆，未改字段与 JSON 结构
+- **拆越界件**：`business_tab.dart` 381 行 → 7 个文件（外壳 + 6 张卡）；`dashboard_screen.dart` 337 行 → 3 个；`matrix_card.dart` 303 行 → 2 个
+- **横切集中一处**：新建 `CONTRIBUTING.md`，收口分层名义、选型现状、门禁三连、依赖规矩
 
-**改什么**：`lib/screens/tabs/business_tab.dart` 381 行同上一并拆。
-**判据**：同上一条；且 `flutter test` 全绿。
-**影响**：`lib/screens/tabs/business_tab.dart`。
+**复验证据**：`flutter analyze` 零告警、`dart format` 无差异、`flutter test` 21/21 绿（Hermes 自己重跑）；最长文件由 381 降到 **235**（全部 <250）；测试断言数 105 → 105 未削弱；全 `lib/` 中文字面量 71 种一一对应、无增无减（行为不变的可比信号）。
 
-**改什么**：横切约定集中一处——新建本仓的开发约定文件，收口那些散在 README、`analysis_options.yaml`、文件头注释里的约束。
-**判据**：文件存在，且 `docs/dev-guide/` 或仓库根能链到它；里面至少包含：分层名义、选型声明（见第三节）、门禁三连。
-**影响**：新增 `src/studio/CONTRIBUTING.md`（或 `docs/dev-guide/studio.md`）。
+**这段的两处命名动作**（超出「只改路径」，已认下）：跨文件搬出的私有类转公开（`_QuotationCard` → `QuotationCard` 等），以及 `_MatrixCell` → `MatrixDataCell`（与模型类 `MatrixCell` 撞名）。
 
 ## 三、选型（默认选型成文）
 
@@ -60,9 +55,9 @@ CI 首跑成功（run `35968122408`：Quality Gates 六步全绿，部署作业�
 **判据**：约定文件或 README 里有一张「已许可依赖」表，与 `pubspec.yaml` 逐条对得上。
 **影响**：`src/studio/README.md`（或约定文件）。
 
-**改什么**：正式域名接入——CDN 刷新列表加 `data.cloud.quanttide.com`（现在只刷兼容入口 `data.quanttide.com`）。
-**判据**：workflow 的域名列表里两条都在；两个域名都能打开同一版本。
-**影响**：`.github/workflows/deploy-studio.yml`（另需 DNS／CDN 侧配置）。
+**改什么**：`data.quanttide.com` 的去向——它现在还指着 studio 桶，按家族惯例这个位置应该是 **site 的入口**（`src/site`，尚未部署）。现在两个域名都刷 studio 的缓存，是过渡态。
+**判据**：定下它的去向：a) 改指 site 桶（那时把它的刷新从 studio workflow 摘掉，交给 site 的部署线）；b) 直接下线（DNS 与 CDN 侧删掉）。
+**影响**：`.github/workflows/deploy-studio.yml`、DNS/CDN 侧（另需 `src/site` 的部署线）。
 
 **改什么**：IaC 落地——建 `manifests/terraform/`，把 OSS 桶与 CDN 的现状写成代码。
 **判据**：`src/studio/manifests/terraform/`（或 `apps/qtdata/manifests/terraform/`，归属待定）存在且 `terraform plan` 能跑出与线上一致的差异。
