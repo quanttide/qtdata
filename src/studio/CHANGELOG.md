@@ -1,5 +1,19 @@
 # Changelog
 
+## [studio/v0.1.0-rc.4] - 2026-09-24
+
+### 新增
+- go_router 路由表（平台契约）：`/` 列表 + `/projects/:id?tab=<slug>` 深链直达详情 Tab，点 Tab 同步 URL；`main.dart` 改 `MaterialApp.router`；深链/未知 id/Tab 同步用例 5 个（总用例 26）
+- `integration_test/` 首个端到端用例：启动 → 看板 → 详情 → 切资产 Tab，`-d linux` 真跑绿；三套测试边界写明（根 `tests/` / `test/` / `integration_test/`）
+- 字体字符门禁 `tool/check_font_chars.py` 进 CI（quality-gates 第四条）：源码字符串与 seed 字符必须在自带字体子集内；字体四档按新字符表重新子集（667 源字符）
+- 屏蔽 gstatic 的线上验收脚本 `scripts/check-web-gstatic-blocked.mjs`（标题/布局/文字/本地 canvaskit 等七项 + 截图）
+
+### 变更
+- 状态管理选型成文：0.1.0 继续 `setState`，偏离 Bloc 默认选型的理由写进 CONTRIBUTING；已许可依赖五行列明
+- 支持矩阵写明：0.1.0 只承诺 Web + Linux，android/ios/macos/windows 不支持（六段验证后再入）
+- `main.dart.js` 单独 no-cache——修一年长缓存让老用户跑旧代码的隐患（beta.3 修过 index 的同类问题）
+- 详情页头部拆出 `detail_header.dart`（单文件 ≤250 约定）；三件套同步段三/四进度与已决事项
+
 ## [studio/v0.1.0-rc.3] - 2026-09-24
 
 ### 修复
