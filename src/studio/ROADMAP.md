@@ -41,7 +41,9 @@ cd src/provider && uvicorn app.main:app --reload
 
 ## 现在在哪
 
-**段零**——页面都画好了（5 Tab / 移动端适配 / 12 个测试文件 21 个用例，2026-09-24 实测全绿；`flutter analyze` 零告警、`dart format` 无差异）。但三条门禁还没进 CI，正名、路由、接通三项也没做——功能上领先，工程上落后：**界面跑在数据模型前面**。
+**段一（门禁）已过**——`quality-gates` 进了 CI 并首跑成功（分支与 PR 触发、`studio/*` tag 才部署），本地同版三条全绿；`analysis_options.yaml` 也加严跑绿。页面部分同样到位（5 Tab / 移动端适配 / 12 个测试文件 21 个用例）。
+
+**现在站在段二（正名）的起点**：`widgets/` → `views/`、撤掉自造的形状分组、4 个越界文件拆开。往后的选型（`go_router`）、接通（`repositories/` + `states/` + 吃 Provider）、交付形态、多端四段都还没动——功能上领先，工程上落后：**界面跑在数据模型前面**。
 
 ## 与结构无关的欠账
 

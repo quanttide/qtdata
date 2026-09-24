@@ -11,15 +11,16 @@ flutter analyze
 flutter test
 ```
 
-## 一、门禁（最高优先：没有门禁，其余改动都无判据）
+## 一、门禁（已落地 2026-09-24）
 
-**改什么**：CI 加一条质量作业，跑 format + analyze + test；与本地同三条命令。
-**判据**：`.github/workflows/` 里存在跑上述三连的 workflow；故意提交一处格式错误能被 CI 拦下。
-**影响**：`.github/workflows/deploy-studio.yml`（或新增 `ci-studio.yml`）。
+`deploy-studio.yml` 改成两作业形态，对齐 qtcloud-work 的 `release-studio.yml`：
 
-**改什么**：`analysis_options.yaml` 已加严并跑绿——`strict-casts` / `strict-inference` / `strict-raw-types` 三条语言级开关，加 `prefer_single_quotes` / `unawaited_futures` / `always_declare_return_types` 三条规则（2026-09-24 落地）。首跑命中 2 处推断告警，**按告警改代码、没关规则**：`MaterialPageRoute<void>`、`showDialog<void>` 补上显式类型参数。
-**判据**：`flutter analyze` 零告警 ✓、`dart format --set-exit-if-changed` 无差异 ✓、`flutter test` 21 个用例全绿 ✓（三条 2026-09-24 实测）。
-**影响**：`src/studio/analysis_options.yaml`、`lib/screens/dashboard_screen.dart`、`lib/widgets/dialogs/doc_dialog.dart`。
+- `quality-gates`——分支与 PR 上跑 `dart format --set-exit-if-changed --output=none .` + `flutter analyze` + `flutter test`
+- `build-and-deploy`——`needs: quality-gates`，且只在 `studio/*` tag 上触发（分支推送只跑到门禁为止）
+
+CI 首跑成功（run `35968122408`：Quality Gates 六步全绿，部署作业按设计 skipped）。`analysis_options.yaml` 同期加严并跑绿（strict 三条 + 三条规则，命中 2 处推断告警按告警改代码）。
+
+**这一段没有欠账了**，往下见二～六段。
 
 ## 二、结构（借 Bloc 家法）
 

@@ -13,7 +13,7 @@
 | `lib/` 总行数 | 2833 |
 | 最长的四个文件 | `screens/tabs/business_tab.dart` 381、`models/project.dart` 377、`screens/dashboard_screen.dart` 335、`widgets/cards/matrix_card.dart` 303 |
 | `test/` | 12 个文件 21 个用例，与 `lib/` 同构：`widgets/` 8、`screens/` 3、`helpers/` 1 |
-| 门禁实况（2026-09-24 实测） | `flutter analyze` 零告警、`dart format --set-exit-if-changed` 无差异、`flutter test` 21 个用例全绿——**用 Flutter 3.44.9 跑的，CI 也钉 3.44.9**（本地与 CI 同版）；但**三条都还没进 CI**，全靠手工跑 |
+| 门禁实况（2026-09-24 实测） | 三条已**进 CI**：`deploy-studio.yml` 的 `quality-gates` 跑 `dart format --set-exit-if-changed` + `flutter analyze` + `flutter test`，分支与 PR 触发、tag 才部署；首跑成功（run `35968122408`，部署作业 skipped）。本地同日同版（Flutter 3.44.9）三条全绿 |
 | 运行时依赖 | 2 个：`flutter`、`cupertino_icons`（无网络、无状态管理、无本地存储） |
 | `doc/` | 页面分解产物（index/project 两页 + 4 个 js + 样式表），Flutter 实现之前的设计版 |
 | `integration_test/` | 空目录——`pubspec.yaml` 的依赖已声明，无用例 |
