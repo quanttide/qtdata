@@ -17,9 +17,13 @@ flutter test
 **判据**：`.github/workflows/` 里存在跑上述三连的 workflow；故意提交一处格式错误能被 CI 拦下。
 **影响**：`.github/workflows/deploy-studio.yml`（或新增 `ci-studio.yml`）。
 
-**改什么**：`analysis_options.yaml` 去掉模板原文的注释块，改成实际启用的规则集（现只 `include: package:flutter_lints/flutter.yaml`）。
-**判据**：文件行数 < 10，且 `flutter analyze` 仍零告警。
-**影响**：`analysis_options.yaml`。
+**改什么**：`analysis_options.yaml` 已加严并跑绿——`strict-casts` / `strict-inference` / `strict-raw-types` 三条语言级开关，加 `prefer_single_quotes` / `unawaited_futures` / `always_declare_return_types` 三条规则（2026-09-24 落地）。首跑命中 2 处推断告警，**按告警改代码、没关规则**：`MaterialPageRoute<void>`、`showDialog<void>` 补上显式类型参数。
+**判据**：`flutter analyze` 零告警 ✓、`dart format --set-exit-if-changed` 无差异 ✓、`flutter test` 21 个用例全绿 ✓（三条 2026-09-24 实测）。
+**影响**：`src/studio/analysis_options.yaml`、`lib/screens/dashboard_screen.dart`、`lib/widgets/dialogs/doc_dialog.dart`。
+
+**改什么**：CI 钉的 Flutter 是 `3.44.8`，本地装的是 `3.44.9`——「本地从严、与 CI 一致」这条要求版本也对齐。
+**判据**：workflow 里的 `flutter-version` 与 `flutter --version` 输出同一版。
+**影响**：`.github/workflows/deploy-studio.yml`。
 
 ## 二、结构（借 Bloc 家法）
 

@@ -12,7 +12,8 @@
 | `lib/` Dart 文件 | 21 |
 | `lib/` 总行数 | 2833 |
 | 最长的四个文件 | `screens/tabs/business_tab.dart` 381、`models/project.dart` 377、`screens/dashboard_screen.dart` 335、`widgets/cards/matrix_card.dart` 303 |
-| `test/` | 12 个文件，与 `lib/` 同构：`widgets/` 8、`screens/` 3、`helpers/` 1 |
+| `test/` | 12 个文件 21 个用例，与 `lib/` 同构：`widgets/` 8、`screens/` 3、`helpers/` 1 |
+| 门禁实况（2026-09-24 实测） | `flutter analyze` 零告警、`dart format --set-exit-if-changed` 无差异、`flutter test` 21 个用例全绿——但**三条都还没进 CI**，全靠手工跑 |
 | 运行时依赖 | 2 个：`flutter`、`cupertino_icons`（无网络、无状态管理、无本地存储） |
 | `doc/` | 页面分解产物（index/project 两页 + 4 个 js + 样式表），Flutter 实现之前的设计版 |
 | `integration_test/` | 空目录——`pubspec.yaml` 的依赖已声明，无用例 |
@@ -29,7 +30,7 @@
 | 同一目录不得混用层名与聚合名（硬禁） | `lib/` 下全是层名／形状名，无聚合名——停在第一阶段，**未触犯** | ✓ |
 | 测试跟着分层 | `test/{widgets,screens,helpers}` 与 `lib/{widgets,screens}` 同构 | ✓ |
 | 组装与实现分离 | `main.dart` 29 行只装配 `MaterialApp`，界面在 `screens/` | ✓ |
-| 横切约束集中一处 | 无此物；`analysis_options.yaml` 是 Flutter 模板原文（只 `include: flutter_lints`），未定制 | ✗ 缺 |
+| 横切约束集中一处 | 无约定文件；`analysis_options.yaml` 已加严（strict-casts／strict-inference／strict-raw-types + 三条规则），约束仍散在 README 与注释里 | ✗ 缺 |
 
 ## 依赖契约
 
