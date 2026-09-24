@@ -36,10 +36,6 @@ CI 首跑成功（run `35968122408`：Quality Gates 六步全绿，部署作业�
 **判据**：同上一条；且 `flutter test` 全绿。
 **影响**：`lib/screens/tabs/business_tab.dart`。
 
-**改什么**：页面名跟着 Tab 走——`screens/dashboard_screen.dart` 的文件名与类名还留在「dashboard」，而 Tab 早已叫「总览」。
-**判据**：全仓无 `dashboard_screen` 字样（`grep -rn "dashboard_screen" src/studio` 无命中）。
-**影响**：`lib/screens/dashboard_screen.dart`（改名）、`lib/main.dart`、`test/screens/dashboard_screen_test.dart`。
-
 **改什么**：横切约定集中一处——新建本仓的开发约定文件，收口那些散在 README、`analysis_options.yaml`、文件头注释里的约束。
 **判据**：文件存在，且 `docs/dev-guide/` 或仓库根能链到它；里面至少包含：分层名义、选型声明（见第三节）、门禁三连。
 **影响**：新增 `src/studio/CONTRIBUTING.md`（或 `docs/dev-guide/studio.md`）。

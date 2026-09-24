@@ -56,6 +56,7 @@ cd src/provider && uvicorn app.main:app --reload
 
 ## 待决（不进 TODO）
 
+- **列表页叫什么**：`lib/screens/dashboard_screen.dart` / `DashboardScreen` 对的是界面上的**「我的项目」页**（列表，标题就是「我的项目」）——注意别跟详情页的第一个 Tab「总览」混（那是 `tabs/overview_tab.dart`）。文件名与界面文案对不上，改法二选一，**命名归你**：跟界面走 → `projects_screen.dart` / `ProjectsScreen`；跟页面分解原型走 → `index_screen.dart` / `IndexScreen`（`doc/index.md` 用的就是这个名字）。
 - **模型从哪来**：现在 `lib/models/project.dart` 自留一份（377 行 12 个类）。契约要求「不留第二份模型」，但要先有上游——抽一个 qtdata toolkit 包发布，还是直接吃 Provider 的 JSON 契约？这决定了四段的写法。
 - **包还是 Tab**：源码里的旧 ROADMAP 规划过 `qtdata-data` / `qtdata-asset` 两个独立 package，实现却把数据页、资产页做成了详情页的两个 Tab。事做了、形态变了——是认可 Tab 这个形态（删掉包的计划），还是仍要拆成包（Tab 退回壳）？
 - **IaC 归属**：`src/studio/manifests/terraform/` 还是 `apps/qtdata/manifests/terraform/`（Studio 与 Site 共用一个目录？）。
