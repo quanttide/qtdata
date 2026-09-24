@@ -1,3 +1,20 @@
-# 静态检查配置。规则集用 flutter_lints 默认。
-# 加严规则与门禁一起落地（见 TODO 一段）：加之前先跑 `flutter analyze`，确认零告警再加。
+# 规则集用 flutter_lints（= lints/recommended + Flutter 专属规则）。
 include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "build/**"
+
+linter:
+  rules:
+    # 从 recommended 起步，先不加自定义规则
+    # 下面三条是最值得提前打开的
+    - prefer_single_quotes
+    - unawaited_futures
+    - always_declare_return_types
