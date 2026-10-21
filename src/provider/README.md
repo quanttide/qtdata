@@ -15,6 +15,14 @@
 
 model（Project / Task / QtDataDataset）+ api（三个资源复用同一套五动作 CRUD）+ store（filestore 本地 JSON 持久化，S3 预留）+ config / version / cmd（服务装配）。
 
+## 文档
+
+三处，都在 `docs/` 下：
+
+- [使用指南](docs/user-guide/index.md)——怎么启动、怎么配置、真命令走一遍；
+- [接口参考](docs/api-references/index.md)——路由、字段、状态码与错误码，一资源一篇；
+- [开发指南](docs/dev-guide/index.md)——目录落位、请求怎么走、加一个资源、服务边界；[路线图](docs/dev-guide/roadmap.md)同在此。
+
 ## 启动
 
 ```bash
@@ -22,7 +30,7 @@ cd src/provider
 go run ./cmd/server
 ```
 
-默认监听 `:8000`。配置通过环境变量或 `CONFIG_PATH` 指向的 JSON 文件设定（见 `docs/usage.md`）。
+默认监听 `:8000`，配置见[使用指南](docs/user-guide/index.md)·配置。
 
 ## 验证
 
