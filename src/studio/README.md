@@ -53,7 +53,7 @@ test/{app,data,project,business,asset}/{views,screens}/   跟着 lib/ 同名同�
 |---|---|
 | [STATUS.md](./STATUS.md) | 对照软件工程契约的体检：结构 / 依赖 / 平台条款逐条判定 |
 | [TODO.md](./TODO.md) | 待办：改什么 / 判据（可跑命令）/ 影响哪些文件 |
-| [ROADMAP.md](./ROADMAP.md) | 路线：为什么做、分五段、现在在哪 |
+| [ROADMAP.md](docs/dev-guide/roadmap.md) | 路线：为什么做、分五段、现在在哪 |
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | 开发约定：分层名义、选型、门禁三连、依赖规矩 |
 | [doc/index.md](./doc/index.md)、[doc/project.md](./doc/project.md) | 页面分解：两页的区块、交互与数据 |
 | [CHANGELOG.md](./CHANGELOG.md) | 版本记录 |
