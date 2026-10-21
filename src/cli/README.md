@@ -26,9 +26,6 @@ qtdata
 
 ```
 
-## 验收标准
+## 开发
 
-- [ ] `scope` 写入 `scope.json`，字段完整可读
-- [ ] `blueprint` 写入 `blueprint.cue`，含数据模型和七步工作流
-- [ ] `quotation` 写入 `quotation.json`，含工时分项和付款计划
-- [ ] `delivery` 验收交付物
+实现状态、待办与达成标志见 [docs/dev-guide/路线图](docs/dev-guide/roadmap.md)；代码落位与一次转换怎么走见 [docs/dev-guide/](docs/dev-guide/index.md)。README 原有四条验收标准已移入路线图，不在此重复。
